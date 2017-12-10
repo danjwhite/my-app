@@ -29,18 +29,17 @@ public class NoteController {
         this.noteRepository = noteRepository;
     }
 
-    @RequestMapping(value = "/entries/recent", method = RequestMethod.GET)
-    public String getRecentNotes(Model model) {
-        model.addAttribute("notes", noteRepository.findRecentNotes());
+    @RequestMapping(value = "/entries/all", method = RequestMethod.GET)
+    public String getNotes(Model model) {
+        model.addAttribute("notes", noteRepository.findNotes());
 
         return "notes";
     }
 
-    @RequestMapping(value = "/entries/all", method = RequestMethod.GET)
-    public String getNotes(Model model,
-                           @RequestParam(value = "max", defaultValue = MAX_LONG) long max,
-                           @RequestParam(value = "count", defaultValue = "20") int count) {
-        model.addAttribute("notes", noteRepository.findNotes(max, count));
+    @RequestMapping(value = "/entries/recent", method = RequestMethod.GET)
+    public String getRecentNotes(Model model,
+                                 @RequestParam(value = "count", defaultValue = "20") int count) {
+        model.addAttribute("notes", noteRepository.findRecentNotes(count));
 
         return "notes";
     }

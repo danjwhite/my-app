@@ -23,19 +23,18 @@ public class JdbcNoteRepository implements NoteRepository {
     }
 
     @Override
-    public List<Note> findRecentNotes() {
+    public List<Note> findNotes() {
         String sql = "select id, title, created_at, body " +
                 "from note " +
-                "order by id desc limit 20";
+                "order by id desc";
 
         return jdbc.query(sql, new NoteRowMapper());
     }
 
     @Override
-    public List<Note> findNotes(long max, int count) {
+    public List<Note> findRecentNotes(int count) {
         String sql = "select id, title, created_at, body " +
                 "from note " +
-                "where id < ? " +
                 "order by id desc limit ?";
 
         return jdbc.query(sql, new NoteRowMapper(), count);

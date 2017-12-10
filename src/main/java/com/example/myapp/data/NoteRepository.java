@@ -6,9 +6,9 @@ import com.example.myapp.domain.Note;
 
 public interface NoteRepository {
 
-    List<Note> findRecentNotes();
+    List<Note> findNotes();
 
-    List<Note> findNotes(long max, int count);
+    List<Note> findRecentNotes(int count);
 
     Note findOne(long id);
 
