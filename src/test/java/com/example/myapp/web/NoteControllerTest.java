@@ -18,6 +18,8 @@ import org.springframework.web.servlet.view.InternalResourceView;
 import com.example.myapp.data.NoteRepository;
 import com.example.myapp.domain.Note;
 
+import javax.annotation.PostConstruct;
+
 public class NoteControllerTest {
 
     @Test
@@ -88,7 +90,14 @@ public class NoteControllerTest {
 
     @Test
     public void testSaveNote() throws Exception {
-        
+        NoteRepository mockRepository = mock(NoteRepository.class);
+        NoteController controller = new NoteController(mockRepository);
+        MockMvc mockMvc = standaloneSetup(controller).build();
+
+        mockMvc.perform(post("/note/add")
+                .param("title", "Title")
+                .param("body", "Body"))
+                .andExpect(redirectedUrl("/note/0"));
     }
 
     private List<Note> createNoteList(int count) {
