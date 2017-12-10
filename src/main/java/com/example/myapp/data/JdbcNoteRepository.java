@@ -36,7 +36,7 @@ public class JdbcNoteRepository implements NoteRepository {
         String sql = "select id, title, created_at, body " +
                 "from note " +
                 "where id < ? " +
-                "order by id desc limit 20";
+                "order by id desc limit ?";
 
         return jdbc.query(sql, new NoteRowMapper(), count);
     }
