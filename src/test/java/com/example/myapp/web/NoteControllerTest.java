@@ -31,7 +31,7 @@ public class NoteControllerTest {
                 .setSingleView(new InternalResourceView("/WEB-INF/views/notes.jsp"))
                 .build();
 
-        mockMvc.perform(get("/notes/all"))
+        mockMvc.perform(get("/note/entries/all"))
                 .andExpect(view().name("notes"))
                 .andExpect(model().attributeExists("notes"))
                 .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));
@@ -48,7 +48,7 @@ public class NoteControllerTest {
                 .setSingleView(new InternalResourceView("/WEB-INF/views/notes.jsp"))
                 .build();
 
-        mockMvc.perform(get("/notes/recent"))
+        mockMvc.perform(get("/note/entries/recent"))
                 .andExpect(view().name("notes"))
                 .andExpect(model().attributeExists("notes"))
                 .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));
@@ -65,10 +65,30 @@ public class NoteControllerTest {
                 .setSingleView(new InternalResourceView("/WEB-INF/views/notes.jsp"))
                 .build();
 
-        mockMvc.perform(get("/notes/recent?count=20"))
+        mockMvc.perform(get("/note/entries/recent?count=20"))
                 .andExpect(view().name("notes"))
                 .andExpect(model().attributeExists("notes"))
                 .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));
+    }
+
+    @Test
+    public void testGetNote() throws Exception {
+        Note expectedNote = new Note(123L, "Title", new Date(), "Body");
+        NoteRepository mockRepository = mock(NoteRepository.class);
+        when(mockRepository.findOne(123L)).thenReturn(expectedNote);
+
+        NoteController controller = new NoteController(mockRepository);
+        MockMvc mockMvc = standaloneSetup(controller).build();
+
+        mockMvc.perform(get("/note/123"))
+                .andExpect(view().name("note"))
+                .andExpect(model().attributeExists("note"))
+                .andExpect(model().attribute("note", expectedNote));
+    }
+
+    @Test
+    public void testSaveNote() throws Exception {
+        
     }
 
     private List<Note> createNoteList(int count) {
