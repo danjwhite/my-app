@@ -98,6 +98,8 @@ public class NoteControllerTest {
                 .param("title", "Title")
                 .param("body", "Body"))
                 .andExpect(redirectedUrl("/note/0"));
+
+        verify(mockRepository, atLeastOnce()).save(new Note("Title", new Date(), "Body"));
     }
 
     private List<Note> createNoteList(int count) {
