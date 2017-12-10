@@ -20,8 +20,6 @@ import javax.validation.Valid;
 @RequestMapping("/note")
 public class NoteController {
 
-    private static final String MAX_LONG = "9223372036854775807";
-
     private NoteRepository noteRepository;
 
     @Autowired

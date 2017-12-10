@@ -21,17 +21,51 @@ import com.example.myapp.domain.Note;
 public class NoteControllerTest {
 
     @Test
-    public void shouldShowRecentNotes() throws Exception {
-        List<Note> expectedNotes = createNoteList(20);
+    public void shouldShowAllNotes() throws Exception {
+        List<Note> expectedNotes = createNoteList(40);
         NoteRepository mockRepository = mock(NoteRepository.class);
-        when(mockRepository.findRecentNotes()).thenReturn(expectedNotes);
+        when(mockRepository.findNotes()).thenReturn(expectedNotes);
 
         NoteController controller = new NoteController(mockRepository);
         MockMvc mockMvc = standaloneSetup(controller)
-                .setSingleView(new InternalResourceView("/WEB-INF/views/posts.jsp"))
+                .setSingleView(new InternalResourceView("/WEB-INF/views/notes.jsp"))
                 .build();
 
-        mockMvc.perform(get("/notes"))
+        mockMvc.perform(get("/notes/all"))
+                .andExpect(view().name("notes"))
+                .andExpect(model().attributeExists("notes"))
+                .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));
+    }
+
+    @Test
+    public void shouldShowRecentNotesWithoutRequestParameter() throws Exception {
+        List<Note> expectedNotes = createNoteList(20);
+        NoteRepository mockRepository = mock(NoteRepository.class);
+        when(mockRepository.findRecentNotes(20)).thenReturn(expectedNotes);
+
+        NoteController controller = new NoteController(mockRepository);
+        MockMvc mockMvc = standaloneSetup(controller)
+                .setSingleView(new InternalResourceView("/WEB-INF/views/notes.jsp"))
+                .build();
+
+        mockMvc.perform(get("/notes/recent"))
+                .andExpect(view().name("notes"))
+                .andExpect(model().attributeExists("notes"))
+                .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));
+    }
+
+    @Test
+    public void shouldShowRecentNotesWithRequestParameter() throws Exception {
+        List<Note> expectedNotes = createNoteList(20);
+        NoteRepository mockRepository = mock(NoteRepository.class);
+        when(mockRepository.findRecentNotes(20)).thenReturn(expectedNotes);
+
+        NoteController controller = new NoteController(mockRepository);
+        MockMvc mockMvc = standaloneSetup(controller)
+                .setSingleView(new InternalResourceView("/WEB-INF/views/notes.jsp"))
+                .build();
+
+        mockMvc.perform(get("/notes/recent?count=20"))
                 .andExpect(view().name("notes"))
                 .andExpect(model().attributeExists("notes"))
                 .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));
