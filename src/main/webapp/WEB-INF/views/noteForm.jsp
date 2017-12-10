@@ -1,4 +1,4 @@
-
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>New Note</title>
@@ -12,6 +12,7 @@
         <label class="pad-top">Body:</label><br>
         <textarea name="body" cols="80" rows="5"></textarea><br>
         <input type="submit" value="Add"/>
-    </form>
+    </form><br>
+    <a href="<c:url value="/" /> ">Cancel</a>
 </body>
 </html>

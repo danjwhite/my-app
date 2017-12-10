@@ -14,6 +14,8 @@
         <div class="noteBody">
             <c:out value="${note.body}"/>
         </div>
-    </div>
+    </div><br>
+    <a href="<c:url value="/note/entries" /> ">Notes</a> |
+    <a href="<c:url value="/note/add" /> ">Add Another Note</a>
 </body>
 </html>

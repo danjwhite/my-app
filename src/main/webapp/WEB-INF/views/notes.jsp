@@ -23,5 +23,7 @@
             </c:forEach>
         </ul>
     </div>
+    <a href="<c:url value="/" /> ">Home</a> |
+    <a href="<c:url value="/note/add" /> ">Add Note</a>
 </body>
 </html>
