@@ -23,6 +23,14 @@ public class JdbcNoteRepository implements NoteRepository {
     }
 
     @Override
+    public List<Note> findNotes() {
+        String sql = "select id, title, created_at, body " +
+                "from note";
+
+        return jdbc.query(sql, new NoteRowMapper());
+    }
+
+    @Override
     public List<Note> findNotes(int count) {
         String sql = "select id, title, created_at, body " +
                 "from note limit ?";
