@@ -61,8 +61,8 @@ public class NoteController {
         }
 
         note.setCreatedAt(new Date());
-        noteRepository.save(note);
+        Long id = noteRepository.save(note);
 
-        return "redirect:/note/" + note.getId();
+        return "redirect:/note/" + id;
     }
 }

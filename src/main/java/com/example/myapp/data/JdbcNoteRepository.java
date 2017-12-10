@@ -50,7 +50,7 @@ public class JdbcNoteRepository implements NoteRepository {
     }
 
     @Override
-    public void save(final Note note) {
+    public Long save(final Note note) {
         final String sql = "insert into note (title, created_at, body) " +
                 "values (?, ?, ?)";
 
@@ -69,7 +69,8 @@ public class JdbcNoteRepository implements NoteRepository {
         };
 
         jdbc.update(preparedStatementCreator, keyHolder);
-        note.setId((Long) keyHolder.getKey());
+
+        return (Long) keyHolder.getKey();
     }
 
     private static class NoteRowMapper implements RowMapper<Note> {

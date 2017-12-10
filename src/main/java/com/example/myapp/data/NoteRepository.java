@@ -12,5 +12,5 @@ public interface NoteRepository {
 
     Note findOne(long id);
 
-    void save(Note note);
+    Long save(Note note);
 }
