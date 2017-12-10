@@ -20,6 +20,8 @@ import javax.validation.Valid;
 @RequestMapping("/note")
 public class NoteController {
 
+    private static final String MAX_LONG = "9223372036854775807";
+
     private NoteRepository noteRepository;
 
     @Autowired
@@ -27,16 +29,18 @@ public class NoteController {
         this.noteRepository = noteRepository;
     }
 
-    @RequestMapping(value = "/entries/all", method = RequestMethod.GET)
-    public String getNotes(Model model) {
-        model.addAttribute("notes", noteRepository.findNotes());
+    @RequestMapping(value = "/entries/recent", method = RequestMethod.GET)
+    public String getRecentNotes(@RequestParam(value = "count", defaultValue = "20") int count, Model model) {
+        model.addAttribute("notes", noteRepository.findRecentNotes());
 
         return "notes";
     }
 
-    @RequestMapping(value = "/entries/recent", method = RequestMethod.GET)
-    public String getNotes(@RequestParam(value = "count", defaultValue = "20") int count, Model model) {
-        model.addAttribute("notes", noteRepository.findNotes(count));
+    @RequestMapping(value = "/entries/all", method = RequestMethod.GET)
+    public String getNotes(Model model,
+                           @RequestParam(value = "max", defaultValue = MAX_LONG) long max,
+                           @RequestParam(value = "count", defaultValue = "20") int count) {
+        model.addAttribute("notes", noteRepository.findNotes(max, count));
 
         return "notes";
     }
