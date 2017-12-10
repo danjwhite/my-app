@@ -27,7 +27,14 @@ public class NoteController {
         this.noteRepository = noteRepository;
     }
 
-    @RequestMapping(value = "/entries", method = RequestMethod.GET)
+    @RequestMapping(value = "/entries/all", method = RequestMethod.GET)
+    public String getNotes(Model model) {
+        model.addAttribute("notes", noteRepository.findNotes());
+
+        return "notes";
+    }
+
+    @RequestMapping(value = "/entries/recent", method = RequestMethod.GET)
     public String getNotes(@RequestParam(value = "count", defaultValue = "20") int count, Model model) {
         model.addAttribute("notes", noteRepository.findNotes(count));
 
