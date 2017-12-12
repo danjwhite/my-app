@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Note</title>
+    <link rel="stylesheet" href="<c:url value="/resources/styles/main.css"/> ">
 </head>
 <body>
     <div class="noteView">
