@@ -13,7 +13,7 @@
         <label class="pad-top">Body:</label><br>
         <textarea name="body" cols="80" rows="5"></textarea><br>
         <input type="submit" value="Add"/>
+        <input type="button" onclick="window.location.href='/'" value="Cancel"/>
     </form><br>
-    <a href="<c:url value="/" /> ">Cancel</a>
 </body>
 </html>

@@ -5,17 +5,18 @@
     <link rel="stylesheet" href="<c:url value="/resources/styles/main.css"/> ">
 </head>
 <body>
-    <div class="noteView">
-        <div class="noteTitle">
-            <c:out value="${note.title}"/>
-        </div>
-        <div class="noteCreateDate">
-            <c:out value="${note.createdAt}"/>
-        </div>
-        <div class="noteBody">
-            <c:out value="${note.body}"/>
-        </div>
-    </div><br>
+
+    <h1>Note created successfully.</h1>
+
+    <p>Here is the information you entered:</p>
+
+    <label>Title:</label>
+    <span>${note.title}</span><br>
+    <label>Date:</label>
+    <span>${note.createdAt}</span><br>
+    <label>Body:</label><br>
+    <p>${note.body}</p>
+
     <a href="<c:url value="/note/entries/recent" /> ">Notes</a> |
     <a href="<c:url value="/note/add" /> ">Add Another Note</a>
 </body>
