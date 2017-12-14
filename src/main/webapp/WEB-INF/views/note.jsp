@@ -6,18 +6,13 @@
 </head>
 <body>
 
-    <h1>Note created successfully.</h1>
+    <h2 class="title"><span class="main-title">Entry created:</span></h2>
+    <h3 class="note-title">${note.title}</h3>
+    <p class="date">Added: ${note.createdAt}</p>
+    <p class="body">${note.body}</p>
 
-    <p>Here is the information you entered:</p>
 
-    <label>Title:</label>
-    <span>${note.title}</span><br>
-    <label>Date:</label>
-    <span>${note.createdAt}</span><br>
-    <label>Body:</label><br>
-    <p>${note.body}</p>
-
-    <a href="<c:url value="/note/entries/recent" /> ">Notes</a> |
-    <a href="<c:url value="/note/add" /> ">Add Another Note</a>
+<a href="<c:url value="/note/entries/recent" /> ">Notes</a> |
+<a href="<c:url value="/note/add" /> ">Add Another Note</a>
 </body>
 </html>
