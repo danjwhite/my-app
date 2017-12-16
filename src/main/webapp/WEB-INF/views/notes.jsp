@@ -20,7 +20,17 @@
 <div class="container">
     <h3>Notes</h3>
     <form name="filter" class="align-left" method="get">
-        <p class="filter-title">Showing Recent Notes</p>
+        <c:choose>
+            <c:when test="${filter == 'recent' && fn:length(notes) > 0}">
+                <p class="filter-title">Showing recent notes</p>
+            </c:when>
+            <c:when test="${filter == 'all' && fn:length(notes) > 0}">
+                <p class="filter-title">Showing all notes</p>
+            </c:when>
+            <c:otherwise>
+                <p class="filter-title">No notes found</p>
+            </c:otherwise>
+        </c:choose>
         <div class="align-right">
             <c:choose>
                 <c:when test="${filter == 'recent' && fn:length(notes) > 0}">
@@ -34,7 +44,7 @@
                     &nbsp;
                 </c:when>
             </c:choose>
-            <input type="button" onclick="window.location.href='/note/add'" value="Create Note">
+            <input type="button" onclick="window.location.href='<c:url value="/note/add"/>'" value="Create Note">
         </div>
     </form>
     <c:forEach items="${notes}" var="note">
