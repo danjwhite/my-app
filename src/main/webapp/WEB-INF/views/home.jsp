@@ -2,24 +2,38 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>My Spring App</title>
-    <link rel="stylesheet" href="<c:url value="/resources/styles/main.css"/> ">
+    <title>My App</title>
+    <link href="main.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<header>
-    <div class="header-title">
-        <img src="${pageContext.request.contextPath}/resources/images/spring-by-pivotal.png" alt=""/>
-        <h1>My Spring App</h1>
+
+<!-------------------- Begin Container -------------------->
+<div id="container">
+
+    <!-------------------- Begin Header -------------------->
+    <div id="header">
+        <div id="banner">
+            <img id="banner-img" src="spring-by-pivotal.png" alt=""/>
+            <h1>My Spring App</h1>
+        </div>
+        <nav id="header-nav">
+            <a class="active" href="<c:url value="/"/>">Home</a>
+            <a href="<c:url value="/note/entries/recent"/>">Notes</a>
+        </nav>
     </div>
-    <nav>
-        <a class="active" href="<c:url value="/"/>">Home</a>
-        <a href="<c:url value="/note/entries/recent"/>">Notes</a>
-    </nav>
-</header>
-<br>
-<div class="container">
-    <h3>Create a new note or view existing notes.</h3>
+
+    <!-------------------- Begin Body -------------------->
+    <div id="body">
+        <h3>Create a new note or view existing notes.</h3>
+
+    </div>
+
+    <!-------------------- Begin Footer -------------------->
+    <div id="footer">
+        <p>&copy; 2017 My Spring App. All rights reserved.</p>
+
+    </div>
+
 </div>
-<footer class="footer">&copy; 2017 My Spring App. All rights reserved.</footer>
 </body>
 </html>
