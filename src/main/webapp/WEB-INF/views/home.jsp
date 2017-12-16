@@ -12,7 +12,7 @@
         <h1>My Spring App</h1>
     </div>
     <nav>
-        <a class="active" href="<c:url value="/"/> ">Home</a>
+        <a class="active" href="<c:url value="/"/>">Home</a>
         <a href="<c:url value="/note/entries/recent"/>">Notes</a>
     </nav>
 </header>
