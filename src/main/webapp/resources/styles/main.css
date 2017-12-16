@@ -1,108 +1,62 @@
 @charset "UTF-8";
-body {
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
     font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
     background-color: floralwhite;
-    margin: 0px;
+    color: black;
 }
-h1 {
+
+h1, h2, h3 {
     color: teal;
 }
-h2 {
-    color: teal;
-}
-h3 {
-    color: teal;
-}
-h3.confirmation {
-    color: teal;
-    margin-bottom: 0;
-}
+
 p {
-    color: black;
     font-size: 14px;
-    display: inline;
-    font-weight: bold;
 }
-th {
-    color: black;
-    font-weight: bold;
-    font-size: 14px;
-    padding-right: 15px;
+
+#container {
+    min-height: 100%;
+    position: relative;
 }
-input[type="text"] {
-    padding: 4px;
-    border: 1px groove black;
-}
-input[type="submit"] {
-    font-size: 20px;
-}
-input[type="button"] {
-    font-size: 20px;
-}
-textarea {
-    border: 1px groove black;
-    vertical-align: top;
-}
-dl {
-    border: 1px solid black;
-    float: left;
-    width: 100%;
-    padding: 10px 10px 10px 10px;
-}
-dt {
-    font-size: 14px;
-    float: left;
-    font-weight: bold;
-    margin-right: 5px;
-    padding: 5px;
+
+#header {
 
 }
-dd {
-    font-size: 14px;
-    padding: 5px 5px 5px 15px;
+
+#body {
+    padding: 10px;
+    padding-bottom: 20px;
+    /**/width: 100%;
+    /**/max-width: 1200px;
 }
-table {
-    border-collapse: collapse;
-}
-th, td {
-    padding-top: .5em;
-    padding-bottom: .5em;
-}
-th {
-    vertical-align: top;
-}
-form {
+
+#footer {
+    position: absolute;
+    bottom: 0;
     width: 100%;
-    max-width: 1200px;
+    height: 20px;
+    /**/text-align: center;
 }
-div.container {
-    width: 100%;
-    margin: 20px;
-    max-width: 1200px;
-}
-.align-left {
-    float: left;
-}
-.align-right {
-    float: right;
-}
-.header-title {
+
+#banner {
     width: 100%;
     overflow: hidden;
     text-align: center;
     background-color: beige;
 }
-.header-title img {
+
+#banner #banner-img {
     float: left;
 }
 
-nav {
-
+#header-nav {
     overflow: hidden;
     background-color: #136854;
 }
 
-nav a {
+#header-nav a {
     float: left;
     color: #f2f2f2;
     text-align: center;
@@ -111,22 +65,70 @@ nav a {
     font-size: 16px;
 }
 
-nav a:hover {
+#header-nav a:hover {
     background-color: #ddd;
     color: black;
 }
 
-nav a.active {
+#header-nav a.active {
     background-color: #4CAF50;
     color: white;
 }
-footer {
-    width: 100%;
-    clear: both;
-    position: relative;
-    z-index: 1;
-    margin-top: 40em;
-    font-size: 12px;
-    text-align: center;
-    color: black;
+
+dl {
+    border: 1px solid black;
+    padding: 10px;
+}
+
+dt {
+    font-weight: bold;
+    float: left;
+    margin-right: 5px;
+    padding: 5px;
+}
+
+dd {
+    padding: 5px;
+}
+
+input[type="button"], input[type="submit"] {
+    font-size: 20px;
+}
+
+input[type="text"] {
+    padding: 4px;
+    border: 1px groove black;
+}
+
+#note-form-table {
+    border-collapse: collapse;
+}
+
+#note-form-table th {
+    vertical-align: top;
+    padding-top: .5em;
+    padding-bottom: .5em;
+    padding-right: .5em;
+}
+
+#note-form-table td {
+    padding-top: .5em;
+    padding-bottom: .5em;
+}
+
+textarea {
+    border: 1px groove black;
+}
+
+#filter-title {
+    font-weight: bold;
+    display: inline;
+}
+
+input[name="filter"] {
+    float: left;
+}
+
+#filter-buttons {
+    float: right;
 }
