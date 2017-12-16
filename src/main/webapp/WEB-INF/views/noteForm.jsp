@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>My Spring App</title>
+    <title>Add Note</title>
     <link rel="stylesheet" href="<c:url value="/resources/styles/main.css"/> ">
 </head>
 <body>
