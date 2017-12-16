@@ -1,4 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -21,8 +22,18 @@
     <form name="filter" class="align-left" method="get">
         <p class="filter-title">Showing Recent Notes</p>
         <div class="align-right">
-            <input type="button" onclick="window.location.href='/note/entries/all'" value="Show All">
-            &nbsp;
+            <c:choose>
+                <c:when test="${filter == 'recent' && fn:length(notes) > 0}">
+                    <input type="button" onclick="window.location.href='<c:url value="/note/entries/all"/>'"
+                           value="Show All">
+                    &nbsp;
+                </c:when>
+                <c:when test="${filter == 'all' && fn:length(notes) > 0}">
+                    <input type="button" onclick="window.location.href='<c:url value="/note/entries/recent"/>'"
+                           value="Show Recent">
+                    &nbsp;
+                </c:when>
+            </c:choose>
             <input type="button" onclick="window.location.href='/note/add'" value="Create Note">
         </div>
     </form>
