@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>My App</title>
-    <link href="main.css" rel="stylesheet" type="text/css">
+    <link href="${pageContext.request.contextPath}/resources/styles/main.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 

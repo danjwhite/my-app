@@ -120,12 +120,11 @@ textarea {
     border: 1px groove black;
 }
 
-#filter-title {
-    font-weight: bold;
-    display: inline;
+input[name="filter"] {
+    float: left;
 }
 
-input[name="filter"] {
+#filter-form-table th {
     float: left;
 }
 
