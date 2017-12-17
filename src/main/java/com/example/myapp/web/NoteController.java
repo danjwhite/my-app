@@ -28,7 +28,6 @@ public class NoteController {
     }
 
     public NoteController() {
-
     }
 
     @RequestMapping(value = "/entries/all", method = RequestMethod.GET)
