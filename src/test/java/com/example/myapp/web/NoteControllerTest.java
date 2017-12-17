@@ -22,15 +22,23 @@ public class NoteControllerTest {
 
     @Test
     public void shouldShowAllNotes() throws Exception {
+
+        // Create expected object.
         List<Note> expectedNotes = createNoteList(40);
+
+        // Create mock repository that will return expected object.
         NoteRepository mockRepository = mock(NoteRepository.class);
         when(mockRepository.findNotes()).thenReturn(expectedNotes);
 
+        // Create controller with injected repository.
         NoteController controller = new NoteController(mockRepository);
+
+        // Set up MockMvc to use controller and view.
         MockMvc mockMvc = standaloneSetup(controller)
                 .setSingleView(new InternalResourceView("/WEB-INF/views/notes.jsp"))
                 .build();
 
+        // Perform GET request on MockMvc and assert expectations.
         mockMvc.perform(get("/note/entries/all"))
                 .andExpect(view().name("notes"))
                 .andExpect(model().attributeExists("notes"))
@@ -39,15 +47,22 @@ public class NoteControllerTest {
 
     @Test
     public void shouldShowRecentNotesWithoutRequestParameter() throws Exception {
+        // Create expected object.
         List<Note> expectedNotes = createNoteList(20);
+
+        // Create mock repository that will return expected object.
         NoteRepository mockRepository = mock(NoteRepository.class);
         when(mockRepository.findRecentNotes(20)).thenReturn(expectedNotes);
 
+        // Create controller with injected repository.
         NoteController controller = new NoteController(mockRepository);
+
+        // Set up MockMvc to use controller and view.
         MockMvc mockMvc = standaloneSetup(controller)
                 .setSingleView(new InternalResourceView("/WEB-INF/views/notes.jsp"))
                 .build();
 
+        // Perform GET request on MockMvc without request parameters and assert expectations.
         mockMvc.perform(get("/note/entries/recent"))
                 .andExpect(view().name("notes"))
                 .andExpect(model().attributeExists("notes"))
@@ -56,15 +71,22 @@ public class NoteControllerTest {
 
     @Test
     public void shouldShowRecentNotesWithRequestParameter() throws Exception {
+        // Create expected object.
         List<Note> expectedNotes = createNoteList(20);
+
+        // Create mock repository that will return expected object.
         NoteRepository mockRepository = mock(NoteRepository.class);
         when(mockRepository.findRecentNotes(20)).thenReturn(expectedNotes);
 
+        // Create controller with injected repository.
         NoteController controller = new NoteController(mockRepository);
+
+        // Set up MockMvc to use controller and view.
         MockMvc mockMvc = standaloneSetup(controller)
                 .setSingleView(new InternalResourceView("/WEB-INF/views/notes.jsp"))
                 .build();
 
+        // Perform GET request on MockMvc with request parameters and assert expectations.
         mockMvc.perform(get("/note/entries/recent?count=20"))
                 .andExpect(view().name("notes"))
                 .andExpect(model().attributeExists("notes"))
@@ -73,13 +95,20 @@ public class NoteControllerTest {
 
     @Test
     public void testGetNote() throws Exception {
+        // Create expected object.
         Note expectedNote = new Note(123L, "Title", new Date(), "Body");
+
+        // Create mock repository that will return expected object.
         NoteRepository mockRepository = mock(NoteRepository.class);
         when(mockRepository.findOne(123L)).thenReturn(expectedNote);
 
+        // Create controller with injected repository.
         NoteController controller = new NoteController(mockRepository);
+
+        // Set up MockMvc to use controller and view.
         MockMvc mockMvc = standaloneSetup(controller).build();
 
+        // Perform GET request on MockMvc and assert expectations.
         mockMvc.perform(get("/note/123"))
                 .andExpect(view().name("note"))
                 .andExpect(model().attributeExists("note"))
@@ -88,15 +117,23 @@ public class NoteControllerTest {
 
     @Test
     public void testSaveNote() throws Exception {
+
+        // Create mock repository.
         NoteRepository mockRepository = mock(NoteRepository.class);
+
+        // Create controller with injected repository.
         NoteController controller = new NoteController(mockRepository);
+
+        // Set up MockMvc to use controller.
         MockMvc mockMvc = standaloneSetup(controller).build();
 
+        // Perform POST request on MockMvc and assert expectations.
         mockMvc.perform(post("/note/add")
                 .param("title", "Title")
                 .param("body", "Body"))
                 .andExpect(redirectedUrl("/note/0"));
 
+        // Verify that the mock repository was actually used to save the form data.
         verify(mockRepository, atLeastOnce()).save(new Note("Title", new Date(), "Body"));
     }
 
