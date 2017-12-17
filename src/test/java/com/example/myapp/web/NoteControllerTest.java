@@ -116,6 +116,19 @@ public class NoteControllerTest {
     }
 
     @Test
+    public void shouldShowNoteForm() throws Exception {
+        // Create controller.
+        NoteController controller = new NoteController();
+
+        // Set up MockMvc to use controller.
+        MockMvc mockMvc = standaloneSetup(controller).build();
+
+        // Perform GET request on MockMvc and assert expectations.
+        mockMvc.perform(get("/note/add"))
+                .andExpect(view().name("noteForm"));
+    }
+
+    @Test
     public void testSaveNote() throws Exception {
 
         // Create mock repository.
