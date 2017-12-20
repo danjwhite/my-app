@@ -116,8 +116,16 @@ input[type="text"] {
     padding-bottom: .5em;
 }
 
-.note-form-errors {
+.error-messages {
     color: red;
+}
+
+.error-field-label {
+    color: red;
+}
+
+.error-field-input {
+    background-color: #ffcccc;
 }
 
 textarea {

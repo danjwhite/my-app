@@ -27,15 +27,23 @@
     <div id="body">
         <h3>New Note</h3>
         <sf:form method="post" name="note-form" commandName="note">
-            <sf:errors path="*" element="div" cssClass="note-form-errors"/>
+            <sf:errors path="*" element="div" cssClass="error-messages"/>
             <table id="note-form-table">
                 <tr>
-                    <td class="note-form-left">Title:</td>
-                    <td class="note-form-right"><sf:input path="title" size="50"/></td>
+                    <td class="note-form-left">
+                        <sf:label path="title" cssErrorClass="error-field-label">Title:</sf:label>
+                    </td>
+                    <td class="note-form-right">
+                        <sf:input path="title" cssErrorClass="error-field-input" size="50"/>
+                    </td>
                 </tr>
                 <tr>
-                    <td class="note-form-left">Body:</td>
-                    <td class="note-form-right"><sf:textarea path="body" cols="80" rows="15"/></td>
+                    <td class="note-form-left">
+                        <sf:label path="body" cssErrorClass="error-field-label">Body:</sf:label>
+                    </td>
+                    <td class="note-form-right">
+                        <sf:textarea path="body" cssErrorClass="error-field-input" cols="80" rows="15"/>
+                    </td>
                 </tr>
                 <tr>
                     <td class="note-form-left"></td>
