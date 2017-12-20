@@ -104,14 +104,14 @@ input[type="text"] {
     border-collapse: collapse;
 }
 
-#note-form-table td.note-form-label {
+#note-form-table td.note-form-left {
     vertical-align: top;
     padding-top: .5em;
     padding-bottom: .5em;
     padding-right: .5em;
 }
 
-#note-form-table td.note-form-input {
+#note-form-table td.note-form-right {
     padding-top: .5em;
     padding-bottom: .5em;
 }

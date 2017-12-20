@@ -28,16 +28,16 @@
         <form method="post" name="note-form">
             <table id="note-form-table">
                 <tr>
-                    <td class="note-form-label">Title:</td>
-                    <td class="note-form-input"><input type="text" size="50" name="title"></td>
+                    <td class="note-form-left">Title:</td>
+                    <td class="note-form-right"><input type="text" size="50" name="title"></td>
                 </tr>
                 <tr>
-                    <td class="note-form-label">Body:</td>
-                    <td class="note-form-input"><textarea name="body" cols="80" rows="15"></textarea></td>
+                    <td class="note-form-left">Body:</td>
+                    <td class="note-form-right"><textarea name="body" cols="80" rows="15"></textarea></td>
                 </tr>
                 <tr>
-                    <td class="note-form-label"></td>
-                    <td class="note-form-input">
+                    <td class="note-form-left"></td>
+                    <td class="note-form-right">
                         <input type="submit" value="Add">
                         &nbsp;
                         <input type="button" onClick="" value="Cancel">
