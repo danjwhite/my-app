@@ -116,12 +116,25 @@ input[type="text"] {
     padding-bottom: .5em;
 }
 
-.error-messages {
-    color: #cc0000;
+#note-form-container {
+    width: 550px;
 }
 
-.error-field-label {
+.error-messages {
     color: #cc0000;
+    background-color: #f2dede;
+    border: 1px solid;
+    line-height: 20px;
+    font-size: 12px;
+    padding: 5px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.error-messages::before {
+    content: url(/resources/images/error.png);
+    float: left;
+    padding: 10px 10px 5px 5px;
 }
 
 .error-field-input {

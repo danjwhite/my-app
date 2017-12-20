@@ -26,6 +26,7 @@
     <!-------------------- Begin Body -------------------->
     <div id="body">
         <h3>New Note</h3>
+        <div id="note-form-container">
         <sf:form method="post" name="note-form" commandName="note">
             <sf:errors path="*" element="div" cssClass="error-messages"/>
             <table id="note-form-table">
@@ -55,6 +56,7 @@
                 </tr>
             </table>
         </sf:form>
+        </div>
     </div>
 
     <!-------------------- Begin Footer -------------------->
