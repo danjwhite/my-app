@@ -28,19 +28,19 @@
         <form method="post" name="note-form">
             <table id="note-form-table">
                 <tr>
-                    <th>Title:</th>
-                    <td><input type="text" size="50" name="title"></td>
+                    <td class="note-form-label">Title:</td>
+                    <td class="note-form-input"><input type="text" size="50" name="title"></td>
                 </tr>
                 <tr>
-                    <th>Body:</th>
-                    <td><textarea name="body" cols="80" rows="15"></textarea></td>
+                    <td class="note-form-label">Body:</td>
+                    <td class="note-form-input"><textarea name="body" cols="80" rows="15"></textarea></td>
                 </tr>
                 <tr>
-                    <th></th>
-                    <td>
+                    <td class="note-form-label"></td>
+                    <td class="note-form-input">
                         <input type="submit" value="Add">
                         &nbsp;
-                        <input type="button" onClick="window.location.href='/'" value="Cancel">
+                        <input type="button" onClick="" value="Cancel">
                     </td>
                 </tr>
             </table>
