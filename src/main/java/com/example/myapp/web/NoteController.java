@@ -54,7 +54,8 @@ public class NoteController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
-    public String showNoteForm() {
+    public String showNoteForm(Model model) {
+        model.addAttribute("note", new Note());
         return "noteForm";
     }
 

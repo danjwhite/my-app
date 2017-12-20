@@ -1,4 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -25,15 +26,16 @@
     <!-------------------- Begin Body -------------------->
     <div id="body">
         <h3>New Note</h3>
-        <form method="post" name="note-form">
+        <sf:form method="post" name="note-form" commandName="note">
+            <sf:errors path="*" element="div" cssClass="note-form-errors"/>
             <table id="note-form-table">
                 <tr>
                     <td class="note-form-left">Title:</td>
-                    <td class="note-form-right"><input type="text" size="50" name="title"></td>
+                    <td class="note-form-right"><sf:input path="title" size="50"/></td>
                 </tr>
                 <tr>
                     <td class="note-form-left">Body:</td>
-                    <td class="note-form-right"><textarea name="body" cols="80" rows="15"></textarea></td>
+                    <td class="note-form-right"><sf:textarea path="body" cols="80" rows="15"/></td>
                 </tr>
                 <tr>
                     <td class="note-form-left"></td>
@@ -44,7 +46,7 @@
                     </td>
                 </tr>
             </table>
-        </form>
+        </sf:form>
     </div>
 
     <!-------------------- Begin Footer -------------------->

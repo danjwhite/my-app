@@ -116,6 +116,10 @@ input[type="text"] {
     padding-bottom: .5em;
 }
 
+.note-form-errors {
+    color: red;
+}
+
 textarea {
     border: 1px groove black;
 }
