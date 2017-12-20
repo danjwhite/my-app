@@ -117,11 +117,11 @@ input[type="text"] {
 }
 
 .error-messages {
-    color: red;
+    color: #cc0000
 }
 
 .error-field-label {
-    color: red;
+    color: #cc0000
 }
 
 .error-field-input {
