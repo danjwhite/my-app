@@ -27,41 +27,41 @@
     <div id="body">
         <h3>New Note</h3>
         <div id="note-form-container">
-        <sf:form method="post" name="note-form" commandName="note">
-            <sf:errors path="*" element="div" cssClass="error-message"/>
-            <table id="note-form-table">
-                <tr>
-                    <td class="note-form-left">
-                        <sf:label path="title" cssErrorClass="error-field-label">Title:</sf:label>
-                    </td>
-                    <td class="note-form-right">
-                        <sf:input path="title" cssErrorClass="error-field-input" size="50"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="note-form-left">
-                        <sf:label path="body" cssErrorClass="error-field-label">Body:</sf:label>
-                    </td>
-                    <td class="note-form-right">
-                        <sf:textarea path="body" cssErrorClass="error-field-input" cols="80" rows="15"/>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="note-form-left"></td>
-                    <td class="note-form-right">
-                        <input type="submit" value="Add">
-                        &nbsp;
-                        <input type="button" onClick="window.location.href='/'" value="Cancel">
-                    </td>
-                </tr>
-            </table>
-        </sf:form>
+            <sf:form method="post" name="note-form" commandName="note">
+                <sf:errors path="*" element="div" cssClass="error-message"/>
+                <table id="note-form-table">
+                    <tr>
+                        <td class="table-left">
+                            <sf:label path="title" cssErrorClass="error-field-label">Title:</sf:label>
+                        </td>
+                        <td class="table-right">
+                            <sf:input path="title" cssErrorClass="error-field-input" size="50"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-left">
+                            <sf:label path="body" cssErrorClass="error-field-label">Body:</sf:label>
+                        </td>
+                        <td class="table-right">
+                            <sf:textarea path="body" cssErrorClass="error-field-input" cols="80" rows="15"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="table-left"></td>
+                        <td class="table-right" id="note-form-buttons">
+                            <input type="submit" value="Add">
+                            &nbsp;
+                            <input type="button" onClick="window.location.href='/'" value="Cancel">
+                        </td>
+                    </tr>
+                </table>
+            </sf:form>
         </div>
     </div>
 
     <!-------------------- Begin Footer -------------------->
     <div id="footer">
-        <p>&copy; 2017 My Spring App. All rights reserved.</p>
+        <p id="footer-message">&copy; 2017 My Spring App. All rights reserved.</p>
     </div>
 
 </div>
