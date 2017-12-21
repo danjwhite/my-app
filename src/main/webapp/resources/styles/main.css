@@ -87,6 +87,7 @@ dt {
     font-weight: bold;
     float: left;
     margin-right: 5px;
+    width: 40px;
 }
 
 dt, dd {
