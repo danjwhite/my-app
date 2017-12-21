@@ -28,7 +28,7 @@
         <h3>New Note</h3>
         <div id="note-form-container">
         <sf:form method="post" name="note-form" commandName="note">
-            <sf:errors path="*" element="div" cssClass="error-messages"/>
+            <sf:errors path="*" element="div" cssClass="error-message"/>
             <table id="note-form-table">
                 <tr>
                     <td class="note-form-left">

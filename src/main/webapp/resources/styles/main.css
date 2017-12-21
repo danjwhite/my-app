@@ -120,7 +120,7 @@ input[type="text"] {
     width: 550px;
 }
 
-.error-messages {
+.error-message {
     color: #cc0000;
     background-color: #fee;
     border: 1px solid #ff7870;
@@ -135,11 +135,6 @@ input[type="text"] {
 }
 
 input[type="text"].error-field-input, textarea.error-field-input {
-    background-image: url(/resources/images/invalid-line.gif);
-    background-repeat:repeat-x;
-    background-size: 5px 3px;
-    background-position: bottom;
-    background-color: #fee;
     border: 1px solid #ff7870;
 }
 
