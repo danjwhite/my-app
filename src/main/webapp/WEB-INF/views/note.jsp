@@ -24,7 +24,11 @@
 
     <!-------------------- Begin Body -------------------->
     <div id="body">
-        <h3>Note Created:</h3>
+        <h3>New Note</h3>
+        <div class="success-message">
+            Note created successfully.
+        </div>
+        <div class="dl-container>">
         <dl>
             <dt>Title:</dt>
             <dd><c:out value="${note.title}"/></dd>
@@ -33,17 +37,18 @@
             <dt>Body:</dt>
             <dd><c:out value="${note.body}"/></dd>
         </dl>
-        <form method="get">
-            <input type="button" onClick="window.location.href='<c:url value="/note/entries/recent"/>'" value="View Notes">
-            &nbsp;
-            <input type="button" onClick="window.location.href='<c:url value="/note/add"/>'" value="Add Another">
-        </form>
     </div>
+    <form method="get">
+        <input type="button" onClick="window.location.href='<c:url value="/note/entries/recent"/>'" value="View Notes">
+        &nbsp;
+        <input type="button" onClick="window.location.href='<c:url value="/note/add"/>'" value="Add Another">
+    </form>
+</div>
 
-    <!-------------------- Begin Footer -------------------->
-    <div id="footer">
-        <p>&copy; 2017 My Spring App. All rights reserved.</p>
-    </div>
+<!-------------------- Begin Footer -------------------->
+<div id="footer">
+    <p id="footer-message">&copy; 2017 My Spring App. All rights reserved.</p>
+</div>
 
 </div>
 </body>
