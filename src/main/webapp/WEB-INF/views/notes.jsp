@@ -27,19 +27,19 @@
     <div id="body">
         <h3>Notes</h3>
         <table width="1200" id="filter-form-table">
-            <th>
+            <td>
                 <c:choose>
                     <c:when test="${filter == 'recent' && fn:length(notes) > 0}">
-                        <p>Showing Recent Notes</p>
+                        <p id="filter-description">Showing Recent Notes</p>
                     </c:when>
                     <c:when test="${filter == 'all' && fn:length(notes) > 0}">
-                        <p>Showing All Notes</p>
+                        <p id="filter-description">Showing All Notes</p>
                     </c:when>
                     <c:otherwise>
-                        <p>No Notes Found</p>
+                        <p id="filter-description">No Notes Found</p>
                     </c:otherwise>
                 </c:choose>
-            </th>
+            </td>
             <td>
                 <form name="filter" method="get">
                     <div id="filter-buttons">
@@ -58,23 +58,24 @@
                 </form>
             </td>
         </table>
-
         <c:forEach items="${notes}" var="note">
-            <dl>
-                <dt>Title:</dt>
-                <dd><c:out value="${note.title}"/></dd>
-                <dt>Date:</dt>
-                <dd><c:out value="${note.createdAt}"/></dd>
-                <dt>Body:</dt>
-                <dd><c:out value="${note.body}"/></dd>
-            </dl>
+            <div class="dl-container">
+                <dl>
+                    <dt>Title:</dt>
+                    <dd><c:out value="${note.title}"/></dd>
+                    <dt>Date:</dt>
+                    <dd><c:out value="${note.createdAt}"/></dd>
+                    <dt>Body:</dt>
+                    <dd><c:out value="${note.body}"/></dd>
+                </dl>
+            </div>
         </c:forEach>
 
     </div>
 
     <!-------------------- Begin Footer -------------------->
     <div id="footer">
-        <p>&copy; 2017 My Spring App. All rights reserved.</p>
+        <p id="footer-message">&copy; 2017 My Spring App. All rights reserved.</p>
     </div>
 
 </div>
