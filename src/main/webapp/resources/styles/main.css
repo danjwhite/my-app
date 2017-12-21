@@ -9,7 +9,7 @@ html, body {
 }
 
 h1, h2, h3 {
-    color: teal;
+    color: #136854;
 }
 
 p {
@@ -28,8 +28,8 @@ p {
 #body {
     padding: 10px;
     padding-bottom: 20px;
-    /**/width: 100%;
-    /**/max-width: 1200px;
+    width: 100%;
+    max-width: 1200px;
 }
 
 #footer {
@@ -37,7 +37,7 @@ p {
     bottom: 0;
     width: 100%;
     height: 20px;
-    /**/text-align: center;
+    text-align: center;
 }
 
 #banner {
@@ -58,7 +58,7 @@ p {
 
 #header-nav a {
     float: left;
-    color: #f2f2f2;
+    color: #F2F2F2;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
@@ -66,7 +66,7 @@ p {
 }
 
 #header-nav a:hover {
-    background-color: #ddd;
+    background-color: #DDD;
     color: black;
 }
 
@@ -77,22 +77,25 @@ p {
 
 dl {
     border: 1px solid black;
+    border-radius: 4px;
     padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 dt {
     font-weight: bold;
     float: left;
     margin-right: 5px;
-    padding: 5px;
 }
 
-dd {
+dt, dd {
+    font-size: 12px;
     padding: 5px;
 }
 
 input[type="button"], input[type="submit"] {
-    font-size: 20px;
+    font-size: 14px;
 }
 
 input[type="text"] {
@@ -104,42 +107,67 @@ input[type="text"] {
     border-collapse: collapse;
 }
 
-#note-form-table td.note-form-left {
+#note-form-table td.table-left {
     vertical-align: top;
-    padding-top: .5em;
-    padding-bottom: .5em;
-    padding-right: .5em;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 10px;
 }
 
-#note-form-table td.note-form-right {
-    padding-top: .5em;
-    padding-bottom: .5em;
+#note-form-table td.table-right {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+label {
+    font-size: 12px;
+}
+
+label.error-field-label {
+    color: #E80000;
 }
 
 #note-form-container {
     width: 550px;
 }
 
+#note-form-table #note-form-buttons {
+    padding-top: 5px;
+}
+
+.success-message {
+    color: green;
+    background-color: #ECFFD8;
+    background-image: url(success.png);
+    margin-bottom: 20px;
+}
+
 .error-message {
-    color: #cc0000;
-    background-color: #fee;
-    border: 1px solid #ff7870;
+    color: #E80000;
+    background-color: #FEE;
+    background-image: url(error.png);
+    margin-bottom: 10px;
+}
+
+.success-message, .error-message {
+    width: 550px;
+    border: 1px solid #D8D8D8;
     line-height: 20px;
     font-size: 12px;
     padding: 5px 5px 5px 35px;
     border-radius: 4px;
-    margin-bottom: 10px;
-    background-image: url(/resources/images/error.png);
     background-repeat: no-repeat;
     background-position: 5px center;
 }
 
 input[type="text"].error-field-input, textarea.error-field-input {
-    border: 1px solid #ff7870;
+    border: 1px solid #E80000;
+    border-radius: 4px;
 }
 
 textarea {
     border: 1px groove black;
+    border-radius: 4px;
     resize: none;
 }
 
@@ -147,10 +175,28 @@ input[name="filter"] {
     float: left;
 }
 
-#filter-form-table th {
-    float: left;
-}
-
 #filter-buttons {
     float: right;
+}
+
+#filter-form-table {
+    border-collapse: collapse;
+}
+
+p, #filter-description {
+    font-weight: bold;
+    margin-top: 0px;
+    vertical-align: middle;
+    display: inherit;
+    font-size: 14px;
+}
+
+p, #footer-message {
+    font-weight: normal;
+    font-size: 12px;
+}
+
+.dl-container {
+    margin-top: 15px;
+    margin-bottom: 15px;
 }
