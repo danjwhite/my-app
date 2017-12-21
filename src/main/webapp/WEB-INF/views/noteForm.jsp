@@ -51,7 +51,7 @@
                     <td class="note-form-right">
                         <input type="submit" value="Add">
                         &nbsp;
-                        <input type="button" onClick="" value="Cancel">
+                        <input type="button" onClick="window.location.href='/'" value="Cancel">
                     </td>
                 </tr>
             </table>
