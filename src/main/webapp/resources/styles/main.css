@@ -138,14 +138,14 @@ label.error-field-label {
 .success-message {
     color: green;
     background-color: #ECFFD8;
-    background-image: url(success.png);
+    background-image: url(/resources/images/success.png);
     margin-bottom: 20px;
 }
 
 .error-message {
     color: #E80000;
     background-color: #FEE;
-    background-image: url(error.png);
+    background-image: url(/resources/images/error.png);
     margin-bottom: 10px;
 }
 
