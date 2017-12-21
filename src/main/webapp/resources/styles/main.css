@@ -122,27 +122,30 @@ input[type="text"] {
 
 .error-messages {
     color: #cc0000;
-    background-color: #f2dede;
-    border: 1px solid;
+    background-color: #fee;
+    border: 1px solid #ff7870;
     line-height: 20px;
     font-size: 12px;
-    padding: 5px;
+    padding: 5px 5px 5px 35px;
     border-radius: 4px;
     margin-bottom: 10px;
+    background-image: url(/resources/images/error.png);
+    background-repeat: no-repeat;
+    background-position: 5px center;
 }
 
-.error-messages::before {
-    content: url(/resources/images/error.png);
-    float: left;
-    padding: 10px 10px 5px 5px;
-}
-
-.error-field-input {
-    background-color: #ffcccc;
+input[type="text"].error-field-input, textarea.error-field-input {
+    background-image: url(/resources/images/invalid-line.gif);
+    background-repeat:repeat-x;
+    background-size: 5px 3px;
+    background-position: bottom;
+    background-color: #fee;
+    border: 1px solid #ff7870;
 }
 
 textarea {
     border: 1px groove black;
+    resize: none;
 }
 
 input[name="filter"] {
