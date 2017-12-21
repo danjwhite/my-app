@@ -30,7 +30,7 @@
 
     <!-------------------- Begin Footer -------------------->
     <div id="footer">
-        <p>&copy; 2017 My Spring App. All rights reserved.</p>
+        <p id="footer-message">&copy; 2017 My Spring App. All rights reserved.</p>
 
     </div>
 
