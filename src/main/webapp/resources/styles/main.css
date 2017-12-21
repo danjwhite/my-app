@@ -23,7 +23,7 @@ p {
 
 #body {
     padding: 10px;
-    padding-bottom: 20px;
+    padding-bottom: 60px;
     width: 100%;
     max-width: 1200px;
 }
@@ -32,7 +32,7 @@ p {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 20px;
+    height: 60px;
     text-align: center;
 }
 
@@ -188,9 +188,12 @@ p, #filter-description {
     font-size: 14px;
 }
 
-p, #footer-message {
+#footer-message {
     font-weight: normal;
     font-size: 12px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
 }
 
 .dl-container {
