@@ -21,10 +21,6 @@ p {
     position: relative;
 }
 
-#header {
-
-}
-
 #body {
     padding: 10px;
     padding-bottom: 20px;
@@ -91,7 +87,7 @@ dt {
 }
 
 dt, dd {
-    font-size: 12px;
+    font-size: 14px;
     padding: 5px;
 }
 
@@ -113,6 +109,7 @@ input[type="text"] {
     padding-top: 10px;
     padding-bottom: 10px;
     padding-right: 10px;
+    float: right;
 }
 
 #note-form-table td.table-right {
@@ -121,7 +118,7 @@ input[type="text"] {
 }
 
 label {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 label.error-field-label {
@@ -151,7 +148,7 @@ label.error-field-label {
 }
 
 .success-message, .error-message {
-    width: 550px;
+    width: 508px;
     border: 1px solid #D8D8D8;
     line-height: 20px;
     font-size: 12px;
