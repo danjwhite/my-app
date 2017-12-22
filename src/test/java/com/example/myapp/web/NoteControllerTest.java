@@ -10,10 +10,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceView;
 
 import com.example.myapp.service.INoteService;
@@ -21,9 +26,32 @@ import com.example.myapp.domain.Note;
 
 public class NoteControllerTest {
 
+    @Mock
+    private INoteService noteService;
+
+    @InjectMocks
+    private NoteController noteController;
+
+    private MockMvc mockMvc;
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        this.mockMvc = MockMvcBuilders.standaloneSetup(noteController).build();
+    }
+
     @Test
     public void shouldShowAllNotes() throws Exception {
 
+        // Create expected object and set up service to return expected object.
+        List<Note> expectedNotes = createNoteList(10);
+        when(noteService.findAll()).thenReturn(expectedNotes);
+
+        // Perform GET request on MockMvc and assert expectations.
+        mockMvc.perform(get("/note/entries/all"))
+                .andExpect(view().name("notes"))
+                .andExpect(model().attributeExists("notes"))
+                .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));
     }
 
     @Test
