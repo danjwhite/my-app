@@ -65,9 +65,6 @@ public class NoteController {
             return "noteForm";
         }
 
-        // TODO: Check to see if this is still needed.
-        note.setCreatedAt(new Date());
-
         Long id = noteService.save(note).getId();
 
         return "redirect:/note/" + id;
