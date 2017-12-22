@@ -59,6 +59,4 @@ public class NoteServiceImpl implements INoteService {
     public long count() {
         return noteDao.count();
     }
-
-
 }
