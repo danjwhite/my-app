@@ -96,7 +96,7 @@ public class NoteControllerTest {
     @Test
     public void testGetNote() throws Exception {
         // Create expected object.
-        Note expectedNote = new Note(123L, "Title", new Date(), "Body");
+        Note expectedNote = new Note(123L, new Date(), "Title", "Body");
 
         // Create mock repository that will return expected object.
         NoteRepository mockRepository = mock(NoteRepository.class);
@@ -147,14 +147,14 @@ public class NoteControllerTest {
                 .andExpect(redirectedUrl("/note/0"));
 
         // Verify that the mock repository was actually used to save the form dao.
-        verify(mockRepository, atLeastOnce()).save(new Note("Title", new Date(), "Body"));
+        verify(mockRepository, atLeastOnce()).save(new Note(new Date(), "Title", "Body"));
     }
 
     private List<Note> createNoteList(int count) {
         List<Note> notes = new ArrayList<Note>();
 
         for (int i = 0; i < count; i++) {
-            notes.add(new Note("Title", new Date(), "Body"));
+            notes.add(new Note(new Date(), "Title", "Body"));
         }
 
         return notes;

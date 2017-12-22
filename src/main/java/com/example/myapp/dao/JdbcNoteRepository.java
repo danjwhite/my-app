@@ -77,8 +77,7 @@ public class JdbcNoteRepository implements NoteRepository {
         public Note mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new Note(
                     rs.getLong("id"),
-                    rs.getString("title"),
-                    rs.getDate("created_at"),
+                    rs.getDate("created_at"), rs.getString("title"),
                     rs.getString("body")
             );
         }

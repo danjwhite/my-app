@@ -34,11 +34,11 @@ public class Note implements Serializable {
     public Note() {
     }
 
-    public Note(String title, Date createdAt, String body) {
-        this(null, title, createdAt, body);
+    public Note(Date createdAt, String title, String body) {
+        this(null, createdAt, title, body);
     }
 
-    public Note(Long id, String title, Date createdAt, String body) {
+    public Note(Long id, Date createdAt, String title, String body) {
         this.id = id;
         this.title = title;
         this.createdAt = createdAt;
