@@ -14,16 +14,11 @@ import java.util.List;
 @Repository
 public class NoteDaoImpl implements INoteDao {
 
-    @Autowired
     private SessionFactory sessionFactory;
 
-    private Session currentSession() {
-        return sessionFactory.getCurrentSession();
-    }
-
-    private Criteria noteCriteria() {
-        return currentSession().createCriteria(Note.class)
-                .addOrder(Order.desc("id"));
+    @Autowired
+    public NoteDaoImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
@@ -66,5 +61,14 @@ public class NoteDaoImpl implements INoteDao {
     @Override
     public void delete(long id) {
         currentSession().delete(findOne(id));
+    }
+
+    private Session currentSession() {
+        return sessionFactory.getCurrentSession();
+    }
+
+    private Criteria noteCriteria() {
+        return currentSession().createCriteria(Note.class)
+                .addOrder(Order.desc("id"));
     }
 }
