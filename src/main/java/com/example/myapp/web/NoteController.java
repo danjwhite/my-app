@@ -2,6 +2,7 @@ package com.example.myapp.web;
 
 import java.util.Date;
 
+import com.example.myapp.service.INoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,12 +20,12 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/note")
 public class NoteController {
-
-    private NoteRepository noteRepository;
+    
+    private INoteService noteService;
 
     @Autowired
-    public NoteController(NoteRepository noteRepository) {
-        this.noteRepository = noteRepository;
+    public NoteController(INoteService noteService) {
+        this.noteService = noteService;
     }
 
     public NoteController() {
@@ -32,7 +33,7 @@ public class NoteController {
 
     @RequestMapping(value = "/entries/all", method = RequestMethod.GET)
     public String getNotes(Model model) {
-        model.addAttribute("notes", noteRepository.findNotes());
+        model.addAttribute("notes", noteService.findAll());
         model.addAttribute("filter", "all");
 
         return "notes";
@@ -41,14 +42,14 @@ public class NoteController {
     @RequestMapping(value = "/entries/recent", method = RequestMethod.GET)
     public String getRecentNotes(Model model,
                                  @RequestParam(value = "count", defaultValue = "20") int count) {
-        model.addAttribute("notes", noteRepository.findRecentNotes(count));
+        model.addAttribute("notes", noteService.findRecent(count));
         model.addAttribute("filter", "recent");
         return "notes";
     }
 
     @RequestMapping(value = "/{noteId}",method = RequestMethod.GET)
     public String getNote(@PathVariable("noteId") long noteId, Model model) {
-        model.addAttribute("note", noteRepository.findOne(noteId));
+        model.addAttribute("note", noteService.findOne(noteId));
 
         return "note";
     }
@@ -65,8 +66,10 @@ public class NoteController {
             return "noteForm";
         }
 
+        // TODO: Check to see if this is still needed.
         note.setCreatedAt(new Date());
-        Long id = noteRepository.save(note);
+
+        Long id = noteService.save(note).getId();
 
         return "redirect:/note/" + id;
     }
