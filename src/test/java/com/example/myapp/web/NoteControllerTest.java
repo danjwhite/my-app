@@ -84,7 +84,14 @@ public class NoteControllerTest {
 
     @Test
     public void testGetNote() throws Exception {
+        // Create expected object and set up service to return it.
+        Note expectedNote = new Note(123L, new Date(), "Title", "Body");
+        when(noteService.findOne(123L)).thenReturn(expectedNote);
 
+        mockMvc.perform(get("/note/123"))
+                .andExpect(view().name("note"))
+                .andExpect(model().attributeExists("note"))
+                .andExpect(model().attribute("note", expectedNote));
     }
 
     @Test
