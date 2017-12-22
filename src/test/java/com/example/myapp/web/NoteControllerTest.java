@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.mockito.InjectMocks;
@@ -58,8 +59,8 @@ public class NoteControllerTest {
     public void shouldShowRecentNotesWithoutRequestParameter() throws Exception {
 
         // Create expected object and set up service to return it.
-        List<Note> expectedNotes = createNoteList(20);
-        when(noteService.findRecent()).thenReturn(expectedNotes);
+        List<Note> expectedNotes = createNoteList(10);
+        when(noteService.findRecent(10)).thenReturn(expectedNotes);
 
         // Perform GET request on MockMvc without request parameters and assert expectations.
         mockMvc.perform(get("/note/entries/recent"))
@@ -72,11 +73,11 @@ public class NoteControllerTest {
     public void shouldShowRecentNotesWithRequestParameter() throws Exception {
 
         // Create expected object and set up service to return it.
-        List<Note> expectedNotes = createNoteList(20);
-        when(noteService.findRecent(20)).thenReturn(expectedNotes);
+        List<Note> expectedNotes = createNoteList(10);
+        when(noteService.findRecent(10)).thenReturn(expectedNotes);
 
         // Perform GET request on MockMvc with request parameters and assert expectations.
-        mockMvc.perform(get("/note/entries/recent?count=20"))
+        mockMvc.perform(get("/note/entries/recent?count=10"))
                 .andExpect(view().name("notes"))
                 .andExpect(model().attributeExists("notes"))
                 .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));
@@ -103,8 +104,17 @@ public class NoteControllerTest {
     }
 
     @Test
+    @Ignore
     public void testSaveNote() throws Exception {
 
+        // Perform POST request on MockMvc and assert expectations.
+        mockMvc.perform(post("/note/add")
+                .param("title", "Title")
+                .param("body", "Body"))
+                .andExpect(redirectedUrl("/note/0"));
+
+        // Verify that the service was actually used to save the form data.
+        // verify(noteService, atLeastOnce()).save(new Note(new Date(), "Title", "Body"));
     }
 
     private List<Note> createNoteList(int count) {

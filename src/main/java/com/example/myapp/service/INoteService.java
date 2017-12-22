@@ -8,8 +8,6 @@ public interface INoteService {
 
     List<Note> findAll();
 
-    List<Note> findRecent();
-
     List<Note> findRecent(int count);
 
     Note findOne(long id);

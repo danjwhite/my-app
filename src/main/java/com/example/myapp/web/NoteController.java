@@ -40,7 +40,7 @@ public class NoteController {
 
     @RequestMapping(value = "/entries/recent", method = RequestMethod.GET)
     public String getRecentNotes(Model model,
-                                 @RequestParam(value = "count", defaultValue = "20") int count) {
+                                 @RequestParam(value = "count", defaultValue = "10") int count) {
         model.addAttribute("notes", noteService.findRecent(count));
         model.addAttribute("filter", "recent");
         return "notes";

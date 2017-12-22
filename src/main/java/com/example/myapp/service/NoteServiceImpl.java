@@ -26,12 +26,6 @@ public class NoteServiceImpl implements INoteService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<Note> findRecent() {
-        return noteDao.findRecent();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
     public List<Note> findRecent(int count) {
         return noteDao.findRecent(count);
     }
