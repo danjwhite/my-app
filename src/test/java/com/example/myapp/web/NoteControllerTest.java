@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.example.myapp.service.INoteService;
 import org.junit.Test;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.view.InternalResourceView;
 
@@ -19,6 +21,9 @@ import com.example.myapp.dao.NoteRepository;
 import com.example.myapp.domain.Note;
 
 public class NoteControllerTest {
+
+    @Autowired
+    INoteService noteService;
 
     @Test
     public void shouldShowAllNotes() throws Exception {
