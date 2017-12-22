@@ -11,16 +11,19 @@ import java.util.Date;
 import java.util.List;
 
 import com.example.myapp.config.BeanConfig;
+import com.example.myapp.config.H2DataConfig;
 import com.example.myapp.dao.INoteDao;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceView;
@@ -28,11 +31,9 @@ import org.springframework.web.servlet.view.InternalResourceView;
 import com.example.myapp.service.INoteService;
 import com.example.myapp.domain.Note;
 
-@ContextConfiguration(classes = {BeanConfig.class})
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {H2DataConfig.class, BeanConfig.class})
 public class NoteControllerTest {
-
-    @Autowired
-    private INoteService noteService;
 
     @Autowired
     private NoteController noteController;
@@ -49,8 +50,8 @@ public class NoteControllerTest {
     public void shouldShowAllNotes() throws Exception {
 
         // Create expected object and set up service to return it.
-        List<Note> expectedNotes = createNoteList(40);
-        when(noteService.findAll()).thenReturn(expectedNotes);
+        List<Note> expectedNotes = createNoteList(10);
+        // when(noteService.findAll()).thenReturn(expectedNotes);
 
         // Perform GET request on MockMvc and assert expectations.
         mockMvc.perform(get("/note/entries/all"))
@@ -64,7 +65,7 @@ public class NoteControllerTest {
 
         // Create expected object and set up service to return it.
         List<Note> expectedNotes = createNoteList(10);
-        when(noteService.findRecent(10)).thenReturn(expectedNotes);
+        // when(noteService.findRecent(10)).thenReturn(expectedNotes);
 
         // Perform GET request on MockMvc without request parameters and assert expectations.
         mockMvc.perform(get("/note/entries/recent"))
@@ -78,7 +79,7 @@ public class NoteControllerTest {
 
         // Create expected object and set up service to return it.
         List<Note> expectedNotes = createNoteList(10);
-        when(noteService.findRecent(10)).thenReturn(expectedNotes);
+        // when(noteService.findRecent(10)).thenReturn(expectedNotes);
 
         // Perform GET request on MockMvc with request parameters and assert expectations.
         mockMvc.perform(get("/note/entries/recent?count=10"))
@@ -90,10 +91,10 @@ public class NoteControllerTest {
     @Test
     public void testGetNote() throws Exception {
         // Create expected object and set up service to return it.
-        Note expectedNote = new Note(123L, new Date(), "Title", "Body");
-        when(noteService.findOne(123L)).thenReturn(expectedNote);
+        Note expectedNote = new Note(1L, new Date(), "Title", "Body");
+        // when(noteService.findOne(123L)).thenReturn(expectedNote);
 
-        mockMvc.perform(get("/note/123"))
+        mockMvc.perform(get("/note/1"))
                 .andExpect(view().name("note"))
                 .andExpect(model().attributeExists("note"))
                 .andExpect(model().attribute("note", expectedNote));
@@ -108,14 +109,13 @@ public class NoteControllerTest {
     }
 
     @Test
-    @Ignore
     public void testSaveNote() throws Exception {
 
         // Perform POST request on MockMvc and assert expectations.
         mockMvc.perform(post("/note/add")
                 .param("title", "Title")
                 .param("body", "Body"))
-                .andExpect(redirectedUrl("/note/0"));
+                .andExpect(redirectedUrl("/note/11"));
 
         // Verify that the service was actually used to save the form data.
         // verify(noteService, atLeastOnce()).save(new Note(new Date(), "Title", "Body"));
