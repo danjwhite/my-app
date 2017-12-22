@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.myapp.domain.Note;
-import com.example.myapp.dao.NoteRepository;
 
 import javax.validation.Valid;
 
