@@ -20,7 +20,7 @@ import javax.validation.Valid;
 @Controller
 @RequestMapping("/note")
 public class NoteController {
-    
+
     private INoteService noteService;
 
     @Autowired
@@ -47,7 +47,7 @@ public class NoteController {
         return "notes";
     }
 
-    @RequestMapping(value = "/{noteId}",method = RequestMethod.GET)
+    @RequestMapping(value = "/{noteId}", method = RequestMethod.GET)
     public String getNote(@PathVariable("noteId") long noteId, Model model) {
         model.addAttribute("note", noteService.findOne(noteId));
 
