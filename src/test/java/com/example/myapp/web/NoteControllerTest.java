@@ -59,7 +59,7 @@ public class NoteControllerTest {
 
         // Create expected object and set up service to return it.
         List<Note> expectedNotes = createNoteList(20);
-        when(noteService.findRecent(20)).thenReturn(expectedNotes);
+        when(noteService.findRecent()).thenReturn(expectedNotes);
 
         // Perform GET request on MockMvc without request parameters and assert expectations.
         mockMvc.perform(get("/note/entries/recent"))
@@ -71,6 +71,15 @@ public class NoteControllerTest {
     @Test
     public void shouldShowRecentNotesWithRequestParameter() throws Exception {
 
+        // Create expected object and set up service to return it.
+        List<Note> expectedNotes = createNoteList(20);
+        when(noteService.findRecent(20)).thenReturn(expectedNotes);
+
+        // Perform GET request on MockMvc with request parameters and assert expectations.
+        mockMvc.perform(get("/note/entries/recent?count=20"))
+                .andExpect(view().name("notes"))
+                .andExpect(model().attributeExists("notes"))
+                .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));
     }
 
     @Test
