@@ -6,19 +6,27 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+@Entity
+@Table(name = "note")
 public class Note implements Serializable {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @Column(name = "title")
     @NotNull(message = "Title is required.")
     @Size(min = 1, max = 140, message = "Title must be within 140 characters.")
     private String title;
 
-    private Date createdAt;
-
+    @Column(name = "body")
     @NotNull(message = "Body is required.")
     @Size(min = 1, max = 5000, message = "Body must be within 5,000 characters.")
     private String body;
