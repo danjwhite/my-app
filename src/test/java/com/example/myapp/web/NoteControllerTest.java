@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.example.myapp.config.BeanConfig;
+import com.example.myapp.dao.INoteDao;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -18,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.view.InternalResourceView;
@@ -25,12 +28,13 @@ import org.springframework.web.servlet.view.InternalResourceView;
 import com.example.myapp.service.INoteService;
 import com.example.myapp.domain.Note;
 
+@ContextConfiguration(classes = {BeanConfig.class})
 public class NoteControllerTest {
 
-    @Mock
+    @Autowired
     private INoteService noteService;
 
-    @InjectMocks
+    @Autowired
     private NoteController noteController;
 
     private MockMvc mockMvc;
