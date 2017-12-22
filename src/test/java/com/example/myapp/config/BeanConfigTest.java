@@ -4,12 +4,15 @@ import com.example.myapp.dao.INoteDao;
 import com.example.myapp.service.INoteService;
 import com.example.myapp.web.NoteController;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertNotNull;
 
-@ContextConfiguration(classes = {BeanConfig.class})
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {BeanConfig.class, H2DataConfig.class})
 public class BeanConfigTest {
 
     @Autowired
