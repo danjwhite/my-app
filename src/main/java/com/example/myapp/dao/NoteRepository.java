@@ -1,4 +1,4 @@
-package com.example.myapp.data;
+package com.example.myapp.dao;
 
 import java.util.List;
 

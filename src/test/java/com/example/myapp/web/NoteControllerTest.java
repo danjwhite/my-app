@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.view.InternalResourceView;
 
-import com.example.myapp.data.NoteRepository;
+import com.example.myapp.dao.NoteRepository;
 import com.example.myapp.domain.Note;
 
 public class NoteControllerTest {
@@ -146,7 +146,7 @@ public class NoteControllerTest {
                 .param("body", "Body"))
                 .andExpect(redirectedUrl("/note/0"));
 
-        // Verify that the mock repository was actually used to save the form data.
+        // Verify that the mock repository was actually used to save the form dao.
         verify(mockRepository, atLeastOnce()).save(new Note("Title", new Date(), "Body"));
     }
 
