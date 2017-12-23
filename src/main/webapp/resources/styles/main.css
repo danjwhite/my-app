@@ -22,8 +22,7 @@ p {
 }
 
 #body {
-    padding: 10px;
-    padding-bottom: 60px;
+    padding: 10px 10px 60px;
     width: 100%;
     max-width: 1200px;
 }
@@ -182,7 +181,7 @@ input[name="filter"] {
 
 p, #filter-description {
     font-weight: bold;
-    margin-top: 0px;
+    margin-top: 0;
     vertical-align: middle;
     display: inherit;
     font-size: 14px;
