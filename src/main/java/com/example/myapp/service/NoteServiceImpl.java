@@ -19,6 +19,8 @@ public class NoteServiceImpl implements INoteService {
         this.noteDao = noteDao;
     }
 
+    // TODO: Add tests for this class.
+
     @Transactional(readOnly = true)
     @Override
     public List<Note> findAll() {

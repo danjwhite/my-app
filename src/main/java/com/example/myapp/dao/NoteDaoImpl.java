@@ -21,6 +21,8 @@ public class NoteDaoImpl implements INoteDao {
         this.sessionFactory = sessionFactory;
     }
 
+    // TODO: Add tests for this class.
+
     @Override
     public long count() {
         return findAll().size();
