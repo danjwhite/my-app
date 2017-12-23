@@ -33,6 +33,7 @@ public class NoteControllerTest {
 
     @Before
     public void setup() {
+
         // Setup MockMvc to use NoteController.
         MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders.standaloneSetup(noteController).build();
@@ -79,6 +80,7 @@ public class NoteControllerTest {
 
     @Test
     public void testGetNote() throws Exception {
+
         // Create expected object.
         Note expectedNote = new Note(1L, new Date(), "Title", "Body");
 
