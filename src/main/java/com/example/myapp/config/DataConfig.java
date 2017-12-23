@@ -27,7 +27,7 @@ public class DataConfig {
     private Environment env;
 
     @Bean
-    public DataSource getDataSource() {
+    public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName(env.getProperty("db.driver"));
         dataSource.setUrl(env.getProperty("db.url"));
@@ -38,9 +38,9 @@ public class DataConfig {
     }
 
     @Bean
-    public LocalSessionFactoryBean getSessionFactory() {
+    public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
-        factoryBean.setDataSource(getDataSource());
+        factoryBean.setDataSource(dataSource());
 
         Properties props = new Properties();
         props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
@@ -53,9 +53,9 @@ public class DataConfig {
     }
 
     @Bean
-    public HibernateTransactionManager getTransactionManager() {
+    public HibernateTransactionManager transactionManager() {
         HibernateTransactionManager transactionManager = new HibernateTransactionManager();
-        transactionManager.setSessionFactory(getSessionFactory().getObject());
+        transactionManager.setSessionFactory(sessionFactory().getObject());
 
         return transactionManager;
     }
