@@ -1,7 +1,5 @@
 package com.example.myapp.web;
 
-import java.util.Date;
-
 import com.example.myapp.service.INoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

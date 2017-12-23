@@ -13,7 +13,8 @@
     <!-------------------- Begin Header -------------------->
     <div id="header">
         <div id="banner">
-            <img id="banner-img" src="${pageContext.request.contextPath}/resources/images/spring-by-pivotal.png" alt=""/>
+            <img id="banner-img" src="${pageContext.request.contextPath}/resources/images/spring-by-pivotal.png"
+                 alt=""/>
             <h1>My Spring App</h1>
         </div>
         <nav id="header-nav">

@@ -13,7 +13,8 @@
     <!-------------------- Begin Header -------------------->
     <div id="header">
         <div id="banner">
-            <img id="banner-img" src="${pageContext.request.contextPath}/resources/images/spring-by-pivotal.png" alt=""/>
+            <img id="banner-img" src="${pageContext.request.contextPath}/resources/images/spring-by-pivotal.png"
+                 alt=""/>
             <h1>My Spring App</h1>
         </div>
         <nav id="header-nav">
@@ -29,26 +30,27 @@
             Note created successfully.
         </div>
         <div class="dl-container>">
-        <dl>
-            <dt>Title:</dt>
-            <dd><c:out value="${note.title}"/></dd>
-            <dt>Date:</dt>
-            <dd><c:out value="${note.createdAt}"/></dd>
-            <dt>Body:</dt>
-            <dd><c:out value="${note.body}"/></dd>
-        </dl>
+            <dl>
+                <dt>Title:</dt>
+                <dd><c:out value="${note.title}"/></dd>
+                <dt>Date:</dt>
+                <dd><c:out value="${note.createdAt}"/></dd>
+                <dt>Body:</dt>
+                <dd><c:out value="${note.body}"/></dd>
+            </dl>
+        </div>
+        <form method="get">
+            <input type="button" onClick="window.location.href='<c:url value="/note/entries/recent"/>'"
+                   value="View Notes">
+            &nbsp;
+            <input type="button" onClick="window.location.href='<c:url value="/note/add"/>'" value="Add Another">
+        </form>
     </div>
-    <form method="get">
-        <input type="button" onClick="window.location.href='<c:url value="/note/entries/recent"/>'" value="View Notes">
-        &nbsp;
-        <input type="button" onClick="window.location.href='<c:url value="/note/add"/>'" value="Add Another">
-    </form>
-</div>
 
-<!-------------------- Begin Footer -------------------->
-<div id="footer">
-    <p id="footer-message">&copy; 2017 My Spring App. All rights reserved.</p>
-</div>
+    <!-------------------- Begin Footer -------------------->
+    <div id="footer">
+        <p id="footer-message">&copy; 2017 My Spring App. All rights reserved.</p>
+    </div>
 
 </div>
 </body>
