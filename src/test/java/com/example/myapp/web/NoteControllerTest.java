@@ -12,6 +12,7 @@ import java.util.List;
 
 import com.example.myapp.config.BeanConfig;
 import com.example.myapp.config.H2DataConfig;
+import com.example.myapp.config.TestConfig;
 import com.example.myapp.dao.INoteDao;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -32,7 +33,7 @@ import com.example.myapp.service.INoteService;
 import com.example.myapp.domain.Note;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {H2DataConfig.class, BeanConfig.class})
+@ContextConfiguration(classes = {TestConfig.class})
 public class NoteControllerTest {
 
     @Autowired
