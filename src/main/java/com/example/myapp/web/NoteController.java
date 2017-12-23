@@ -69,4 +69,6 @@ public class NoteController {
 
         return "redirect:/note/" + id;
     }
+
+    // TODO: Add functionality to edit and delete a note.
 }
