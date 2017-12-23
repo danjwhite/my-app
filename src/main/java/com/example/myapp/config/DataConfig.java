@@ -22,9 +22,13 @@ import com.example.myapp.domain.Note;
 @EnableTransactionManagement
 @ComponentScan(basePackages = {"com.example.myapp.dao", "com.example.myapp.service"})
 public class DataConfig {
+    
+    private Environment env;
 
     @Autowired
-    private Environment env;
+    public DataConfig(Environment env) {
+        this.env = env;
+    }
 
     @Bean
     public DataSource dataSource() {

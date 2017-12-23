@@ -26,8 +26,12 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class TestConfig {
 
-    @Autowired
     private Environment env;
+
+    @Autowired
+    public TestConfig(Environment env) {
+        this.env = env;
+    }
 
     @Bean
     public DataSource dataSource() {
