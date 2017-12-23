@@ -17,13 +17,13 @@ import org.springframework.test.web.servlet.MockMvc;
 public class HomeControllerTest {
 
     @Autowired
-    private HomeController controller;
+    private HomeController homeController;
 
     @Test
     public void testHomePage() throws Exception {
 
-        // Set up MockMvc to use controller.
-        MockMvc mockMvc = standaloneSetup(controller).build();
+        // Set up MockMvc to use HomeController.
+        MockMvc mockMvc = standaloneSetup(homeController).build();
 
         // Perform GET request and assert expectations.
         mockMvc.perform(get("/"))
