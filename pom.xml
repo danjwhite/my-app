@@ -15,6 +15,7 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <!-- Version properties -->
         <spring.version>4.3.7.RELEASE</spring.version>
+        <liquibase.version>3.5.3</liquibase.version>
     </properties>
     <dependencies>
         <!-- Spring MVC -->
@@ -68,6 +69,13 @@
             <artifactId>h2</artifactId>
             <version>1.4.182</version>
             <scope>compile</scope>
+        </dependency>
+
+        <!-- Liquibase Core -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>3.5.3</version>
         </dependency>
 
         <!-- Hibernate 5.2.9 Final -->
@@ -184,14 +192,24 @@
         </profile>
     </profiles>
 
-    <!-- Build Plugins -->
+    <!-- Build -->
     <build>
-        <!-- Resources Plugin -->
+        <!-- Resources -->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
+
+        <!-- Plugins -->
+        <plugins>
+            <!-- Liquibase Plugin -->
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>3.5.3</version>
+            </plugin>
+        </plugins>
     </build>
 </project>
