@@ -5,12 +5,12 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -22,21 +22,33 @@ import com.example.myapp.domain.Note;
 @PropertySource("classpath:app.properties")
 @ComponentScan(basePackages = {"com.example.myapp.dao", "com.example.myapp.service"})
 public class DataConfig {
-    
-    private Environment env;
 
-    @Autowired
-    public DataConfig(Environment env) {
-        this.env = env;
-    }
+    @Value("${db.diver}")
+    private String driver;
+
+    @Value("${db.url}")
+    private String url;
+
+    @Value("${db.username}")
+    private String username;
+
+    @Value("${db.password}")
+    private String password;
+
+    @Value("${hibernate.show_sql}")
+    private String showSql;
+
+    @Value("${hibernate.format_sql}")
+    private String formatSql;
+
 
     @Bean
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(env.getProperty("db.driver"));
-        dataSource.setUrl(env.getProperty("db.url"));
-        dataSource.setUsername(env.getProperty("db.username"));
-        dataSource.setPassword(env.getProperty("db.password"));
+        dataSource.setDriverClassName(driver);
+        dataSource.setUrl(url);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
 
         return dataSource;
     }
@@ -47,8 +59,8 @@ public class DataConfig {
         factoryBean.setDataSource(dataSource());
 
         Properties props = new Properties();
-        props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
-        props.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
+        props.put("hibernate.show_sql", showSql);
+        props.put("hibernate.format_sql", formatSql);
 
         factoryBean.setHibernateProperties(props);
         factoryBean.setAnnotatedClasses(Note.class);
@@ -62,5 +74,10 @@ public class DataConfig {
         transactionManager.setSessionFactory(sessionFactory().getObject());
 
         return transactionManager;
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 }

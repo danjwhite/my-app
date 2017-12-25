@@ -7,11 +7,12 @@ import com.example.myapp.service.INoteService;
 import com.example.myapp.service.NoteServiceImpl;
 import com.example.myapp.web.HomeController;
 import com.example.myapp.web.NoteController;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
@@ -26,12 +27,11 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class TestConfig {
 
-    private Environment env;
+    @Value("${hibernate.show_sql}")
+    private String showSql;
 
-    @Autowired
-    public TestConfig(Environment env) {
-        this.env = env;
-    }
+    @Value("${hibernate.format_sql}")
+    private String formatSql;
 
     @Bean
     public DataSource dataSource() {
@@ -47,8 +47,8 @@ public class TestConfig {
         factoryBean.setDataSource(dataSource());
 
         Properties props = new Properties();
-        props.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
-        props.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
+        props.put("hibernate.show_sql", showSql);
+        props.put("hibernate.format_sql", formatSql);
 
         factoryBean.setHibernateProperties(props);
         factoryBean.setAnnotatedClasses(Note.class);
@@ -62,6 +62,11 @@ public class TestConfig {
         transactionManager.setSessionFactory(sessionFactory().getObject());
 
         return transactionManager;
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 
     @Bean
