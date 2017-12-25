@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.example.myapp.domain.Note;
 
 @Configuration
-@PropertySource("classpath:app.properties")
 @EnableTransactionManagement
+@PropertySource("classpath:app.properties")
 @ComponentScan(basePackages = {"com.example.myapp.dao", "com.example.myapp.service"})
 public class DataConfig {
     
