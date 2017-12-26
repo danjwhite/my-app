@@ -35,10 +35,10 @@ public class DataConfig {
     @Value("${db.password}")
     private String password;
 
-    @Value("${orm.show_sql}")
+    @Value("${hibernate.show_sql}")
     private String showSql;
 
-    @Value("${orm.format_sql}")
+    @Value("${hibernate.format_sql}")
     private String formatSql;
 
 
