@@ -54,6 +54,7 @@ public class NoteController {
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String showNoteForm(Model model) {
         model.addAttribute("note", new Note());
+        model.addAttribute("formType", "add");
         return "noteForm";
     }
 
@@ -69,4 +70,11 @@ public class NoteController {
     }
 
     // TODO: Add functionality to edit and delete a note.
+
+    @RequestMapping(value = "/edit/{noteId}", method = RequestMethod.GET)
+    public String editNote(@PathVariable("noteId") long noteId, Model model) {
+        model.addAttribute("note", noteService.findOne(noteId));
+        model.addAttribute("formType", "edit");
+        return "noteForm";
+    }
 }
