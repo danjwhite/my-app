@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.myapp.domain.Note;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
@@ -70,13 +71,20 @@ public class NoteController {
         return "redirect:/note/" + id;
     }
 
-    // TODO: Add functionality to edit and delete a note.
-
     // TODO: Create test for this method.
     @RequestMapping(value = "/edit/{noteId}", method = RequestMethod.GET)
     public String editNote(@PathVariable("noteId") long noteId, Model model) {
         model.addAttribute("note", noteService.findOne(noteId));
         model.addAttribute("formType", "edit");
         return "noteForm";
+    }
+
+    // TODO: Create test for this method.
+    @RequestMapping(value = "/delete")
+    public String deleteNote(@RequestParam(value = "noteId") long noteId, HttpServletRequest request) {
+        noteService.delete(noteId);
+
+        // Redirect to the previous URL.
+        return "redirect:" + request.getHeader("Referer");
     }
 }
