@@ -26,7 +26,14 @@
 
     <!-------------------- Begin Body -------------------->
     <div id="body">
-        <h3>New Note</h3>
+        <c:choose>
+            <c:when test="${formType == 'add'}">
+                <h3>New Note</h3>
+            </c:when>
+            <c:when test="${formType == 'edit'}">
+                <h3>Edit Note</h3>
+            </c:when>
+        </c:choose>
         <div id="note-form-container">
             <sf:form method="post" name="note-form" commandName="note">
                 <sf:errors path="*" element="div" cssClass="error-message"/>
@@ -36,7 +43,14 @@
                             <sf:label path="title" cssErrorClass="error-field-label">Title:</sf:label>
                         </td>
                         <td class="table-right">
-                            <sf:input path="title" cssErrorClass="error-field-input" size="50"/>
+                            <c:choose>
+                                <c:when test="${formType == 'add'}">
+                                    <sf:input path="title" cssErrorClass="error-field-input" size="50"/>
+                                </c:when>
+                                <c:when test="${formType == 'edit'}">
+                                    <sf:input path="title" cssErrorClass="error-field-input" size="50" value="${note.title}"/>
+                                </c:when>
+                            </c:choose>
                         </td>
                     </tr>
                     <tr>
@@ -44,7 +58,14 @@
                             <sf:label path="body" cssErrorClass="error-field-label">Body:</sf:label>
                         </td>
                         <td class="table-right">
-                            <sf:textarea path="body" cssErrorClass="error-field-input" cols="80" rows="15"/>
+                            <c:choose>
+                                <c:when test="${formType == 'add'}">
+                                    <sf:textarea path="body" cssErrorClass="error-field-input" cols="80" rows="15"/>
+                                </c:when>
+                                <c:when test="${formType == 'edit'}">
+                                    <sf:textarea path="body" cssErrorClass="error-field-input" cols="80" rows="15" value="${note.body}"/>
+                                </c:when>
+                            </c:choose>
                         </td>
                     </tr>
                     <tr>
