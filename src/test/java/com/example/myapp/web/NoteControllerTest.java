@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.example.myapp.config.TestConfig;
+import com.example.myapp.service.INoteService;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,6 +29,9 @@ public class NoteControllerTest {
 
     @Autowired
     private NoteController noteController;
+
+    @Autowired
+    private INoteService noteService;
 
     private MockMvc mockMvc;
 
@@ -104,9 +108,9 @@ public class NoteControllerTest {
     }
 
     @Test
-    public void testSaveNote() throws Exception {
+    public void testAddNote() throws Exception {
 
-        // Perform POST request on MockMvc and assert expectations.
+        // Perform POST request to add a note on MockMvc and assert expectations.
         mockMvc.perform(post("/note/add")
                 .param("title", "Title")
                 .param("body", "Body"))
