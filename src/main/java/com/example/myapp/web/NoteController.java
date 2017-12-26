@@ -58,7 +58,7 @@ public class NoteController {
         return "noteForm";
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequestMapping(value = {"/add", "/edit/*"}, method = RequestMethod.POST)
     public String saveNote(@Valid  Note note, Errors errors) throws Exception {
         if (errors.hasErrors()) {
             return "noteForm";
