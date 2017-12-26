@@ -27,10 +27,10 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class TestConfig {
 
-    @Value("${orm.show_sql}")
+    @Value("${hibernate.show_sql}")
     private String showSql;
 
-    @Value("${orm.format_sql}")
+    @Value("${hibernate.format_sql}")
     private String formatSql;
 
     @Bean
