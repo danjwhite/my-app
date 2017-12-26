@@ -45,14 +45,15 @@ public class NoteDaoImpl implements INoteDao {
 
     @Override
     public Note save(Note note) {
-        Serializable id = currentSession().save(note);
 
-        return new Note(
-                (Long) id,
-                note.getCreatedAt(),
-                note.getTitle(),
-                note.getBody()
-        );
+        if (note.getId() == null) {
+            Long id = (Long) currentSession().save(note);
+            note.setId(id);
+            return note;
+        } else {
+            currentSession().update(note);
+            return note;
+        }
     }
 
     @Override
