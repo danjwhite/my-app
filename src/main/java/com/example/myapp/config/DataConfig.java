@@ -23,7 +23,7 @@ import com.example.myapp.domain.Note;
 @ComponentScan(basePackages = {"com.example.myapp.dao", "com.example.myapp.service"})
 public class DataConfig {
 
-    @Value("${db.diver}")
+    @Value("${db.driver}")
     private String driver;
 
     @Value("${db.url}")
@@ -35,10 +35,10 @@ public class DataConfig {
     @Value("${db.password}")
     private String password;
 
-    @Value("${hibernate.show_sql}")
+    @Value("${orm.show_sql}")
     private String showSql;
 
-    @Value("${hibernate.format_sql}")
+    @Value("${orm.format_sql}")
     private String formatSql;
 
 

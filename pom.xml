@@ -172,12 +172,12 @@
             <id>dev</id>
             <properties>
                 <env>dev</env>
-                <db.driver>com.mysql.cj.jdbc.Driver</db.driver>
-                <db.url>jdbc:mysql://localhost:3306/myapp_dev</db.url>
-                <db.username>root</db.username>
-                <db.password>Apple2012</db.password>
-                <hibernate.showSql>true</hibernate.showSql>
-                <hibernate.formatSql>true</hibernate.formatSql>
+                <pom.db.driver>com.mysql.cj.jdbc.Driver</pom.db.driver>
+                <pom.db.url>jdbc:mysql://localhost:3306/myapp_dev</pom.db.url>
+                <pom.db.username>root</pom.db.username>
+                <pom.db.password>Apple2012</pom.db.password>
+                <pom.hibernate.showSql>true</pom.hibernate.showSql>
+                <pom.hibernate.formatSql>true</pom.hibernate.formatSql>
             </properties>
         </profile>
 
@@ -186,12 +186,12 @@
             <id>qa</id>
             <properties>
                 <env>qa</env>
-                <db.driver>com.mysql.cj.jdbc.Driver</db.driver>
-                <db.url>jdbc:mysql://localhost:3306/myapp_dev</db.url>
-                <db.username>root</db.username>
-                <db.password>Apple2012</db.password>
-                <hibernate.showSql>true</hibernate.showSql>
-                <hibernate.formatSql>true</hibernate.formatSql>
+                <pom.db.driver>com.mysql.cj.jdbc.Driver</pom.db.driver>
+                <pom.db.url>jdbc:mysql://localhost:3306/myapp_dev</pom.db.url>
+                <pom.db.username>root</pom.db.username>
+                <pom.db.password>Apple2012</pom.db.password>
+                <pom.hibernate.showSql>true</pom.hibernate.showSql>
+                <pom.hibernate.formatSql>true</pom.hibernate.formatSql>
             </properties>
         </profile>
 
@@ -200,12 +200,12 @@
             <id>prod</id>
             <properties>
                 <env>prod</env>
-                <db.driver>com.mysql.cj.jdbc.Driver</db.driver>
-                <db.url>jdbc:mysql://localhost:3306/myapp_dev</db.url>
-                <db.username>root</db.username>
-                <db.password>Apple2012</db.password>
-                <hibernate.showSql>true</hibernate.showSql>
-                <hibernate.formatSql>true</hibernate.formatSql>
+                <pom.db.driver>com.mysql.cj.jdbc.Driver</pom.db.driver>
+                <pom.db.url>jdbc:mysql://localhost:3306/myapp_dev</pom.db.url>
+                <pom.db.username>root</pom.db.username>
+                <pom.db.password>Apple2012</pom.db.password>
+                <pom.hibernate.showSql>true</pom.hibernate.showSql>
+                <pom.hibernate.formatSql>true</pom.hibernate.formatSql>
             </properties>
         </profile>
     </profiles>
@@ -229,7 +229,10 @@
                 <version>3.5.3</version>
                 <configuration>
                     <changeLogFile>${project.basedir}/src/main/resources/change-log.xml</changeLogFile>
-                    <driver>${db.driver}</driver>
+                    <driver>${pom.db.driver}</driver>
+                    <url>${pom.db.url}</url>
+                    <username>${pom.db.username}</username>
+                    <password>${pom.db.password}</password>
                 </configuration>
             </plugin>
         </plugins>
