@@ -97,15 +97,32 @@ public class NoteControllerTest {
     }
 
     @Test
-    public void shouldShowNoteForm() throws Exception {
+    public void shouldShowNoteFormForAdding() throws Exception {
 
         // Perform GET request on MockMvc to add a note and assert expectations.
         mockMvc.perform(get("/note/add"))
                 .andExpect(view().name("noteForm"));
+    }
+
+    @Test
+    public void shouldShowNoteFormForEditing() throws Exception {
+
+        // Get the expected model attribute object.
+        Note note = noteService.findOne(1L);
+
+        // Get the expected properties of the attribute object.
+        Date createdAt = note.getCreatedAt();
+        String title = note.getTitle();
+        String body = note.getBody();
 
         // Perform GET request on MockMvc to edit a note and assert expectations.
         mockMvc.perform(get("/note/edit/1"))
-                .andExpect(view().name("noteForm"));
+                .andExpect(view().name("noteForm"))
+                .andExpect(model().attributeExists("note"))
+                .andExpect(model().attribute("note", hasProperty("id", is(1L))))
+                .andExpect(model().attribute("note", hasProperty("createdAt", is(createdAt))))
+                .andExpect(model().attribute("note", hasProperty("title", is(title))))
+                .andExpect(model().attribute("note", hasProperty("body", is(body))));
     }
 
     @Test
