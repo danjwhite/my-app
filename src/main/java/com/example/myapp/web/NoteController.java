@@ -58,6 +58,7 @@ public class NoteController {
         return "noteForm";
     }
 
+    // TODO: Create test for POST request for this method.
     @RequestMapping(value = {"/add", "/edit/*"}, method = RequestMethod.POST)
     public String saveNote(@Valid  Note note, Errors errors) throws Exception {
         if (errors.hasErrors()) {
@@ -71,6 +72,7 @@ public class NoteController {
 
     // TODO: Add functionality to edit and delete a note.
 
+    // TODO: Create test for this method.
     @RequestMapping(value = "/edit/{noteId}", method = RequestMethod.GET)
     public String editNote(@PathVariable("noteId") long noteId, Model model) {
         model.addAttribute("note", noteService.findOne(noteId));

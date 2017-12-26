@@ -86,9 +86,9 @@
                 </table>
                 <table class="note-list-table">
                     <tr>
-                        <td class="note-list-table-option"><a href="">View</a></td>
-                        <td class="note-list-table-option"><a href="">Edit</a></td>
-                        <td class="note-list-table-option"><a href="">Delete</a></td>
+                        <td class="note-list-table-option"><a href="/note/${note.id}">View</a></td>
+                        <td class="note-list-table-option"><a href="/note/edit/${note.id}">Edit</a></td>
+                        <td class="note-list-table-option"><a href="/note/delete/${note.id}">Delete</a></td>
                     </tr>
                 </table>
             </div>
