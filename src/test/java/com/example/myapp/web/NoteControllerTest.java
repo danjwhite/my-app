@@ -94,8 +94,12 @@ public class NoteControllerTest {
     @Test
     public void shouldShowNoteForm() throws Exception {
 
-        // Perform GET request on MockMvc and assert expectations.
+        // Perform GET request on MockMvc to add a note and assert expectations.
         mockMvc.perform(get("/note/add"))
+                .andExpect(view().name("noteForm"));
+
+        // Perform GET request on MockMvc to edit a note and assert expectations.
+        mockMvc.perform(get("/note/edit/1"))
                 .andExpect(view().name("noteForm"));
     }
 
