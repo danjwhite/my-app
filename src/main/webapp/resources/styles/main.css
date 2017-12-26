@@ -70,24 +70,30 @@ p {
     color: white;
 }
 
-dl {
-    border: 1px solid black;
-    border-radius: 4px;
-    padding: 10px;
+table.note-list-table {
+    padding-left: 5px;
     margin-top: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
+    width: 100%;
+
 }
 
-dt {
+th.note-list-table-header {
     font-weight: bold;
-    float: left;
     margin-right: 5px;
     width: 40px;
 }
 
-dt, dd {
+th.note-list-table-header, td.note-list-table-data {
     font-size: 14px;
     padding: 5px;
+    float: left;
+}
+
+td.note-list-table-option {
+    font-size: 14px;
+    padding: 0px 5px 0px 5px;
+    float: left;
 }
 
 input[type="button"], input[type="submit"] {
@@ -195,7 +201,9 @@ p, #filter-description {
     left: 50%;
 }
 
-.dl-container {
+.note-container {
+    border: 1px solid black;
+    border-radius: 4px;
     margin-top: 15px;
     margin-bottom: 15px;
 }
