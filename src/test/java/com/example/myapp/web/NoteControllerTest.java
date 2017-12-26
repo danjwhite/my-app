@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.example.myapp.config.TestConfig;
 import com.example.myapp.service.INoteService;
+import jdk.nashorn.internal.runtime.ECMAException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -115,6 +116,16 @@ public class NoteControllerTest {
                 .param("title", "Title")
                 .param("body", "Body"))
                 .andExpect(redirectedUrl("/note/11"));
+    }
+
+    @Test
+    public void testEditNote() throws Exception {
+
+        // Perform POST request to edit a note on MockMvc and assert expectations
+        mockMvc.perform(post("/note/edit/1")
+                .param("title", "New title")
+                .param("body", "New body"))
+                .andExpect(redirectedUrl("/note/1"));
     }
 
     private List<Note> createNoteList(int count) {
