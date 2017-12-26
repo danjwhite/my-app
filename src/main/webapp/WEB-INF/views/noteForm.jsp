@@ -50,7 +50,7 @@
                     <tr>
                         <td class="table-left"></td>
                         <td class="table-right" id="note-form-buttons">
-                            <input type="submit" value="Add">
+                            <input type="submit" value="Save">
                             &nbsp;
                             <input type="button" onClick="window.location.href='/'" value="Cancel">
                         </td>
