@@ -59,7 +59,7 @@ public class NoteController {
         return "noteForm";
     }
 
-    // TODO: Create test for POST request for this method.
+    // TODO: Create test for edit request for this method.
     @RequestMapping(value = {"/add", "/edit/*"}, method = RequestMethod.POST)
     public String saveNote(@Valid  Note note, Errors errors) throws Exception {
         if (errors.hasErrors()) {
