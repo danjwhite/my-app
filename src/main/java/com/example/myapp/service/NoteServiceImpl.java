@@ -42,7 +42,10 @@ public class NoteServiceImpl implements INoteService {
     @Transactional
     @Override
     public Note save(Note note) {
-        note.setCreatedAt(new Date());
+        if (note.getId() == null) {
+            note.setCreatedAt(new Date());
+        }
+
         return noteDao.save(note);
     }
 
