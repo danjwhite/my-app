@@ -69,15 +69,28 @@
             </tr>
         </table>
         <c:forEach items="${notes}" var="note">
-            <div class="dl-container">
-                <dl>
-                    <dt>Title:</dt>
-                    <dd><c:out value="${note.title}"/></dd>
-                    <dt>Date:</dt>
-                    <dd><c:out value="${note.createdAt}"/></dd>
-                    <dt>Body:</dt>
-                    <dd><c:out value="${note.body}"/></dd>
-                </dl>
+            <div class="note-container">
+                <table class="note-list-table">
+                    <tr>
+                        <th class="note-list-table-header">Title:</th>
+                        <td class="note-list-table-data"><c:out value="${note.title}"/></td>
+                    </tr>
+                    <tr>
+                        <th class="note-list-table-header">Date:</th>
+                        <td class="note-list-table-data"><c:out value="${note.createdAt}"/></td>
+                    </tr>
+                    <tr>
+                        <th class="note-list-table-header">Body:</th>
+                        <td class="note-list-table-data"><c:out value="${note.body}"/></td>
+                    </tr>
+                </table>
+                <table class="note-list-table">
+                    <tr>
+                        <td class="note-list-table-option"><a href="">View</a></td>
+                        <td class="note-list-table-option"><a href="">Edit</a></td>
+                        <td class="note-list-table-option"><a href="">Delete</a></td>
+                    </tr>
+                </table>
             </div>
         </c:forEach>
 
