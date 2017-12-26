@@ -240,6 +240,9 @@
                         <goals>
                             <goal>update</goal>
                         </goals>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
