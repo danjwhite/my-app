@@ -16,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/note")
@@ -31,19 +32,16 @@ public class NoteController {
     public NoteController() {
     }
 
-    @RequestMapping(value = "/entries/all", method = RequestMethod.GET)
-    public String getNotes(Model model) {
-        model.addAttribute("notes", noteService.findAll());
-        model.addAttribute("filter", "all");
+    @RequestMapping(value = "/entries/{filter}", method = RequestMethod.GET)
+    public String getNotes(@PathVariable("filter") String filter,
+                           @RequestParam(value = "count", defaultValue = "10") int count,
+                           Model model) {
+        List<Note> notes = filter.equals("recent") ? noteService.findRecent(count) :
+                noteService.findAll();
 
-        return "notes";
-    }
+        model.addAttribute("notes", notes);
+        model.addAttribute("filter", filter);
 
-    @RequestMapping(value = "/entries/recent", method = RequestMethod.GET)
-    public String getRecentNotes(Model model,
-                                 @RequestParam(value = "count", defaultValue = "10") int count) {
-        model.addAttribute("notes", noteService.findRecent(count));
-        model.addAttribute("filter", "recent");
         return "notes";
     }
 
@@ -53,7 +51,7 @@ public class NoteController {
 
         return "note";
     }
-    
+
     // TODO: Add test for this method.
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String addNote(Model model) {
@@ -96,7 +94,7 @@ public class NoteController {
         redirectAttributes.addAttribute("confirmation", "edited");
         return "redirect:/note/" + noteId;
     }
-    
+
     // TODO: Add test for this method.
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String deleteNote(@RequestParam(value = "noteId") long noteId, HttpServletRequest request) {
