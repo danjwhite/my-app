@@ -25,10 +25,23 @@
 
     <!-------------------- Begin Body -------------------->
     <div id="body">
-        <h3>New Note</h3>
-        <div class="success-message">
-            Note created successfully.
-        </div>
+        <c:choose>
+            <c:when test="${param.confirmation == 'added'}">
+                <h3>New Note</h3>
+                <div class="success-message">
+                    Note created successfully.
+                </div>
+            </c:when>
+            <c:when test="${param.confirmation == 'edited'}">
+                <h3>Updated Note</h3>
+                <div class="success-message">
+                    Note updated successfully.
+                </div>
+            </c:when>
+            <c:otherwise>
+                <h3>View Note</h3>
+            </c:otherwise>
+        </c:choose>
         <div class="note-container">
             <table class="note-list-table">
                 <tr>

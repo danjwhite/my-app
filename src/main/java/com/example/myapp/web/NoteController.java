@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.myapp.domain.Note;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -64,14 +65,14 @@ public class NoteController {
 
     // TODO: Add test for this method.
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String saveNote(@Valid Note note, Errors errors) {
+    public String saveNote(@Valid Note note, RedirectAttributes redirectAttributes, Errors errors) {
         if (errors.hasErrors()) {
             return "noteForm";
         }
 
-        Long id = noteService.add(note).getId();
-
-        return "redirect:/note/" + id;
+        Long noteId = noteService.add(note).getId();
+        redirectAttributes.addAttribute("confirmation", "added");
+        return "redirect:/note/" + noteId;
     }
 
     // TODO: Add test for this method.
@@ -86,13 +87,13 @@ public class NoteController {
 
     // TODO: Add test for this method.
     @RequestMapping(value = "/edit/{noteId}", method = RequestMethod.POST)
-    public String updateNote(@Valid Note note, @PathVariable long noteId, Errors errors) {
+    public String updateNote(@Valid Note note, @PathVariable long noteId, RedirectAttributes redirectAttributes, Errors errors) {
         if (errors.hasErrors()) {
             return "noteForm";
         }
 
         noteService.update(note);
-
+        redirectAttributes.addAttribute("confirmation", "edited");
         return "redirect:/note/" + noteId;
     }
     
