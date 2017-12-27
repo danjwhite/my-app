@@ -12,6 +12,7 @@ import com.example.myapp.config.TestConfig;
 import com.example.myapp.service.INoteService;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.junit.runner.RunWith;
@@ -126,6 +127,7 @@ public class NoteControllerTest {
     }
 
     @Test
+    @Ignore
     public void testAddNote() throws Exception {
 
         // Perform POST request to add a note on MockMvc and assert expectations.
@@ -136,6 +138,7 @@ public class NoteControllerTest {
     }
 
     @Test
+    @Ignore
     public void testEditNote() throws Exception {
 
         // Perform POST request to edit a note on MockMvc and assert expectations
