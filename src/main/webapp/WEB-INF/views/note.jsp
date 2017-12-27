@@ -60,7 +60,7 @@
             <table class="note-list-table">
                 <tr>
                     <td class="note-list-table-option"><a href="/note/edit/${note.id}">Edit</a></td>
-                    <td class="note-list-table-option"><a href="/note/delete/${note.id}">Delete</a></td>
+                    <td class="note-list-table-option"><a href="/note/delete?noteId=${note.id}">Delete</a></td>
                 </tr>
             </table>
         </div>
