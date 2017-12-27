@@ -15,6 +15,7 @@
         <maven.compiler.source>1.6</maven.compiler.source>
         <!-- Version properties -->
         <spring.version>4.3.7.RELEASE</spring.version>
+        <slf4j.version>1.7.25</slf4j.version>
         <liquibase.version>3.5.3</liquibase.version>
     </properties>
     <dependencies>
@@ -54,6 +55,20 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
+        </dependency>
+
+        <!-- SLF4J API -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <!-- SLF4J Simple -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <!-- Mysql Connector -->
