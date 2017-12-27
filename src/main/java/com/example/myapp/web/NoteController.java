@@ -1,6 +1,7 @@
 package com.example.myapp.web;
 
 import com.example.myapp.service.INoteService;
+import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,35 +52,51 @@ public class NoteController {
 
         return "note";
     }
-
+    
+    // TODO: Add test for this method.
     @RequestMapping(value = "/add", method = RequestMethod.GET)
-    public String showNoteForm(Model model) {
+    public String addNote(Model model) {
         model.addAttribute("note", new Note());
         model.addAttribute("formType", "add");
+
         return "noteForm";
     }
 
-    // TODO: Create test for edit request for this method.
-    @RequestMapping(value = {"/add", "/edit/*"}, method = RequestMethod.POST)
-    public String saveNote(@Valid  Note note, Errors errors) throws Exception {
+    // TODO: Add test for this method.
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public String saveNote(@Valid Note note, Errors errors) {
         if (errors.hasErrors()) {
             return "noteForm";
         }
 
-        Long id = noteService.save(note).getId();
+        Long id = noteService.add(note).getId();
 
         return "redirect:/note/" + id;
     }
 
-    // TODO: Create test for this method.
+    // TODO: Add test for this method.
     @RequestMapping(value = "/edit/{noteId}", method = RequestMethod.GET)
-    public String editNote(@PathVariable("noteId") long noteId, Model model) {
-        model.addAttribute("note", noteService.findOne(noteId));
+    public String editNote(@PathVariable long noteId, Model model) {
+        Note note = noteService.findOne(noteId);
+        model.addAttribute("note", note);
         model.addAttribute("formType", "edit");
+
         return "noteForm";
     }
 
-    // TODO: Create test for this method.
+    // TODO: Add test for this method.
+    @RequestMapping(value = "/edit/{noteId}", method = RequestMethod.POST)
+    public String updateNote(@Valid Note note, @PathVariable long noteId, Errors errors) {
+        if (errors.hasErrors()) {
+            return "noteForm";
+        }
+
+        noteService.update(note);
+
+        return "redirect:/note/" + noteId;
+    }
+    
+    // TODO: Add test for this method.
     @RequestMapping(value = "/delete")
     public String deleteNote(@RequestParam(value = "noteId") long noteId, HttpServletRequest request) {
         noteService.delete(noteId);

@@ -37,6 +37,7 @@
         <div id="note-form-container">
             <sf:form method="post" name="note-form" commandName="note">
                 <sf:hidden path="id"/>
+                <sf:hidden path="createdAt"/>
                 <sf:errors path="*" element="div" cssClass="error-message"/>
                 <table id="note-form-table">
                     <tr>

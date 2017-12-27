@@ -43,12 +43,15 @@ public class NoteServiceImpl implements INoteService {
     // TODO: Add test for this method.
     @Transactional
     @Override
-    public Note save(Note note) {
-        if (note.getId() == null) {
-            note.setCreatedAt(new Date());
-        }
+    public Note add(Note note) {
+        return noteDao.add(note);
+    }
 
-        return noteDao.save(note);
+    // TODO: Add test for this method.
+    @Transactional
+    @Override
+    public Note update(Note note) {
+        return noteDao.update(note);
     }
 
     // TODO: Add test for this method.

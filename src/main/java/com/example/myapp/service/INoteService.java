@@ -12,7 +12,9 @@ public interface INoteService {
 
     Note findOne(long id);
 
-    Note save(Note note);
+    Note add(Note note);
+
+    Note update(Note note);
 
     void delete(long id);
 

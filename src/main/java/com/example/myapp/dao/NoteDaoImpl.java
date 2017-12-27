@@ -47,16 +47,19 @@ public class NoteDaoImpl implements INoteDao {
 
     // TODO: Add test for this method.
     @Override
-    public Note save(Note note) {
+    public Note add(Note note) {
+        Long id = (Long) currentSession().save(note);
+        note.setId(id);
 
-        if (note.getId() == null) {
-            Long id = (Long) currentSession().save(note);
-            note.setId(id);
-            return note;
-        } else {
-            currentSession().update(note);
-            return note;
-        }
+        return note;
+    }
+
+    // TODO: Add test for this method.
+    @Override
+    public Note update(Note note) {
+        currentSession().update(note);
+
+        return note;
     }
 
     // TODO: Add test for this method.
