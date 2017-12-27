@@ -19,26 +19,28 @@ public class NoteServiceImpl implements INoteService {
         this.noteDao = noteDao;
     }
 
-    // TODO: Add tests for this class.
-
+    // TODO: Add test for this method.
     @Transactional(readOnly = true)
     @Override
     public List<Note> findAll() {
         return noteDao.findAll();
     }
 
+    // TODO: Add test for this method.
     @Transactional(readOnly = true)
     @Override
     public List<Note> findRecent(int count) {
         return noteDao.findRecent(count);
     }
 
+    // TODO: Add test for this method.
     @Transactional(readOnly = true)
     @Override
     public Note findOne(long id) {
         return noteDao.findOne(id);
     }
 
+    // TODO: Add test for this method.
     @Transactional
     @Override
     public Note save(Note note) {
@@ -49,12 +51,14 @@ public class NoteServiceImpl implements INoteService {
         return noteDao.save(note);
     }
 
+    // TODO: Add test for this method.
     @Transactional
     @Override
     public void delete(long id) {
         noteDao.delete(id);
     }
 
+    // TODO: Add test for this method.
     @Transactional
     @Override
     public long count() {
