@@ -98,7 +98,7 @@ public class NoteController {
     }
     
     // TODO: Add test for this method.
-    @RequestMapping(value = "/delete")
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public String deleteNote(@RequestParam(value = "noteId") long noteId, HttpServletRequest request) {
         noteService.delete(noteId);
 
