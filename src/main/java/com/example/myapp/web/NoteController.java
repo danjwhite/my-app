@@ -50,7 +50,6 @@ public class NoteController {
         return "note";
     }
 
-    // TODO: Add test for this method.
     @RequestMapping(value = "/add", method = RequestMethod.GET)
     public String addNote(Model model) {
         model.addAttribute("note", new Note());
@@ -59,7 +58,6 @@ public class NoteController {
         return "noteForm";
     }
 
-    // TODO: Add test for this method.
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String saveNote(@Valid Note note, RedirectAttributes redirectAttributes, Errors errors) {
         if (errors.hasErrors()) {
@@ -71,8 +69,7 @@ public class NoteController {
         redirectAttributes.addAttribute("confirmation", "added");
         return "redirect:/note/view";
     }
-
-    // TODO: Add test for this method.
+    
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String editNote(@RequestParam(value = "noteId") long noteId, Model model) {
         Note note = noteService.findOne(noteId);
