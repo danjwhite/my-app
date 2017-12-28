@@ -4,15 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.myapp.service.INoteService;
 import com.example.myapp.domain.Note;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -31,8 +30,22 @@ public class NoteController {
     }
 
     @RequestMapping(value = "/view/entries", method = RequestMethod.GET)
-    public String getNotes(@RequestParam(value = "display", defaultValue = "recent") String display,
-                           Model model) {
+    public String getNotes(@RequestParam(value = "display", required = false) String display,
+                           @CookieValue(value = "displayCookie", required = false) String displayCookieValue,
+                           Model model,
+                           HttpServletResponse response) {
+
+        if (display == null) {
+            if (displayCookieValue == null) {
+                display = "recent";
+            } else {
+                display = displayCookieValue;
+            }
+        } else {
+            Cookie cookie = new Cookie("displayCookie", display);
+            response.addCookie(cookie);
+        }
+
         List<Note> notes = display.equals("recent") ? noteService.findRecent() :
                 noteService.findAll();
 
