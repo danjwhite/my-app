@@ -50,7 +50,7 @@ public class NoteController {
         // Get notes based on the display type.
         List<Note> notes = display.equals("recent") ? noteService.findRecent() :
                 noteService.findAll();
-        
+
         // Add attributes to the model.
         model.addAttribute("notes", notes);
         model.addAttribute("display", display);
