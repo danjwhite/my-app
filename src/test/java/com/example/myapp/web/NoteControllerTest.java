@@ -3,6 +3,7 @@ package com.example.myapp.web;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.junit.Assert.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import com.example.myapp.service.INoteService;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
 
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -140,12 +142,26 @@ public class NoteControllerTest {
     @Test
     public void testEditNote() throws Exception {
 
-        // Perform POST request to edit a note on MockMvc and assert expectations
+        // Perform POST request to edit a note on MockMvc and assert expectations.
         mockMvc.perform(post("/note/edit?noteId=1")
                 .param("id", "1")
                 .param("title", "New title")
                 .param("body", "New body"))
                 .andExpect(redirectedUrl("/note/view?noteId=1&confirmation=edited"));
+    }
+
+    @Test
+    public void testDeleteNote() throws Exception {
+
+        // Assert note count before delete.
+        assertEquals(10, noteService.count());
+
+        // Perform GET request to delete a note on MockMvc and assert expectations.
+        mockMvc.perform(get("/note/delete?noteId=1"))
+                .andExpect(redirectedUrl("/note/entries/recent"));
+
+        // Assert note count after delete.
+        assertEquals(9, noteService.count());
     }
 
     private List<Note> createNoteList(int count) {

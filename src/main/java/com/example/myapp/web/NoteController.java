@@ -93,7 +93,7 @@ public class NoteController {
     }
 
     // TODO: Add test for this method.
-    @RequestMapping(value = "/delete")
+    @RequestMapping(value = "/delete", method = RequestMethod.GET)
     public String deleteNote(@RequestParam(value = "noteId") long noteId) {
         noteService.delete(noteId);
 
