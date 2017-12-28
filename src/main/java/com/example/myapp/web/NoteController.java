@@ -73,8 +73,8 @@ public class NoteController {
     }
 
     // TODO: Add test for this method.
-    @RequestMapping(value = "/edit/{noteId}", method = RequestMethod.GET)
-    public String editNote(@PathVariable long noteId, Model model) {
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public String editNote(@RequestParam(value = "noteId") long noteId, Model model) {
         Note note = noteService.findOne(noteId);
         model.addAttribute("note", note);
         model.addAttribute("formType", "edit");
@@ -83,15 +83,16 @@ public class NoteController {
     }
 
     // TODO: Add test for this method.
-    @RequestMapping(value = "/edit/{noteId}", method = RequestMethod.POST)
-    public String updateNote(@Valid Note note, @PathVariable long noteId, RedirectAttributes redirectAttributes, Errors errors) {
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public String updateNote(@Valid Note note, @RequestParam(value = "noteId") long noteId, RedirectAttributes redirectAttributes, Errors errors) {
         if (errors.hasErrors()) {
             return "noteForm";
         }
 
         noteService.update(note);
+        redirectAttributes.addAttribute("noteId", noteId);
         redirectAttributes.addAttribute("confirmation", "edited");
-        return "redirect:/note/" + noteId;
+        return "redirect:/note/view";
     }
 
     // TODO: Add test for this method.

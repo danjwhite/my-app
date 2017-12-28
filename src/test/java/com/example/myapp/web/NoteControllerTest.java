@@ -117,7 +117,7 @@ public class NoteControllerTest {
         String body = note.getBody();
 
         // Perform GET request on MockMvc to edit a note and assert expectations.
-        mockMvc.perform(get("/note/edit/1"))
+        mockMvc.perform(get("/note/edit?noteId=1"))
                 .andExpect(view().name("noteForm"))
                 .andExpect(model().attributeExists("note"))
                 .andExpect(model().attribute("note", hasProperty("id", is(1L))))
@@ -137,14 +137,13 @@ public class NoteControllerTest {
     }
 
     @Test
-    @Ignore
     public void testEditNote() throws Exception {
 
         // Perform POST request to edit a note on MockMvc and assert expectations
-        mockMvc.perform(post("/note/edit/1")
+        mockMvc.perform(post("/note/edit?noteId=1")
                 .param("title", "New title")
                 .param("body", "New body"))
-                .andExpect(redirectedUrl("/note/1"));
+                .andExpect(redirectedUrl("/note/view?noteId=1&confirmation=edited"));
     }
 
     private List<Note> createNoteList(int count) {
