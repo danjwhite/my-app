@@ -99,7 +99,7 @@ public class NoteController {
 
     // TODO: Add test for this method.
     @RequestMapping(value = "/delete")
-    public String deleteNote(@RequestParam(value = "noteId") long noteId, HttpServletRequest request) {
+    public String deleteNote(@RequestParam(value = "noteId") long noteId) {
         noteService.delete(noteId);
 
         return "redirect:/note/entries/recent";
