@@ -79,7 +79,6 @@ public class NoteController {
         return "noteForm";
     }
 
-    // TODO: Add test for this method.
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public String updateNote(@Valid Note note, @RequestParam(value = "noteId") long noteId, RedirectAttributes redirectAttributes, Errors errors) {
         if (errors.hasErrors()) {
@@ -91,8 +90,7 @@ public class NoteController {
         redirectAttributes.addAttribute("confirmation", "edited");
         return "redirect:/note/view";
     }
-
-    // TODO: Add test for this method.
+    
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     public String deleteNote(@RequestParam(value = "noteId") long noteId) {
         noteService.delete(noteId);
