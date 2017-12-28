@@ -19,7 +19,7 @@
         </div>
         <nav id="header-nav">
             <a class="active" href="<c:url value="/"/>">Home</a>
-            <a href="<c:url value="/note/entries/recent"/>">Notes</a>
+            <a href="<c:url value="/notes/view/entries"/>">Notes</a>
         </nav>
     </div>
 
