@@ -59,8 +59,8 @@
             </table>
             <table class="note-list-table">
                 <tr>
-                    <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/note/edit?noteId=${note.id}">Edit</a></td>
-                    <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/note/delete?noteId=${note.id}">Delete</a></td>
+                    <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/notes/edit?noteId=${note.id}">Edit</a></td>
+                    <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/notes/delete?noteId=${note.id}">Delete</a></td>
                 </tr>
             </table>
         </div>
