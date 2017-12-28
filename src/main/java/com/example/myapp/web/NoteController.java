@@ -17,6 +17,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/note")
@@ -96,11 +98,10 @@ public class NoteController {
     }
 
     // TODO: Add test for this method.
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/delete")
     public String deleteNote(@RequestParam(value = "noteId") long noteId, HttpServletRequest request) {
         noteService.delete(noteId);
 
-        // Redirect to the previous URL.
-        return "redirect:" + request.getHeader("Referer");
+        return "redirect:/note/entries/recent";
     }
 }
