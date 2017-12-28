@@ -50,7 +50,7 @@ public class NoteControllerTest {
     public void shouldShowAllNotes() throws Exception {
 
         // Create expected object.
-        List<Note> expectedNotes = createNoteList(10);
+        List<Note> expectedNotes = createNoteList(12);
 
         // Perform GET request on MockMvc and assert expectations.
         mockMvc.perform(get("/notes/view/entries?display=all"))
@@ -134,7 +134,7 @@ public class NoteControllerTest {
         mockMvc.perform(post("/notes/add")
                 .param("title", "Title")
                 .param("body", "Body"))
-                .andExpect(redirectedUrl("/notes/view/entry?noteId=11&confirmation=added"));
+                .andExpect(redirectedUrl("/notes/view/entry?noteId=13&confirmation=added"));
     }
 
     @Test
@@ -152,14 +152,14 @@ public class NoteControllerTest {
     public void testDeleteNote() throws Exception {
 
         // Assert note count before delete.
-        assertEquals(11, noteService.count());
+        assertEquals(13, noteService.count());
 
         // Perform GET request to delete a note on MockMvc and assert expectations.
         mockMvc.perform(get("/notes/delete?noteId=1"))
                 .andExpect(redirectedUrl("/notes/view/entries"));
 
         // Assert note count after delete.
-        assertEquals(10, noteService.count());
+        assertEquals(12, noteService.count());
     }
 
     private List<Note> createNoteList(int count) {
