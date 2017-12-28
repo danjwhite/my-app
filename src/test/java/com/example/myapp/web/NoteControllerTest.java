@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.junit.Assert.*;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,7 +13,6 @@ import com.example.myapp.config.TestConfig;
 import com.example.myapp.service.INoteService;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 
