@@ -86,8 +86,8 @@
                 </table>
                 <table class="note-list-table">
                     <tr>
-                        <td class="note-list-table-option"><a href="/note/${note.id}">View</a></td>
-                        <td class="note-list-table-option"><a href="/note/edit/${note.id}">Edit</a></td>
+                        <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/note/view?noteId=${note.id}">View</a></td>
+                        <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/note/edit?noteId=${note.id}">Edit</a></td>
                         <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/note/delete?noteId=${note.id}">Delete</a></td>
                     </tr>
                 </table>
