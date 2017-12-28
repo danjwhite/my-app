@@ -53,7 +53,7 @@ public class NoteControllerTest {
         List<Note> expectedNotes = createNoteList(10);
 
         // Perform GET request on MockMvc and assert expectations.
-        mockMvc.perform(get("/note/entries/all"))
+        mockMvc.perform(get("/notes/entries/all"))
                 .andExpect(view().name("notes"))
                 .andExpect(model().attributeExists("notes"))
                 .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));
@@ -66,7 +66,7 @@ public class NoteControllerTest {
         List<Note> expectedNotes = createNoteList(10);
 
         // Perform GET request on MockMvc without request parameters and assert expectations.
-        mockMvc.perform(get("/note/entries/recent"))
+        mockMvc.perform(get("/notes/entries/recent"))
                 .andExpect(view().name("notes"))
                 .andExpect(model().attributeExists("notes"))
                 .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));
@@ -79,7 +79,7 @@ public class NoteControllerTest {
         List<Note> expectedNotes = createNoteList(10);
 
         // Perform GET request on MockMvc with request parameters and assert expectations.
-        mockMvc.perform(get("/note/entries/recent?count=10"))
+        mockMvc.perform(get("/notes/entries/recent?count=10"))
                 .andExpect(view().name("notes"))
                 .andExpect(model().attributeExists("notes"))
                 .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));
@@ -92,7 +92,7 @@ public class NoteControllerTest {
         Note expectedNote = noteService.findOne(1L);
 
         // Perform GET request on MockMvc with path variable and assert expectations.
-        mockMvc.perform(get("/note/view?noteId=1"))
+        mockMvc.perform(get("/notes/view?noteId=1"))
                 .andExpect(view().name("note"))
                 .andExpect(model().attributeExists("note"))
                 .andExpect(model().attribute("note", expectedNote));
@@ -102,7 +102,7 @@ public class NoteControllerTest {
     public void shouldShowNoteFormForAdding() throws Exception {
 
         // Perform GET request on MockMvc to add a note and assert expectations.
-        mockMvc.perform(get("/note/add"))
+        mockMvc.perform(get("/notes/add"))
                 .andExpect(view().name("noteForm"));
     }
 
@@ -118,7 +118,7 @@ public class NoteControllerTest {
         String body = note.getBody();
 
         // Perform GET request on MockMvc to edit a note and assert expectations.
-        mockMvc.perform(get("/note/edit?noteId=1"))
+        mockMvc.perform(get("/notes/edit?noteId=1"))
                 .andExpect(view().name("noteForm"))
                 .andExpect(model().attributeExists("note"))
                 .andExpect(model().attribute("note", hasProperty("id", is(1L))))
@@ -131,35 +131,35 @@ public class NoteControllerTest {
     public void testAddNote() throws Exception {
 
         // Perform POST request to add a note on MockMvc and assert expectations.
-        mockMvc.perform(post("/note/add")
+        mockMvc.perform(post("/notes/add")
                 .param("title", "Title")
                 .param("body", "Body"))
-                .andExpect(redirectedUrl("/note/view?noteId=11&confirmation=added"));
+                .andExpect(redirectedUrl("/notes/view?noteId=11&confirmation=added"));
     }
 
     @Test
     public void testEditNote() throws Exception {
 
         // Perform POST request to edit a note on MockMvc and assert expectations.
-        mockMvc.perform(post("/note/edit?noteId=1")
+        mockMvc.perform(post("/notes/edit?noteId=1")
                 .param("id", "1")
                 .param("title", "New title")
                 .param("body", "New body"))
-                .andExpect(redirectedUrl("/note/view?noteId=1&confirmation=edited"));
+                .andExpect(redirectedUrl("/notes/view?noteId=1&confirmation=edited"));
     }
 
     @Test
     public void testDeleteNote() throws Exception {
 
         // Assert note count before delete.
-        assertEquals(10, noteService.count());
+        assertEquals(11, noteService.count());
 
         // Perform GET request to delete a note on MockMvc and assert expectations.
-        mockMvc.perform(get("/note/delete?noteId=1"))
-                .andExpect(redirectedUrl("/note/entries/recent"));
+        mockMvc.perform(get("/notes/delete?noteId=1"))
+                .andExpect(redirectedUrl("/notes/entries/recent"));
 
         // Assert note count after delete.
-        assertEquals(9, noteService.count());
+        assertEquals(10, noteService.count());
     }
 
     private List<Note> createNoteList(int count) {

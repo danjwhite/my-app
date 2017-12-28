@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping("/note")
+@RequestMapping("/notes")
 public class NoteController {
 
     private INoteService noteService;
@@ -67,7 +67,7 @@ public class NoteController {
         Long noteId = noteService.add(note).getId();
         redirectAttributes.addAttribute("noteId", noteId);
         redirectAttributes.addAttribute("confirmation", "added");
-        return "redirect:/note/view";
+        return "redirect:/notes/view";
     }
     
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
@@ -88,13 +88,13 @@ public class NoteController {
         noteService.update(note);
         redirectAttributes.addAttribute("noteId", noteId);
         redirectAttributes.addAttribute("confirmation", "edited");
-        return "redirect:/note/view";
+        return "redirect:/notes/view";
     }
     
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     public String deleteNote(@RequestParam(value = "noteId") long noteId) {
         noteService.delete(noteId);
 
-        return "redirect:/note/entries/recent";
+        return "redirect:/notes/entries/recent";
     }
 }
