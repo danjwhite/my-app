@@ -29,8 +29,8 @@ public class NoteServiceImpl implements INoteService {
     // TODO: Add test for this method.
     @Transactional(readOnly = true)
     @Override
-    public List<Note> findRecent(int count) {
-        return noteDao.findRecent(count);
+    public List<Note> findRecent() {
+        return noteDao.findRecent();
     }
 
     // TODO: Add test for this method.

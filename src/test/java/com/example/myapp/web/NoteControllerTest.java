@@ -66,7 +66,7 @@ public class NoteControllerTest {
         List<Note> expectedNotes = createNoteList(10);
 
         // Perform GET request on MockMvc without request parameters and assert expectations.
-        mockMvc.perform(get("/notes/view/entries?display=recent"))
+        mockMvc.perform(get("/notes/view/entries"))
                 .andExpect(view().name("notes"))
                 .andExpect(model().attributeExists("notes"))
                 .andExpect(model().attribute("notes", hasItems(expectedNotes.toArray())));

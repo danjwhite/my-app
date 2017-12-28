@@ -8,7 +8,7 @@ public interface INoteDao {
 
     List<Note> findAll();
 
-    List<Note> findRecent(int count);
+    List<Note> findRecent();
 
     Note findOne(long id);
 

@@ -36,8 +36,8 @@ public class NoteDaoImpl implements INoteDao {
 
     // TODO: Add test for this method.
     @Override
-    public List<Note> findRecent(int count) {
-        return (List<Note>) noteCriteria().setMaxResults(count).list();
+    public List<Note> findRecent() {
+        return (List<Note>) noteCriteria().setMaxResults(10).list();
     }
 
     // TODO: Add test for this method.

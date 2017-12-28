@@ -32,9 +32,8 @@ public class NoteController {
 
     @RequestMapping(value = "/view/entries", method = RequestMethod.GET)
     public String getNotes(@RequestParam(value = "display", defaultValue = "recent") String display,
-                           @RequestParam(value = "maxResults", defaultValue = "10") int maxResults,
                            Model model) {
-        List<Note> notes = display.equals("recent") ? noteService.findRecent(maxResults) :
+        List<Note> notes = display.equals("recent") ? noteService.findRecent() :
                 noteService.findAll();
 
         model.addAttribute("notes", notes);
