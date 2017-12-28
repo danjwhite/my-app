@@ -20,7 +20,7 @@
         </div>
         <nav id="header-nav">
             <a href="<c:url value="/"/>">Home</a>
-            <a class="active" href="<c:url value="/note/entries/recent"/>">Notes</a>
+            <a class="active" href="<c:url value="/notes/view/entries"/>">Notes</a>
         </nav>
     </div>
 
@@ -31,10 +31,10 @@
             <tr>
                 <td>
                     <c:choose>
-                        <c:when test="${filter == 'recent' && fn:length(notes) > 0}">
+                        <c:when test="${display == 'recent' && fn:length(notes) > 0}">
                             <p id="filter-description">Showing Recent Notes</p>
                         </c:when>
-                        <c:when test="${filter == 'all' && fn:length(notes) > 0}">
+                        <c:when test="${display == 'all' && fn:length(notes) > 0}">
                             <p id="filter-description">Showing All Notes</p>
                         </c:when>
                         <c:otherwise>
@@ -48,20 +48,20 @@
                     <form name="filter" method="get">
                         <div id="filter-buttons">
                             <c:choose>
-                                <c:when test="${filter == 'recent' && fn:length(notes) > 0}">
+                                <c:when test="${display == 'recent' && fn:length(notes) > 0}">
                                     <input type="button"
-                                           onClick="window.location.href='<c:url value="/note/entries/all"/>'"
+                                           onClick="window.location.href='<c:url value="/notes/view/entries?display=all"/>'"
                                            value="Show All">
                                     &nbsp;
                                 </c:when>
-                                <c:when test="${filter == 'all' && fn:length(notes) > 0}">
+                                <c:when test="${display == 'all' && fn:length(notes) > 0}">
                                     <input type="button"
-                                           onClick="window.location.href='<c:url value="/note/entries/recent"/>'"
+                                           onClick="window.location.href='<c:url value="/notes/view/entries?display=recent"/>'"
                                            value="Show Recent">
                                     &nbsp;
                                 </c:when>
                             </c:choose>
-                            <input type="button" onClick="window.location.href='<c:url value="/note/add"/>'"
+                            <input type="button" onClick="window.location.href='<c:url value="/notes/add"/>'"
                                    value="Create Note">
                         </div>
                     </form>
@@ -86,9 +86,9 @@
                 </table>
                 <table class="note-list-table">
                     <tr>
-                        <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/note/view?noteId=${note.id}">View</a></td>
-                        <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/note/edit?noteId=${note.id}">Edit</a></td>
-                        <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/note/delete?noteId=${note.id}">Delete</a></td>
+                        <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/notes/view/entry?noteId=${note.id}">View</a></td>
+                        <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/notes/edit?noteId=${note.id}">Edit</a></td>
+                        <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/notes/delete?noteId=${note.id}">Delete</a></td>
                     </tr>
                 </table>
             </div>

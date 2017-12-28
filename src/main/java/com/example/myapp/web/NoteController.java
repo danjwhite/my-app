@@ -30,20 +30,20 @@ public class NoteController {
     public NoteController() {
     }
 
-    @RequestMapping(value = "/entries/{filter}", method = RequestMethod.GET)
-    public String getNotes(@PathVariable("filter") String filter,
-                           @RequestParam(value = "count", defaultValue = "10") int count,
+    @RequestMapping(value = "/view/entries", method = RequestMethod.GET)
+    public String getNotes(@RequestParam(value = "display", defaultValue = "recent") String display,
+                           @RequestParam(value = "maxResults", defaultValue = "10") int maxResults,
                            Model model) {
-        List<Note> notes = filter.equals("recent") ? noteService.findRecent(count) :
+        List<Note> notes = display.equals("recent") ? noteService.findRecent(maxResults) :
                 noteService.findAll();
 
         model.addAttribute("notes", notes);
-        model.addAttribute("filter", filter);
+        model.addAttribute("display", display);
 
         return "notes";
     }
 
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/view/entry", method = RequestMethod.GET)
     public String getNote(@RequestParam(value = "noteId") long noteId, Model model) {
         model.addAttribute("note", noteService.findOne(noteId));
 
@@ -67,7 +67,7 @@ public class NoteController {
         Long noteId = noteService.add(note).getId();
         redirectAttributes.addAttribute("noteId", noteId);
         redirectAttributes.addAttribute("confirmation", "added");
-        return "redirect:/notes/view";
+        return "redirect:/notes/view/entry";
     }
     
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
@@ -88,13 +88,13 @@ public class NoteController {
         noteService.update(note);
         redirectAttributes.addAttribute("noteId", noteId);
         redirectAttributes.addAttribute("confirmation", "edited");
-        return "redirect:/notes/view";
+        return "redirect:/notes/view/entry";
     }
     
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     public String deleteNote(@RequestParam(value = "noteId") long noteId) {
         noteService.delete(noteId);
 
-        return "redirect:/notes/entries/recent";
+        return "redirect:/notes/view/entries";
     }
 }

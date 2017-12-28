@@ -20,7 +20,7 @@
         </div>
         <nav id="header-nav">
             <a href="<c:url value="/"/>">Home</a>
-            <a class="active" href="<c:url value="/note/entries/recent"/>">Notes</a>
+            <a class="active" href="<c:url value="/notes/view/entries"/>">Notes</a>
         </nav>
     </div>
 
