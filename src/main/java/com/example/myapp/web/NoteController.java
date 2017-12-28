@@ -35,6 +35,7 @@ public class NoteController {
                            Model model,
                            HttpServletResponse response) {
 
+        // Determine the display type.
         if (display == null) {
             if (displayCookieValue == null) {
                 display = "recent";
@@ -46,9 +47,11 @@ public class NoteController {
             response.addCookie(cookie);
         }
 
+        // Get notes based on the display type.
         List<Note> notes = display.equals("recent") ? noteService.findRecent() :
                 noteService.findAll();
-
+        
+        // Add attributes to the model.
         model.addAttribute("notes", notes);
         model.addAttribute("display", display);
 
