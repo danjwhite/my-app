@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -141,6 +142,7 @@ public class NoteControllerTest {
 
         // Perform POST request to edit a note on MockMvc and assert expectations
         mockMvc.perform(post("/note/edit?noteId=1")
+                .param("id", "1")
                 .param("title", "New title")
                 .param("body", "New body"))
                 .andExpect(redirectedUrl("/note/view?noteId=1&confirmation=edited"));

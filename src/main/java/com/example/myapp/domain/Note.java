@@ -19,7 +19,7 @@ public class Note implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private Date createdAt;
 
     @Column(name = "title")
