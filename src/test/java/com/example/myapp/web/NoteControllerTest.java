@@ -127,14 +127,13 @@ public class NoteControllerTest {
     }
 
     @Test
-    @Ignore
     public void testAddNote() throws Exception {
 
         // Perform POST request to add a note on MockMvc and assert expectations.
         mockMvc.perform(post("/note/add")
                 .param("title", "Title")
                 .param("body", "Body"))
-                .andExpect(redirectedUrl("/note/11"));
+                .andExpect(redirectedUrl("/note/view?noteId=11&confirmation=added"));
     }
 
     @Test

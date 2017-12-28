@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -48,6 +49,9 @@ public class NoteDaoImpl implements INoteDao {
     // TODO: Add test for this method.
     @Override
     public Note add(Note note) {
+
+        note.setCreatedAt(new Date());
+
         Long id = (Long) currentSession().save(note);
         note.setId(id);
 

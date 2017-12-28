@@ -67,8 +67,9 @@ public class NoteController {
         }
 
         Long noteId = noteService.add(note).getId();
+        redirectAttributes.addAttribute("noteId", noteId);
         redirectAttributes.addAttribute("confirmation", "added");
-        return "redirect:/note/" + noteId;
+        return "redirect:/note/view";
     }
 
     // TODO: Add test for this method.
