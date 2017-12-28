@@ -22,31 +22,27 @@ public class NoteDaoImpl implements INoteDao {
         this.sessionFactory = sessionFactory;
     }
 
-    // TODO: Add test for this method.
     @Override
     public long count() {
         return findAll().size();
     }
 
-    // TODO: Add test for this method.
     @Override
     public Note findOne(long id) {
         return currentSession().get(Note.class, id);
     }
 
-    // TODO: Add test for this method.
+
     @Override
     public List<Note> findRecent() {
         return (List<Note>) noteCriteria().setMaxResults(10).list();
     }
 
-    // TODO: Add test for this method.
     @Override
     public List<Note> findAll() {
         return (List<Note>) noteCriteria().list();
     }
 
-    // TODO: Add test for this method.
     @Override
     public Note add(Note note) {
 
@@ -58,7 +54,6 @@ public class NoteDaoImpl implements INoteDao {
         return note;
     }
 
-    // TODO: Add test for this method.
     @Override
     public Note update(Note note) {
         currentSession().update(note);
@@ -66,13 +61,11 @@ public class NoteDaoImpl implements INoteDao {
         return note;
     }
 
-    // TODO: Add test for this method.
     @Override
     public void delete(long id) {
         currentSession().delete(findOne(id));
     }
 
-    // TODO: Add test for this method.
     private Session currentSession() {
         return sessionFactory.getCurrentSession();
     }

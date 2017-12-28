@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -128,6 +129,7 @@ public class NoteControllerTest {
     }
 
     @Test
+    @DirtiesContext
     public void testAddNote() throws Exception {
 
         // Perform POST request to add a note on MockMvc and assert expectations.
@@ -138,6 +140,7 @@ public class NoteControllerTest {
     }
 
     @Test
+    @DirtiesContext
     public void testEditNote() throws Exception {
 
         // Perform POST request to edit a note on MockMvc and assert expectations.
@@ -149,17 +152,18 @@ public class NoteControllerTest {
     }
 
     @Test
+    @DirtiesContext
     public void testDeleteNote() throws Exception {
 
         // Assert note count before delete.
-        assertEquals(13, noteService.count());
+        assertEquals(12, noteService.count());
 
         // Perform GET request to delete a note on MockMvc and assert expectations.
         mockMvc.perform(get("/notes/delete?noteId=1"))
                 .andExpect(redirectedUrl("/notes/view/entries"));
 
         // Assert note count after delete.
-        assertEquals(12, noteService.count());
+        assertEquals(11, noteService.count());
     }
 
     private List<Note> createNoteList(int count) {

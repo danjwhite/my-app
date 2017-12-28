@@ -54,7 +54,7 @@ public class NoteServiceImpl implements INoteService {
         noteDao.delete(id);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public long count() {
         return noteDao.count();

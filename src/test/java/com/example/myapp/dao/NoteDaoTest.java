@@ -1,4 +1,4 @@
-package com.example.myapp.service;
+package com.example.myapp.dao;
 
 import static org.junit.Assert.*;
 
@@ -16,34 +16,33 @@ import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfig.class})
-// @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class NoteServiceTest {
+public class NoteDaoTest {
 
     @Autowired
-    INoteService noteService;
+    private INoteDao noteDao;
 
     @Test
     @Transactional
     public void testCount() {
-        assertEquals(12, noteService.count());
+        assertEquals(12, noteDao.count());
     }
 
     @Test
     @Transactional
     public void testFindAll() {
-        assertEquals(12, noteService.findAll().size());
+        assertEquals(12, noteDao.findAll().size());
     }
 
     @Test
     @Transactional
     public void testFindRecent() {
-        assertEquals(10, noteService.findRecent().size());
+        assertEquals(10, noteDao.findRecent().size());
     }
 
     @Test
     @Transactional
     public void testFindOne() {
-        Note note = noteService.findOne(1L);
+        Note note = noteDao.findOne(1L);
         assertEquals(1L, note.getId().longValue());
         assertEquals("Title", note.getTitle());
         assertEquals("Body", note.getBody());
@@ -53,12 +52,12 @@ public class NoteServiceTest {
     @Transactional
     @DirtiesContext
     public void testAdd() {
-        assertEquals(12, noteService.count());
+        assertEquals(12, noteDao.count());
 
         Note newNote = new Note(null, null, "Title", "Body");
-        Note savedNote = noteService.add(newNote);
+        Note savedNote = noteDao.add(newNote);
 
-        assertEquals(13, noteService.count());
+        assertEquals(13, noteDao.count());
         assertEquals(13L, savedNote.getId().longValue());
         assertNotNull(savedNote.getCreatedAt());
         assertEquals("Title", savedNote.getTitle());
@@ -69,20 +68,20 @@ public class NoteServiceTest {
     @Transactional
     @DirtiesContext
     public void testUpdate() {
-        assertEquals(12, noteService.count());
+        assertEquals(12, noteDao.count());
 
-        Note originalNote = noteService.findOne(1L);
+        Note originalNote = noteDao.findOne(1L);
         Date originalCreatedAt = originalNote.getCreatedAt();
         String originalTitle = originalNote.getTitle();
         String originalBody = originalNote.getBody();
 
         originalNote.setTitle("New Title");
         originalNote.setBody("New Body");
-        noteService.update(originalNote);
+        noteDao.update(originalNote);
 
-        Note updatedNote = noteService.findOne(1L);
+        Note updatedNote = noteDao.findOne(1L);
 
-        assertEquals(12, noteService.count());
+        assertEquals(12, noteDao.count());
         assertEquals(1L, updatedNote.getId().longValue());
         assertEquals(originalCreatedAt, updatedNote.getCreatedAt());
         assertNotEquals(originalTitle, updatedNote.getTitle());
@@ -93,12 +92,13 @@ public class NoteServiceTest {
     @Transactional
     @DirtiesContext
     public void testDelete() {
-        assertEquals(12, noteService.count());
-        assertNotNull(noteService.findOne(1L));
+        assertEquals(12, noteDao.count());
+        assertNotNull(noteDao.findOne(1L));
 
-        noteService.delete(1L);
+        noteDao.delete(1L);
 
-        assertEquals(11, noteService.count());
-        assertNull(noteService.findOne(1L));
+        assertEquals(11, noteDao.count());
+        assertNull(noteDao.findOne(1L));
     }
+
 }
