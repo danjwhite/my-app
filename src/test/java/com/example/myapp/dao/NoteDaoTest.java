@@ -51,6 +51,7 @@ public class NoteDaoTest {
     @Test
     @Transactional
     @DirtiesContext
+    @SuppressWarnings("Duplicates")
     public void testAdd() {
         assertEquals(12, noteDao.count());
 
@@ -67,6 +68,7 @@ public class NoteDaoTest {
     @Test
     @Transactional
     @DirtiesContext
+    @SuppressWarnings("Duplicates")
     public void testUpdate() {
         assertEquals(12, noteDao.count());
 
@@ -91,6 +93,7 @@ public class NoteDaoTest {
     @Test
     @Transactional
     @DirtiesContext
+    @SuppressWarnings("Duplicates")
     public void testDelete() {
         assertEquals(12, noteDao.count());
         assertNotNull(noteDao.findOne(1L));
