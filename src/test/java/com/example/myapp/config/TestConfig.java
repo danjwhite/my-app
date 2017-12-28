@@ -42,6 +42,7 @@ public class TestConfig {
     }
 
     @Bean
+    @SuppressWarnings("Duplicates")
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
         factoryBean.setDataSource(dataSource());
