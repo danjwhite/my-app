@@ -89,7 +89,7 @@ public class NoteControllerTest {
     public void testGetNote() throws Exception {
 
         // Create expected object.
-        Note expectedNote = new Note(1L, new Date(), "Title", "Body");
+        Note expectedNote = noteService.findOne(1L);
 
         // Perform GET request on MockMvc with path variable and assert expectations.
         mockMvc.perform(get("/note/view?noteId=1"))
