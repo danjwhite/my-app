@@ -65,10 +65,10 @@
             </table>
         </div>
         <form method="get">
-            <input type="button" onClick="window.location.href='<c:url value="/note/entries/recent"/>'"
+            <input type="button" onClick="window.location.href='<c:url value="/notes/view/entries"/>'"
                    value="View Notes">
             &nbsp;
-            <input type="button" onClick="window.location.href='<c:url value="/note/add"/>'" value="Add Another">
+            <input type="button" onClick="window.location.href='<c:url value="/notes/add"/>'" value="Add Another">
         </form>
     </div>
 
