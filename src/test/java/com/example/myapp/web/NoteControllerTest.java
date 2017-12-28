@@ -91,7 +91,7 @@ public class NoteControllerTest {
         Note expectedNote = new Note(1L, new Date(), "Title", "Body");
 
         // Perform GET request on MockMvc with path variable and assert expectations.
-        mockMvc.perform(get("/note/1"))
+        mockMvc.perform(get("/note/view?noteId=1"))
                 .andExpect(view().name("note"))
                 .andExpect(model().attributeExists("note"))
                 .andExpect(model().attribute("note", expectedNote));

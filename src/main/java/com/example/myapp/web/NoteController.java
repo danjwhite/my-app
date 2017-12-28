@@ -43,8 +43,8 @@ public class NoteController {
         return "notes";
     }
 
-    @RequestMapping(value = "/{noteId}", method = RequestMethod.GET)
-    public String getNote(@PathVariable("noteId") long noteId, Model model) {
+    @RequestMapping(value = "/view", method = RequestMethod.GET)
+    public String getNote(@RequestParam(value = "noteId") long noteId, Model model) {
         model.addAttribute("note", noteService.findOne(noteId));
 
         return "note";
