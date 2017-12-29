@@ -10,6 +10,7 @@ import com.example.myapp.web.NoteController;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
@@ -24,6 +25,7 @@ import java.util.Properties;
 
 @Configuration
 @PropertySource("classpath:app.properties")
+@ComponentScan(basePackages = {"com.example.myapp.dao", "com.example.myapp.service", "com.example.myapp.web"})
 @EnableTransactionManagement
 public class TestConfig {
 
