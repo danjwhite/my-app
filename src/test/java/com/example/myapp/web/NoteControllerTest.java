@@ -29,6 +29,7 @@ import com.example.myapp.domain.Note;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfig.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class NoteControllerTest {
 
     @Autowired
@@ -129,7 +130,6 @@ public class NoteControllerTest {
     }
 
     @Test
-    @DirtiesContext
     public void testAddNote() throws Exception {
 
         // Perform POST request to add a note on MockMvc and assert expectations.
@@ -140,7 +140,6 @@ public class NoteControllerTest {
     }
 
     @Test
-    @DirtiesContext
     public void testEditNote() throws Exception {
 
         // Perform POST request to edit a note on MockMvc and assert expectations.
@@ -152,7 +151,6 @@ public class NoteControllerTest {
     }
 
     @Test
-    @DirtiesContext
     public void testDeleteNote() throws Exception {
 
         // Assert note count before delete.

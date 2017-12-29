@@ -16,6 +16,7 @@ import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {TestConfig.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class NoteDaoTest {
 
     @Autowired
@@ -50,7 +51,6 @@ public class NoteDaoTest {
 
     @Test
     @Transactional
-    @DirtiesContext
     @SuppressWarnings("Duplicates")
     public void testAdd() {
         assertEquals(12, noteDao.count());
@@ -67,7 +67,6 @@ public class NoteDaoTest {
 
     @Test
     @Transactional
-    @DirtiesContext
     @SuppressWarnings("Duplicates")
     public void testUpdate() {
         assertEquals(12, noteDao.count());
@@ -92,7 +91,6 @@ public class NoteDaoTest {
 
     @Test
     @Transactional
-    @DirtiesContext
     @SuppressWarnings("Duplicates")
     public void testDelete() {
         assertEquals(12, noteDao.count());
