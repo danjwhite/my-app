@@ -105,18 +105,18 @@ input[type="text"] {
     border: 1px groove black;
 }
 
-#note-form-table {
+.form-table {
     border-collapse: collapse;
 }
 
-#note-form-table td.table-left {
+.form-table td.table-left {
     vertical-align: top;
     padding-top: 10px;
     padding-bottom: 10px;
     padding-right: 10px;
 }
 
-#note-form-table td.table-right {
+.form-table td.table-right {
     padding-top: 10px;
     padding-bottom: 10px;
 }
@@ -129,11 +129,11 @@ label.error-field-label {
     color: #E80000;
 }
 
-#note-form-container {
+.form-container {
     width: 550px;
 }
 
-#note-form-table #note-form-buttons {
+.form-table .form-buttons {
     padding-top: 5px;
 }
 

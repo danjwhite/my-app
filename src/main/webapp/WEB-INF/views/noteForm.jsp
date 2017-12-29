@@ -34,11 +34,11 @@
                 <h3>Edit Note</h3>
             </c:when>
         </c:choose>
-        <div id="note-form-container">
+        <div class="form-container">
             <sf:form method="post" name="note-form" commandName="note">
                 <sf:hidden path="id"/>
                 <sf:errors path="*" element="div" cssClass="error-message"/>
-                <table id="note-form-table">
+                <table class="form-table">
                     <tr>
                         <td class="table-left">
                             <sf:label path="title" cssErrorClass="error-field-label">Title:</sf:label>
@@ -71,7 +71,7 @@
                     </tr>
                     <tr>
                         <td class="table-left"></td>
-                        <td class="table-right" id="note-form-buttons">
+                        <td class="table-right form-buttons">
                             <input type="submit" value="Save">
                             &nbsp;
                             <input type="button" onClick="history.back()" value="Cancel">
