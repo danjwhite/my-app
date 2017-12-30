@@ -70,7 +70,7 @@ p {
     color: white;
 }
 
-table.note-list-table {
+table.text-table {
     padding-left: 5px;
     margin-top: 10px;
     margin-bottom: 5px;
@@ -78,19 +78,19 @@ table.note-list-table {
 
 }
 
-th.note-list-table-header {
+th.text-table-header {
     font-weight: bold;
     margin-right: 5px;
     width: 40px;
 }
 
-th.note-list-table-header, td.note-list-table-data {
+th.text-table-header, td.text-table-data {
     font-size: 14px;
     padding: 5px;
     float: left;
 }
 
-td.note-list-table-option {
+td.text-table-option {
     font-size: 14px;
     padding: 0px 5px 0px 5px;
     float: left;
@@ -201,7 +201,7 @@ p, #filter-description {
     left: 50%;
 }
 
-.note-container {
+.box-container {
     border: 1px solid black;
     border-radius: 4px;
     margin-top: 15px;

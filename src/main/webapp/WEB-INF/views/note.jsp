@@ -42,25 +42,25 @@
                 <h3>View Note</h3>
             </c:otherwise>
         </c:choose>
-        <div class="note-container">
-            <table class="note-list-table">
+        <div class="box-container">
+            <table class="text-table">
                 <tr>
-                    <th class="note-list-table-header">Title:</th>
-                    <td class="note-list-table-data"><c:out value="${note.title}"/></td>
+                    <th class="text-table-header">Title:</th>
+                    <td class="text-table-data"><c:out value="${note.title}"/></td>
                 </tr>
                 <tr>
-                    <th class="note-list-table-header">Date:</th>
-                    <td class="note-list-table-data"><c:out value="${note.createdAt}"/></td>
+                    <th class="text-table-header">Date:</th>
+                    <td class="text-table-data"><c:out value="${note.createdAt}"/></td>
                 </tr>
                 <tr>
-                    <th class="note-list-table-header">Body:</th>
-                    <td class="note-list-table-data"><c:out value="${note.body}"/></td>
+                    <th class="text-table-header">Body:</th>
+                    <td class="text-table-data"><c:out value="${note.body}"/></td>
                 </tr>
             </table>
-            <table class="note-list-table">
+            <table class="text-table">
                 <tr>
-                    <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/notes/edit?noteId=${note.id}">Edit</a></td>
-                    <td class="note-list-table-option"><a href="${pageContext.request.contextPath}/notes/delete?noteId=${note.id}">Delete</a></td>
+                    <td class="text-table-option"><a href="${pageContext.request.contextPath}/notes/edit?noteId=${note.id}">Edit</a></td>
+                    <td class="text-table-option"><a href="${pageContext.request.contextPath}/notes/delete?noteId=${note.id}">Delete</a></td>
                 </tr>
             </table>
         </div>
