@@ -19,8 +19,17 @@
             <h1>My Spring App</h1>
         </div>
         <nav id="header-nav">
-            <a href="<c:url value="/"/>">Home</a>
-            <a class="active" href="<c:url value="/notes/view/entries"/>">Notes</a>
+            <ul>
+                <li><a href="<c:url value="/"/>">Home</a></li>
+                <li><a class="active" href="<c:url value="/notes/view/entries"/>">Notes</a></li>
+                <li>
+                    <a href="<c:url value="#"/>">Account</a>
+                    <ul>
+                        <li><a href="<c:url value="#"/>">Log Out</a></li>
+                        <li><a href="<c:url value="#"/>">Settings</a></li>
+                    </ul>
+                </li>
+            </ul>
         </nav>
     </div>
 
@@ -49,7 +58,8 @@
                                     <sf:input path="title" cssErrorClass="error-field-input" size="50"/>
                                 </c:when>
                                 <c:when test="${formType == 'edit'}">
-                                    <sf:input path="title" cssErrorClass="error-field-input" size="50" value="${note.title}"/>
+                                    <sf:input path="title" cssErrorClass="error-field-input" size="50"
+                                              value="${note.title}"/>
                                 </c:when>
                             </c:choose>
                         </td>
@@ -64,7 +74,8 @@
                                     <sf:textarea path="body" cssErrorClass="error-field-input" cols="80" rows="15"/>
                                 </c:when>
                                 <c:when test="${formType == 'edit'}">
-                                    <sf:textarea path="body" cssErrorClass="error-field-input" cols="80" rows="15" value="${note.body}"/>
+                                    <sf:textarea path="body" cssErrorClass="error-field-input" cols="80" rows="15"
+                                                 value="${note.body}"/>
                                 </c:when>
                             </c:choose>
                         </td>

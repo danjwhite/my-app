@@ -18,8 +18,17 @@
             <h1>My Spring App</h1>
         </div>
         <nav id="header-nav">
-            <a href="<c:url value="/"/>">Home</a>
-            <a class="active" href="<c:url value="/notes/view/entries"/>">Notes</a>
+            <ul>
+                <li><a href="<c:url value="/"/>">Home</a></li>
+                <li><a class="active" href="<c:url value="/notes/view/entries"/>">Notes</a></li>
+                <li>
+                    <a href="<c:url value="#"/>">Account</a>
+                    <ul>
+                        <li><a href="<c:url value="#"/>">Log Out</a></li>
+                        <li><a href="<c:url value="#"/>">Settings</a></li>
+                    </ul>
+                </li>
+            </ul>
         </nav>
     </div>
 
@@ -59,8 +68,10 @@
             </table>
             <table class="text-table">
                 <tr>
-                    <td class="text-table-option"><a href="${pageContext.request.contextPath}/notes/edit?noteId=${note.id}">Edit</a></td>
-                    <td class="text-table-option"><a href="${pageContext.request.contextPath}/notes/delete?noteId=${note.id}">Delete</a></td>
+                    <td class="text-table-option"><a
+                            href="${pageContext.request.contextPath}/notes/edit?noteId=${note.id}">Edit</a></td>
+                    <td class="text-table-option"><a
+                            href="${pageContext.request.contextPath}/notes/delete?noteId=${note.id}">Delete</a></td>
                 </tr>
             </table>
         </div>

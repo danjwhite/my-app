@@ -19,8 +19,17 @@
             <h1>My Spring App</h1>
         </div>
         <nav id="header-nav">
-            <a href="<c:url value="/"/>">Home</a>
-            <a class="active" href="<c:url value="/notes/view/entries"/>">Notes</a>
+            <ul>
+                <li><a href="<c:url value="/"/>">Home</a></li>
+                <li><a class="active" href="<c:url value="/notes/view/entries"/>">Notes</a></li>
+                <li>
+                    <a href="<c:url value="#"/>">Account</a>
+                    <ul>
+                        <li><a href="<c:url value="#"/>">Log Out</a></li>
+                        <li><a href="<c:url value="#"/>">Settings</a></li>
+                    </ul>
+                </li>
+            </ul>
         </nav>
     </div>
 
@@ -50,13 +59,15 @@
                             <c:choose>
                                 <c:when test="${display == 'recent' && fn:length(notes) > 0}">
                                     <input type="button"
-                                           onClick="window.location.href='<c:url value="/notes/view/entries?display=all"/>'"
+                                           onClick="window.location.href='<c:url
+                                                   value="/notes/view/entries?display=all"/>'"
                                            value="Show All">
                                     &nbsp;
                                 </c:when>
                                 <c:when test="${display == 'all' && fn:length(notes) > 0}">
                                     <input type="button"
-                                           onClick="window.location.href='<c:url value="/notes/view/entries?display=recent"/>'"
+                                           onClick="window.location.href='<c:url
+                                                   value="/notes/view/entries?display=recent"/>'"
                                            value="Show Recent">
                                     &nbsp;
                                 </c:when>
@@ -86,9 +97,13 @@
                 </table>
                 <table class="text-table">
                     <tr>
-                        <td class="text-table-option"><a href="${pageContext.request.contextPath}/notes/view/entry?noteId=${note.id}">View</a></td>
-                        <td class="text-table-option"><a href="${pageContext.request.contextPath}/notes/edit?noteId=${note.id}">Edit</a></td>
-                        <td class="text-table-option"><a href="${pageContext.request.contextPath}/notes/delete?noteId=${note.id}">Delete</a></td>
+                        <td class="text-table-option"><a
+                                href="${pageContext.request.contextPath}/notes/view/entry?noteId=${note.id}">View</a>
+                        </td>
+                        <td class="text-table-option"><a
+                                href="${pageContext.request.contextPath}/notes/edit?noteId=${note.id}">Edit</a></td>
+                        <td class="text-table-option"><a
+                                href="${pageContext.request.contextPath}/notes/delete?noteId=${note.id}">Delete</a></td>
                     </tr>
                 </table>
             </div>

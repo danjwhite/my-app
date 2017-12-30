@@ -46,28 +46,70 @@ p {
     float: left;
 }
 
-#header-nav {
-    overflow: hidden;
-    background-color: #136854;
+#header-nav ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    background: #136854;
+    height: 36px;
 }
 
-#header-nav a {
+#header-nav ul li {
     float: left;
-    color: #F2F2F2;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
+    position: relative;
     font-size: 16px;
-}
-
-#header-nav a:hover {
-    background-color: #DDD;
-    color: black;
 }
 
 #header-nav a.active {
     background-color: #4CAF50;
+}
+
+#header-nav a:link, #header-nav a:visited {
+    text-decoration: none;
     color: white;
+}
+
+#header-nav ul li a, #header-nav ul li a:visited {
+    display: block;
+    color: white;
+    width: 104px;
+    height: auto;
+    line-height: 16px;
+    padding: 10px;
+    text-align:center;
+}
+
+#header-nav ul li a:hover {
+    display: block;
+    color: black;
+    background-color: #DDD;
+    line-height: 16px;
+    padding: 10px;
+}
+
+#header-nav ul li ul, #header-nav ul li:hover ul li ul {
+    display: none;
+}
+
+#header-nav ul li:hover ul {
+    display:block;
+    position:absolute;
+    top:36px;
+    left:0;
+    height:auto;
+}
+
+#header-nav ul li:hover ul li a {
+    display:block;
+    text-align:left;
+    border-bottom:1px solid #FFF;
+}
+
+#header-nav ul li:hover ul li:hover ul {
+    display:block;
+    position:absolute;
+    left:124px;
+    top:0;
 }
 
 table.text-table {
