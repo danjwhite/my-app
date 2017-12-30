@@ -41,10 +41,10 @@
             <column name="last_updated" type="TIMESTAMP">
                 <constraints nullable="true"/>
             </column>
-            -->
             <column name="user_id" type="INT UNSIGNED">
                 <constraints nullable="false"/>
             </column>
+            -->
             <column name="title" type="VARCHAR(140)">
                 <constraints nullable="false"/>
             </column>
