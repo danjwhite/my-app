@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Change Password</title>
+    <title>Edit Account Info</title>
     <link href="${pageContext.request.contextPath}/resources/styles/main.css" rel="stylesheet" type="text/css">
 </head>
 <body>
@@ -35,33 +35,25 @@
 
     <!-------------------- Begin Body -------------------->
     <div id="body">
-        <h3>Change Password</h3>
+        <h3>Edit Account Info</h3>
         <div class="form-container">
             <sf:form method="post" name="password-form" commandName="user">
                 <sf:errors path="*" element="div" cssClass="error-message"/>
                 <table class="form-table">
                     <tr>
                         <td class="table-left">
-                            <sf:label path="password" cssErrorClass="error-field-label">Current Password:</sf:label>
+                            <sf:label path="firstName" cssErrorClass="error-field-label">First Name:</sf:label>
                         </td>
                         <td class="table-right">
-                            <sf:input path="password" cssErrorClass="error-field-input" size="30"/>
+                            <sf:input path="firstName" cssErrorClass="error-field-input" size="30"/>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-left">
-                            <sf:label path="newPassword" cssErrorClass="error-field-label">New Password</sf:label>
+                            <sf:label path="lastName" cssErrorClass="error-field-label">Last Name:</sf:label>
                         </td>
                         <td class="table-right">
-                            <sf:input path="newPassword" cssErrorClass="error-field-input" size="30"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-left">
-                            <sf:label path="confirmNewPassword" cssErrorClass="error-field-label">Confirm New Password</sf:label>
-                        </td>
-                        <td class="table-right">
-                            <sf:input path="confirmNewPassword" cssErrorClass="error-field-input" size="30"/>
+                            <sf:input path="lastName" cssErrorClass="error-field-input" size="30"/>
                         </td>
                     </tr>
                     <tr>
