@@ -78,7 +78,7 @@
                         <td class="table-right form-buttons">
                             <input type="submit" value="Register">
                             &nbsp;
-                            <input type="button" onClick="" value="Cancel">
+                            <input type="button" onClick="history.back()" value="Cancel">
                         </td>
                     </tr>
                 </table>
