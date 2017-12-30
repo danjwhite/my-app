@@ -78,16 +78,24 @@ table.text-table {
 
 }
 
+th.account-table-header {
+    width: 80px;
+}
+
+th.note-table-header {
+    width: 40px;
+}
+
 th.text-table-header {
     font-weight: bold;
     margin-right: 5px;
-    width: 40px;
 }
 
 th.text-table-header, td.text-table-data {
     font-size: 14px;
     padding: 5px;
     float: left;
+    text-align: left;
 }
 
 td.text-table-option {

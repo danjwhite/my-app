@@ -45,15 +45,15 @@
         <div class="box-container">
             <table class="text-table">
                 <tr>
-                    <th class="text-table-header">Title:</th>
+                    <th class="text-table-header note-table-header">Title:</th>
                     <td class="text-table-data"><c:out value="${note.title}"/></td>
                 </tr>
                 <tr>
-                    <th class="text-table-header">Date:</th>
+                    <th class="text-table-header note-table-header">Date:</th>
                     <td class="text-table-data"><c:out value="${note.createdAt}"/></td>
                 </tr>
                 <tr>
-                    <th class="text-table-header">Body:</th>
+                    <th class="text-table-header note-table-header">Body:</th>
                     <td class="text-table-data"><c:out value="${note.body}"/></td>
                 </tr>
             </table>
