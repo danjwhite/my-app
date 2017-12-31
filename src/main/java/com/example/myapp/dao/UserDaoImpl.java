@@ -6,9 +6,11 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class UserDaoImpl implements IUserDao {
 
     private SessionFactory sessionFactory;
@@ -17,7 +19,7 @@ public class UserDaoImpl implements IUserDao {
     public UserDaoImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
-    
+
     @Override
     public User findById(long id) {
         return currentSession().get(User.class, id);
