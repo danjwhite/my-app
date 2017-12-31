@@ -3,17 +3,16 @@
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
+    <!-- Create user table -->
     <changeSet id="1.0_create_user_table" author="dwhite">
         <createTable tableName="user">
-            <column autoIncrement="true" name="id" type="INT UNSIGNED">
+            <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true"/>
             </column>
             <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="last_updated" type="TIMESTAMP">
-                <constraints nullable="true"/>
-            </column>
+            <column name="last_updated" type="TIMESTAMP"/>
             <column name="username" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
@@ -29,22 +28,106 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="1.1_create_note_table" author="dwhite">
-        <createTable tableName="note">
-            <column autoIncrement="true" name="id" type="INT UNSIGNED">
+    <!-- Create user.username unique constraint -->
+    <changeSet id="1.1_create_user_username_unique_constraint" author="dwhite">
+        <addUniqueConstraint columnNames="username" constraintName="username" tableName="user"/>
+    </changeSet>
+
+    <!-- Create role table -->
+    <changeSet id="1.2_create_role_table" author="dwhite">
+        <createTable tableName="role">
+            <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true"/>
             </column>
             <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <!--
-            <column name="last_updated" type="TIMESTAMP">
-                <constraints nullable="true"/>
-            </column>
-            <column name="user_id" type="INT UNSIGNED">
+            <column name="last_updated" type="TIMESTAMP"/>
+            <column name="type" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            -->
+        </createTable>
+    </changeSet>
+
+    <!-- Create role.type unique constraint -->
+    <changeSet id="1.3_create_role_type_unique_constraint" author="dwhite">
+        <addUniqueConstraint columnNames="type" constraintName="type" tableName="role"/>
+    </changeSet>
+
+    <!-- Insert role types -->
+    <changeSet id="1.4_insert_role_type_values" author="dwhite">
+        <insert tableName="role">
+            <column name="type" value="USER"/>
+        </insert>
+        <insert tableName="role">
+            <column name="type" value="ADMIN"/>
+        </insert>
+    </changeSet>
+
+    <!-- Create user_role table -->
+    <changeSet id="1.5_create_user_role_table" author="dwhite">
+        <createTable tableName="user_role">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="TIMESTAMP"/>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create user_role.user_id FK -->
+    <changeSet id="1.6_create_user_role_user_fk" author="dwhite">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_role" constraintName="fk_user_role_user" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="user"/>
+    </changeSet>
+
+    <!-- Create user_role.role_id FK -->
+    <changeSet id="1.7_create_user_role_role_fk" author="dwhite">
+        <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="user_role" constraintName="fk_user_role_role" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="role"/>
+    </changeSet>
+
+    <!-- Create persistent_login table -->
+    <changeSet id="1.8_create_persistent_login_table" author="dwhite">
+        <createTable tableName="persistent_login">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="TIMESTAMP"/>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="series" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="token" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="last_used" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create note table -->
+    <changeSet id="1.9_create_note_table" author="dwhite">
+        <createTable tableName="note">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints primaryKey="true"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated" type="TIMESTAMP"/>
             <column name="title" type="VARCHAR(140)">
                 <constraints nullable="false"/>
             </column>
@@ -54,11 +137,4 @@
         </createTable>
     </changeSet>
 
-    <!--
-    <changeSet id="1.2_add_fk_note_user" author="dwhite">
-        <addForeignKeyConstraint baseTableName="note" baseColumnNames="user_id" constraintName="fk_note_user"
-                                 referencedTableName="user"
-                                 referencedColumnNames="id"/>
-    </changeSet>
-    -->
 </databaseChangeLog>
