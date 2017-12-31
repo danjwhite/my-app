@@ -1,46 +1,55 @@
 package com.example.myapp.domain;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.validator.constraints.NotBlank;
+
 import javax.persistence.*;
-import java.util.Date;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "created_at", updatable = false)
-    private Date createdAt;
-
-    @Column(name = "last_updated")
-    private Date lastUpdated;
-
-    @Column(name = "username")
+    @NotBlank
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
-    @Column(name = "password")
+    @NotBlank
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "first_name")
+    @NotBlank
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @NotBlank
+    @Column(name = "last_name", nullable = false)
     private String lastName;
+
+    @NotBlank
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_role",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    private Set<Role> roles = new HashSet<Role>();
 
     public User() {
     }
 
-    public User(Date createdAt, String username, String password, String firstName, String lastName) {
-        this(null, createdAt, null, username, password, firstName, lastName);
+    public User(String username, String password, String firstName, String lastName) {
+        this(null, username, password, firstName, lastName);
     }
 
-    public User(Long id, Date createdAt, Date lastUpdated, String username, String password, String firstName, String lastName) {
+    public User(Long id, String username, String password, String firstName, String lastName) {
         this.id = id;
-        this.createdAt = createdAt;
-        this.lastUpdated = lastUpdated;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -53,22 +62,6 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(Date lastUpdated) {
-        this.lastUpdated = lastUpdated;
     }
 
     public String getUsername() {
@@ -101,5 +94,23 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    @Override
+    public boolean equals(Object that) {
+        return EqualsBuilder.reflectionEquals(this, that, "id", "createdAt");
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this, "id", "createdAt");
     }
 }
