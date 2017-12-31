@@ -32,8 +32,8 @@ public class NoteServiceImpl implements INoteService {
 
     @Transactional(readOnly = true)
     @Override
-    public Note findOne(long id) {
-        return noteDao.findOne(id);
+    public Note findById(long id) {
+        return noteDao.findById(id);
     }
 
     @Transactional

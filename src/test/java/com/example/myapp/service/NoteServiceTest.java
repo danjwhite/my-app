@@ -43,7 +43,7 @@ public class NoteServiceTest {
     @Test
     @Transactional
     public void testFindOne() {
-        Note note = noteService.findOne(1L);
+        Note note = noteService.findById(1L);
         assertEquals(1L, note.getId().longValue());
         assertEquals("Title", note.getTitle());
         assertEquals("Body", note.getBody());
@@ -71,7 +71,7 @@ public class NoteServiceTest {
     public void testUpdate() {
         assertEquals(12, noteService.count());
 
-        Note originalNote = noteService.findOne(1L);
+        Note originalNote = noteService.findById(1L);
         Date originalCreatedAt = originalNote.getCreatedAt();
         String originalTitle = originalNote.getTitle();
         String originalBody = originalNote.getBody();
@@ -80,7 +80,7 @@ public class NoteServiceTest {
         originalNote.setBody("New Body");
         noteService.update(originalNote);
 
-        Note updatedNote = noteService.findOne(1L);
+        Note updatedNote = noteService.findById(1L);
 
         assertEquals(12, noteService.count());
         assertEquals(1L, updatedNote.getId().longValue());
@@ -94,11 +94,11 @@ public class NoteServiceTest {
     @SuppressWarnings("Duplicates")
     public void testDelete() {
         assertEquals(12, noteService.count());
-        assertNotNull(noteService.findOne(1L));
+        assertNotNull(noteService.findById(1L));
 
         noteService.delete(1L);
 
         assertEquals(11, noteService.count());
-        assertNull(noteService.findOne(1L));
+        assertNull(noteService.findById(1L));
     }
 }

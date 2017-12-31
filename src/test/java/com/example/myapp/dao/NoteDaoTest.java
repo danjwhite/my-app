@@ -43,7 +43,7 @@ public class NoteDaoTest {
     @Test
     @Transactional
     public void testFindOne() {
-        Note note = noteDao.findOne(1L);
+        Note note = noteDao.findById(1L);
         assertEquals(1L, note.getId().longValue());
         assertEquals("Title", note.getTitle());
         assertEquals("Body", note.getBody());
@@ -71,7 +71,7 @@ public class NoteDaoTest {
     public void testUpdate() {
         assertEquals(12, noteDao.count());
 
-        Note originalNote = noteDao.findOne(1L);
+        Note originalNote = noteDao.findById(1L);
         Date originalCreatedAt = originalNote.getCreatedAt();
         String originalTitle = originalNote.getTitle();
         String originalBody = originalNote.getBody();
@@ -80,7 +80,7 @@ public class NoteDaoTest {
         originalNote.setBody("New Body");
         noteDao.update(originalNote);
 
-        Note updatedNote = noteDao.findOne(1L);
+        Note updatedNote = noteDao.findById(1L);
 
         assertEquals(12, noteDao.count());
         assertEquals(1L, updatedNote.getId().longValue());
@@ -94,12 +94,12 @@ public class NoteDaoTest {
     @SuppressWarnings("Duplicates")
     public void testDelete() {
         assertEquals(12, noteDao.count());
-        assertNotNull(noteDao.findOne(1L));
+        assertNotNull(noteDao.findById(1L));
 
         noteDao.delete(1L);
 
         assertEquals(11, noteDao.count());
-        assertNull(noteDao.findOne(1L));
+        assertNull(noteDao.findById(1L));
     }
 
 }

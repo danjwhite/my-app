@@ -10,7 +10,7 @@ public interface INoteService {
 
     List<Note> findRecent();
 
-    Note findOne(long id);
+    Note findById(long id);
 
     Note add(Note note);
 

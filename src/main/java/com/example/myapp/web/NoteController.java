@@ -60,7 +60,7 @@ public class NoteController {
 
     @RequestMapping(value = "/view/entry", method = RequestMethod.GET)
     public String getNote(@RequestParam(value = "noteId") long noteId, Model model) {
-        model.addAttribute("note", noteService.findOne(noteId));
+        model.addAttribute("note", noteService.findById(noteId));
 
         return "note";
     }
@@ -87,7 +87,7 @@ public class NoteController {
     
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String editNote(@RequestParam(value = "noteId") long noteId, Model model) {
-        Note note = noteService.findOne(noteId);
+        Note note = noteService.findById(noteId);
         model.addAttribute("note", note);
         model.addAttribute("formType", "edit");
 

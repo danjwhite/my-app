@@ -91,7 +91,7 @@ public class NoteControllerTest {
     public void testGetNote() throws Exception {
 
         // Create expected object.
-        Note expectedNote = noteService.findOne(1L);
+        Note expectedNote = noteService.findById(1L);
 
         // Perform GET request on MockMvc with path variable and assert expectations.
         mockMvc.perform(get("/notes/view/entry?noteId=1"))
@@ -112,7 +112,7 @@ public class NoteControllerTest {
     public void shouldShowNoteFormForEditing() throws Exception {
 
         // Get the expected model attribute object.
-        Note note = noteService.findOne(1L);
+        Note note = noteService.findById(1L);
 
         // Get the expected properties of the attribute object.
         Date createdAt = note.getCreatedAt();

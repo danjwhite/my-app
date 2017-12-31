@@ -8,7 +8,6 @@ import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class NoteDaoImpl implements INoteDao {
     }
 
     @Override
-    public Note findOne(long id) {
+    public Note findById(long id) {
         return currentSession().get(Note.class, id);
     }
 
@@ -63,7 +62,7 @@ public class NoteDaoImpl implements INoteDao {
 
     @Override
     public void delete(long id) {
-        currentSession().delete(findOne(id));
+        currentSession().delete(findById(id));
     }
 
     private Session currentSession() {
