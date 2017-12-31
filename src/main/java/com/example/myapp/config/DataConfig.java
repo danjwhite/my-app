@@ -20,7 +20,7 @@ import com.example.myapp.domain.Note;
 @Configuration
 @EnableTransactionManagement
 @PropertySource("classpath:app.properties")
-@ComponentScan(basePackages = {"com.example.myapp.dao", "com.example.myapp.service"})
+@ComponentScan(basePackages = {"com.example.myapp"})
 public class DataConfig {
 
     @Value("${db.driver}")
