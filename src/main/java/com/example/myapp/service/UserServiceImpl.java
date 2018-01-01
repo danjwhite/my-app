@@ -3,11 +3,12 @@ package com.example.myapp.service;
 import com.example.myapp.dao.IUserDao;
 import com.example.myapp.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
+@Service
 public class UserServiceImpl implements IUserService {
 
     private IUserDao userDao;
