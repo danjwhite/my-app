@@ -1,0 +1,49 @@
+package com.example.myapp.service;
+
+import com.example.myapp.domain.Role;
+import com.example.myapp.domain.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class UserDetailsServiceImpl implements UserDetailsService {
+
+    private IUserService userService;
+
+    @Autowired
+    public UserDetailsServiceImpl(IUserService userService) {
+        this.userService = userService;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userService.findByUsername(username);
+
+        if (user == null)
+            throw new UsernameNotFoundException("Username not found");
+
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+                true, true, true, true, getGrantedAuthorities(user));
+    }
+
+
+    private List<GrantedAuthority> getGrantedAuthorities(User user) {
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+
+        for (Role role : user.getRoles()) {
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + role.getType()));
+        }
+
+        return grantedAuthorities;
+    }
+}
