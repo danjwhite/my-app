@@ -25,6 +25,9 @@
             <column name="last_name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
+            <column defaultValueNumeric="1" name="active" type="INT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
