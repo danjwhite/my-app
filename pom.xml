@@ -75,7 +75,7 @@
             <id>dev</id>
             <properties>
                 <env>dev</env>
-                <pom.db.driver>com.mysql.cj.jdbc.Driver</pom.db.driver>
+                <pom.db.driver>com.mysql.jdbc.Driver</pom.db.driver>
                 <pom.db.url>jdbc:mysql://localhost:3306/myapp_dev?nullNamePatternMatchesAll=true</pom.db.url>
                 <pom.db.username>root</pom.db.username>
                 <pom.db.password>Apple2012</pom.db.password>
@@ -89,7 +89,7 @@
             <id>prod</id>
             <properties>
                 <env>prod</env>
-                <pom.db.driver>com.mysql.cj.jdbc.Driver</pom.db.driver>
+                <pom.db.driver>com.mysql.jdbc.Driver</pom.db.driver>
                 <pom.db.url>jdbc:mysql://localhost:3306/myapp_prod?nullNamePatternMatchesAll=true</pom.db.url>
                 <pom.db.username>root</pom.db.username>
                 <pom.db.password>Apple2012</pom.db.password>
