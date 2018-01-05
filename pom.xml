@@ -111,33 +111,10 @@
 
         <!-- Plugins -->
         <plugins>
-
             <!-- Spring Boot Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-
-            <!-- Liquibase Plugin -->
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>3.5.3</version>
-                <configuration>
-                    <changeLogFile>${project.basedir}/src/main/resources/db.changelog.xml</changeLogFile>
-                    <driver>${pom.db.driver}</driver>
-                    <url>${pom.db.url}</url>
-                    <username>${pom.db.username}</username>
-                    <password>${pom.db.password}</password>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>update</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
