@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -33,10 +34,10 @@ import com.example.myapp.domain.Note;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class NoteControllerTest {
 
-    @Mock
+    @Autowired
     private NoteController noteController;
 
-    @Mock
+    @Autowired
     private INoteService noteService;
 
     private MockMvc mockMvc;

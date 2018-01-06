@@ -6,6 +6,7 @@ import com.example.myapp.domain.Note;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -20,7 +21,7 @@ import java.util.Date;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class NoteServiceTest {
 
-    @Mock
+    @Autowired
     INoteService noteService;
 
     @Test
