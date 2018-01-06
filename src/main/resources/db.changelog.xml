@@ -96,31 +96,6 @@
         <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="user_role" constraintName="fk_user_role_role" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="role"/>
     </changeSet>
 
-    <!-- Create persistent_login table -->
-    <changeSet id="1.8_create_persistent_login_table" author="dwhite">
-        <createTable tableName="persistent_login">
-            <column autoIncrement="true" name="id" type="INT">
-                <constraints primaryKey="true"/>
-            </column>
-            <column defaultValueComputed="CURRENT_TIMESTAMP" name="created_at" type="TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_updated" type="TIMESTAMP"/>
-            <column name="username" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="series" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="token" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column defaultValueComputed="CURRENT_TIMESTAMP" name="last_used" type="TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
     <!-- Create note table -->
     <changeSet id="1.9_create_note_table" author="dwhite">
         <createTable tableName="note">
