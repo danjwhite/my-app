@@ -77,37 +77,6 @@
         </dependency>
     </dependencies>
 
-    <!-- Profiles -->
-    <profiles>
-        <!-- Dev Profile -->
-        <profile>
-            <id>dev</id>
-            <properties>
-                <env>dev</env>
-                <pom.db.driver>com.mysql.jdbc.Driver</pom.db.driver>
-                <pom.db.url>jdbc:mysql://localhost:3306/myapp_dev?nullNamePatternMatchesAll=true</pom.db.url>
-                <pom.db.username>root</pom.db.username>
-                <pom.db.password>Apple2012</pom.db.password>
-                <pom.hibernate.showSql>true</pom.hibernate.showSql>
-                <pom.hibernate.formatSql>true</pom.hibernate.formatSql>
-            </properties>
-        </profile>
-        
-        <!-- Prod Profile -->
-        <profile>
-            <id>prod</id>
-            <properties>
-                <env>prod</env>
-                <pom.db.driver>com.mysql.jdbc.Driver</pom.db.driver>
-                <pom.db.url>jdbc:mysql://localhost:3306/myapp_prod?nullNamePatternMatchesAll=true</pom.db.url>
-                <pom.db.username>root</pom.db.username>
-                <pom.db.password>Apple2012</pom.db.password>
-                <pom.hibernate.showSql>true</pom.hibernate.showSql>
-                <pom.hibernate.formatSql>true</pom.hibernate.formatSql>
-            </properties>
-        </profile>
-    </profiles>
-
     <!-- Build -->
     <build>
         <!-- Resources -->
