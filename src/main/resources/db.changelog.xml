@@ -98,6 +98,11 @@
 
     <!-- Create note table -->
     <changeSet id="1.9_create_note_table" author="dwhite">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="note"/>
+            </not>
+        </preConditions>
         <createTable tableName="note">
             <column autoIncrement="true" name="id" type="INT">
                 <constraints primaryKey="true"/>
