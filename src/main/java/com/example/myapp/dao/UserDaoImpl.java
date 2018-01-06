@@ -1,38 +1,46 @@
 package com.example.myapp.dao;
 
 import com.example.myapp.domain.User;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
 public class UserDaoImpl implements IUserDao {
 
-    private SessionFactory sessionFactory;
+    private EntityManager entityManager;
 
     @Autowired
-    public UserDaoImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public UserDaoImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     @Override
     public User findById(long id) {
-        return currentSession().get(User.class, id);
+        return entityManager.find(User.class, id);
     }
 
     @Override
     public User findByUsername(String username) {
-        return currentSession().get(User.class, username);
+        return entityManager.find(User.class, username);
     }
 
     @Override
     public List<User> findAll() {
-        return (List<User>) userCriteria().list();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
+        Root<User> root = criteriaQuery.from(User.class);
+        criteriaQuery.select(root);
+        TypedQuery<User> typedQuery = entityManager.createQuery(criteriaQuery);
+
+        return typedQuery.getResultList();
     }
 
     @Override
@@ -42,30 +50,19 @@ public class UserDaoImpl implements IUserDao {
 
     @Override
     public User add(User user) {
-        Long id = (Long) currentSession().save(user);
-        user.setId(id);
+        entityManager.persist(user);
+        entityManager.flush();
 
         return user;
     }
 
     @Override
     public User update(User user) {
-        currentSession().update(user);
-
-        return user;
+        return entityManager.merge(user);
     }
 
     @Override
     public void delete(String username) {
-        currentSession().delete(findByUsername(username));
-    }
-
-    private Session currentSession() {
-        return sessionFactory.getCurrentSession();
-    }
-
-    private Criteria userCriteria() {
-        return currentSession().createCriteria(User.class)
-                .addOrder(Order.desc("id"));
+        entityManager.remove(findByUsername(username));
     }
 }

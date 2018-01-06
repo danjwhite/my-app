@@ -1,46 +1,44 @@
 package com.example.myapp.dao;
 
 import com.example.myapp.domain.Role;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
 public class RoleDaoImpl implements IRoleDao {
 
-    private SessionFactory sessionFactory;
+    private EntityManager entityManager;
 
     @Autowired
-    public RoleDaoImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public RoleDaoImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     @Override
     public Role findById(long id) {
-        return currentSession().get(Role.class, id);
+        return entityManager.find(Role.class, id);
     }
 
     @Override
     public Role findByType(String type) {
-        return currentSession().get(Role.class, type);
+        return entityManager.find(Role.class, type);
     }
 
     @Override
     public List<Role> findAll() {
-        return (List<Role>) roleCriteria().list();
-    }
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Role> criteriaQuery = criteriaBuilder.createQuery(Role.class);
+        Root<Role> root = criteriaQuery.from(Role.class);
+        criteriaQuery.select(root);
+        TypedQuery<Role> typedQuery = entityManager.createQuery(criteriaQuery);
 
-    private Session currentSession() {
-        return sessionFactory.getCurrentSession();
-    }
-
-    private Criteria roleCriteria() {
-        return currentSession().createCriteria(Role.class)
-                .addOrder(Order.desc("id"));
+        return typedQuery.getResultList();
     }
 }

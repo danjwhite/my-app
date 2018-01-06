@@ -1,24 +1,26 @@
 package com.example.myapp.dao;
 
 import com.example.myapp.domain.Note;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.Date;
 import java.util.List;
 
 @Repository
 public class NoteDaoImpl implements INoteDao {
 
-    private SessionFactory sessionFactory;
+    private EntityManager entityManager;
 
     @Autowired
-    public NoteDaoImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    public NoteDaoImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     @Override
@@ -28,49 +30,49 @@ public class NoteDaoImpl implements INoteDao {
 
     @Override
     public Note findById(long id) {
-        return currentSession().get(Note.class, id);
+        return entityManager.find(Note.class, id);
     }
 
 
     @Override
     public List<Note> findRecent() {
-        return (List<Note>) noteCriteria().setMaxResults(10).list();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Note> criteriaQuery = criteriaBuilder.createQuery(Note.class);
+        Root<Note> root = criteriaQuery.from(Note.class);
+        criteriaQuery.select(root);
+        TypedQuery<Note> typedQuery = entityManager.createQuery(criteriaQuery).setMaxResults(10);
+
+        return typedQuery.getResultList();
     }
 
     @Override
     public List<Note> findAll() {
-        return (List<Note>) noteCriteria().list();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Note> criteriaQuery = criteriaBuilder.createQuery(Note.class);
+        Root<Note> root = criteriaQuery.from(Note.class);
+        criteriaQuery.select(root);
+        TypedQuery<Note> typedQuery = entityManager.createQuery(criteriaQuery);
+
+        return typedQuery.getResultList();
     }
 
     @Override
     public Note add(Note note) {
 
         note.setCreatedAt(new Date());
-
-        Long id = (Long) currentSession().save(note);
-        note.setId(id);
+        entityManager.persist(note);
+        entityManager.flush();
 
         return note;
     }
 
     @Override
     public Note update(Note note) {
-        currentSession().update(note);
-
-        return note;
+        return entityManager.merge(note);
     }
 
     @Override
     public void delete(long id) {
-        currentSession().delete(findById(id));
-    }
-
-    private Session currentSession() {
-        return sessionFactory.getCurrentSession();
-    }
-
-    private Criteria noteCriteria() {
-        return currentSession().createCriteria(Note.class)
-                .addOrder(Order.desc("id"));
+        entityManager.remove(findById(id));
     }
 }
