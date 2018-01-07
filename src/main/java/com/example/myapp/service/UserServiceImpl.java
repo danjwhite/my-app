@@ -3,6 +3,7 @@ package com.example.myapp.service;
 import com.example.myapp.dao.IUserDao;
 import com.example.myapp.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,9 +14,12 @@ public class UserServiceImpl implements IUserService {
 
     private IUserDao userDao;
 
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Autowired
-    public UserServiceImpl(IUserDao userDao) {
+    public UserServiceImpl(IUserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDao = userDao;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -45,12 +49,19 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional
     public User add(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return userDao.add(user);
     }
 
     @Override
     @Transactional
     public User update(User user) {
+        User entity = userDao.findById(user.getId());
+
+        if (!entity.getPassword().equals(user.getPassword())) {
+            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        }
+
         return userDao.update(user);
     }
 
