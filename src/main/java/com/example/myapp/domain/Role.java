@@ -16,7 +16,7 @@ public class Role implements Serializable {
     private Integer Id;
 
     @Column(name = "type", unique = true, nullable = false)
-    private String type = RoleType.USER.getRoleType();
+    private String type;
 
     public Integer getId() {
         return Id;
