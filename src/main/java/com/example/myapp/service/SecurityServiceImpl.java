@@ -2,7 +2,9 @@ package com.example.myapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +17,9 @@ public class SecurityServiceImpl implements ISecurityService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
+    AuthenticationTrustResolver authenticationTrustResolver;
+
+    @Autowired
     private UserDetailsService userDetailsService;
 
     @Override
@@ -25,6 +30,12 @@ public class SecurityServiceImpl implements ISecurityService {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean isCurrentAuthenticationAnonymous() {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authenticationTrustResolver.isAnonymous(authentication);
     }
 
     @Override
