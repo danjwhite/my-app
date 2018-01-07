@@ -56,7 +56,7 @@ public class UserServiceImpl implements IUserService {
         User user = new User();
         user.setFirstName(userRegistrationDto.getFirstName());
         user.setLastName(userRegistrationDto.getLastName());
-        user.setUsername(userRegistrationDto.getUserName());
+        user.setUsername(userRegistrationDto.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(userRegistrationDto.getPassword()));
         user.setRoles(Arrays.asList(new Role("ROLE_USER")));
         return userDao.add(user);

@@ -36,7 +36,7 @@ public class UserRegistrationController {
     public String registerUser(@ModelAttribute("user") @Valid UserRegistrationDto userRegistrationDto,
                                BindingResult result,
                                RedirectAttributes redirectAttributes) {
-        User existing = userService.findByUsername(userRegistrationDto().getUserName());
+        User existing = userService.findByUsername(userRegistrationDto().getUsername());
         if (existing != null) {
             result.rejectValue("username", null, "There is already an account registered with this username");
         }
@@ -47,7 +47,7 @@ public class UserRegistrationController {
 
         Long userId = userService.add(userRegistrationDto).getId();
 
-        securityService.autoLogin(userRegistrationDto.getUserName(), userRegistrationDto.getPassword());
+        securityService.autoLogin(userRegistrationDto.getUsername(), userRegistrationDto.getPassword());
 
         redirectAttributes.addAttribute("userId", userId);
         redirectAttributes.addAttribute("confirmation", "created");
