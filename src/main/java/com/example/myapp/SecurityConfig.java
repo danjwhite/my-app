@@ -28,8 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     // TODO: Work out the details of this
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-
-    }
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//
+//    }
 }
