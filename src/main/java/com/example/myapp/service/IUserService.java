@@ -1,6 +1,7 @@
 package com.example.myapp.service;
 
 import com.example.myapp.domain.User;
+import com.example.myapp.dto.UserRegistrationDto;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ public interface IUserService {
 
     User findByUsername(String username);
 
-    User add(User user);
+    User add(UserRegistrationDto userRegistrationDto);
 
     User update(User user);
 

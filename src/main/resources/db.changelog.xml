@@ -60,10 +60,10 @@
     <!-- Insert role types -->
     <changeSet id="1.4_insert_role_type_values" author="dwhite">
         <insert tableName="role">
-            <column name="type" value="USER"/>
+            <column name="type" value="ROLE_USER"/>
         </insert>
         <insert tableName="role">
-            <column name="type" value="ADMIN"/>
+            <column name="type" value="ROLE_ADMIN"/>
         </insert>
     </changeSet>
 

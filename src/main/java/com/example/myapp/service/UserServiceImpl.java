@@ -1,12 +1,15 @@
 package com.example.myapp.service;
 
 import com.example.myapp.dao.IUserDao;
+import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
+import com.example.myapp.dto.UserRegistrationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -48,8 +51,14 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public User add(User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+    public User add(UserRegistrationDto userRegistrationDto) {
+
+        User user = new User();
+        user.setFirstName(userRegistrationDto.getFirstName());
+        user.setLastName(userRegistrationDto.getLastName());
+        user.setUsername(userRegistrationDto.getUserName());
+        user.setPassword(bCryptPasswordEncoder.encode(userRegistrationDto.getPassword()));
+        user.setRoles(Arrays.asList(new Role("ROLE_USER")));
         return userDao.add(user);
     }
 

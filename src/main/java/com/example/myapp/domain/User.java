@@ -6,8 +6,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collection;
 
 @Entity
 @Table(name = "user")
@@ -39,7 +38,7 @@ public class User implements Serializable {
     @JoinTable(name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id")})
-    private Set<Role> roles = new HashSet<Role>();
+    private Collection<Role> roles;
 
     public User() {
     }
@@ -96,11 +95,11 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
-    public Set<Role> getRoles() {
+    public Collection<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Collection<Role> roles) {
         this.roles = roles;
     }
 
