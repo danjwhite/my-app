@@ -2,6 +2,7 @@ package com.example.myapp.web;
 
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserRegistrationDto;
+import com.example.myapp.service.ISecurityService;
 import com.example.myapp.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,9 @@ public class UserRegistrationController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private ISecurityService securityService;
 
     @ModelAttribute("user")
     public UserRegistrationDto userRegistrationDto() {
@@ -42,6 +46,9 @@ public class UserRegistrationController {
         }
 
         Long userId = userService.add(userRegistrationDto).getId();
+
+        securityService.autoLogin(userRegistrationDto.getUserName(), userRegistrationDto.getPassword());
+
         redirectAttributes.addAttribute("userId", userId);
         redirectAttributes.addAttribute("confirmation", "created");
 
