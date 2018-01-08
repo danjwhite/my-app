@@ -32,7 +32,7 @@ public class UserRegistrationController {
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new UserRegistrationDto());
 
-        return "register";
+        return "registrationForm";
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -45,7 +45,7 @@ public class UserRegistrationController {
         }
 
         if (result.hasErrors()) {
-            return "register";
+            return "registrationForm";
         }
 
         Long userId = userService.add(userRegistrationDto).getId();
