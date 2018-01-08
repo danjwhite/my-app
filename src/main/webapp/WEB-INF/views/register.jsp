@@ -30,7 +30,7 @@
     <div id="body">
         <h3>Register</h3>
         <div class="form-container">
-            <sf:form method="post" name="register-form" commandName="user">
+            <sf:form method="post" name="register-form" modelAttribute="user">
                 <sf:errors path="*" element="div" cssClass="error-message"/>
                 <table class="form-table">
                     <tr>
