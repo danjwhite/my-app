@@ -46,7 +46,6 @@ public class NoteControllerTest {
     public void setup() {
 
         // Setup MockMvc to use NoteController.
-        MockitoAnnotations.initMocks(this);
         this.mockMvc = MockMvcBuilders.standaloneSetup(noteController).build();
     }
 
