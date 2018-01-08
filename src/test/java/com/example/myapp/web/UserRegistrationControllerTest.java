@@ -45,4 +45,17 @@ public class UserRegistrationControllerTest {
                 .andExpect(model().attribute("user", hasProperty("password", is(nullValue()))))
                 .andExpect(model().attribute("user", hasProperty("confirmPassword", is(nullValue()))));
     }
+
+    @Test
+    public void testRegisterUser() throws Exception {
+
+        // Perform POST request to register a user on MockMvc and assert expectations.
+        mockMvc.perform(post("/register")
+            .param("firstName", "John")
+            .param("lastName", "Smith")
+            .param("username", "jsmith")
+            .param("password", "Password123")
+            .param("confirmPassword", "Password123"))
+            .andExpect(status().isOk());
+    }
 }
