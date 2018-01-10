@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -29,7 +30,18 @@ public class UserDaoImpl implements IUserDao {
 
     @Override
     public User findByUsername(String username) {
-        return entityManager.find(User.class, username);
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
+        Root<User> root = criteriaQuery.from(User.class);
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("username"), username));
+        User user = null;
+        try {
+            user = entityManager.createQuery(criteriaQuery).getSingleResult();
+        } catch (NoResultException e) {
+            // Do nothing
+        }
+
+        return user;
     }
 
     @Override
