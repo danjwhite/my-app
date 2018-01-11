@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -28,7 +29,18 @@ public class RoleDaoImpl implements IRoleDao {
 
     @Override
     public Role findByType(String type) {
-        return entityManager.find(Role.class, type);
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Role> criteriaQuery = criteriaBuilder.createQuery(Role.class);
+        Root<Role> root = criteriaQuery.from(Role.class);
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("type"), type));
+        Role role = null;
+        try {
+            role = entityManager.createQuery(criteriaQuery).getSingleResult();
+        } catch (NoResultException e) {
+            // Do nothing
+        }
+
+        return role;
     }
 
     @Override
