@@ -1,5 +1,6 @@
 package com.example.myapp.service;
 
+import com.example.myapp.dao.IRoleDao;
 import com.example.myapp.dao.IUserDao;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
@@ -17,11 +18,14 @@ public class UserServiceImpl implements IUserService {
 
     private IUserDao userDao;
 
+    private IRoleDao roleDao;
+
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(IUserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(IUserDao userDao, IRoleDao roleDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDao = userDao;
+        this.roleDao = roleDao;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -58,7 +62,10 @@ public class UserServiceImpl implements IUserService {
         user.setLastName(userRegistrationDto.getLastName());
         user.setUsername(userRegistrationDto.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(userRegistrationDto.getPassword()));
-        user.setRoles(Arrays.asList(new Role("ROLE_USER")));
+
+        Role role = roleDao.findByType("ROLE_USER");
+        user.setRoles(Arrays.asList(role));
+
         return userDao.add(user);
     }
 

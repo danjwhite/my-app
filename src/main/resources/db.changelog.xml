@@ -13,16 +13,16 @@
                 <constraints nullable="false"/>
             </column>
             <column name="last_updated" type="TIMESTAMP"/>
-            <column name="username" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="password" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
             <column name="first_name" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="last_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column defaultValueNumeric="1" name="active" type="INT">
