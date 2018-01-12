@@ -43,11 +43,11 @@ public class Role implements Serializable {
 
     @Override
     public boolean equals(Object that) {
-        return EqualsBuilder.reflectionEquals(this, that, "id", "createdAt");
+        return EqualsBuilder.reflectionEquals(this, that, "id");
     }
 
     @Override
     public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this, "id", "createdAt");
+        return HashCodeBuilder.reflectionHashCode(this, "id");
     }
 }
