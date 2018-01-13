@@ -76,12 +76,34 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional
     public User update(User user) {
+
+        // Find user.
         User entity = userDao.findById(user.getId());
 
-        if (!entity.getPassword().equals(user.getPassword()))
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        if (entity != null) {
 
-        return userDao.update(user);
+            // Set user entity fields to match any updated fields.
+            entity.setFirstName(user.getFirstName());
+            entity.setLastName(user.getLastName());
+            entity.setUsername(user.getUsername());
+
+            // Encode and set password if it dose not match.
+            if (!bCryptPasswordEncoder.matches(user.getPassword(), entity.getPassword())) {
+                entity.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+            }
+
+            // Add any new roles.
+            Set<Role> roles = entity.getRoles();
+            for (Role role : user.getRoles()) {
+                if (!roles.contains(role)) {
+                    roles.add(role);
+                }
+            }
+
+            entity.setRoles(roles);
+        }
+
+        return userDao.update(entity);
     }
 
     @Override
