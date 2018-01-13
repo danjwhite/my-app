@@ -78,9 +78,8 @@ public class UserServiceImpl implements IUserService {
     public User update(User user) {
         User entity = userDao.findById(user.getId());
 
-        if (!entity.getPassword().equals(user.getPassword())) {
+        if (!entity.getPassword().equals(user.getPassword()))
             user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        }
 
         return userDao.update(user);
     }
