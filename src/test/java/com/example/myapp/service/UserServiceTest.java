@@ -166,4 +166,17 @@ public class UserServiceTest {
         assertFalse(BCrypt.checkpw(password, updatedUser.getPassword()));
         assertNotEquals(roles, updatedUser.getRoles());
     }
+
+    @Test
+    @Transactional
+    @SuppressWarnings("Duplicates")
+    public void testDelete() {
+        assertEquals(4, userService.count());
+        assertNotNull(userService.findByUsername("mjones"));
+
+        userService.delete("mjones");
+
+        assertEquals(3, userService.count());
+        assertNull(userService.findByUsername("mjones"));
+    }
 }
