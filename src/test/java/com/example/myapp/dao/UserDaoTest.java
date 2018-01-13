@@ -106,4 +106,58 @@ public class UserDaoTest {
         assertEquals("$2y$10$58hikU/OYmVojQkUwGQHRO9.oKPVPG6t3WShvU4NqHNTzzloZpwXC", user.getPassword());
         assertEquals(roles, savedUser.getRoles());
     }
+
+    @Test
+    @Transactional
+    public void testUpdate() {
+
+        // Get user and save original fields.
+        User user = userDao.findById(3L);
+        String firstName = user.getFirstName();
+        String lastName = user.getLastName();
+        String username = user.getUsername();
+        String password = user.getPassword();
+        Set<Role> roles = new HashSet<>(user.getRoles());
+
+        // Declare updated password.
+        String updatedPassword = "$2y$10$um0c/380Ny2oEDo5nS0OXegxVmWyoMd0.gIWyaX6PrseSqIdqinbK";
+
+        // Declare updated roles.
+        Set<Role> updatedRoles = user.getRoles();
+        updatedRoles.add(roleDao.findByType("ROLE_ADMIN"));
+
+        // Set user password and roles.
+        user.setPassword(updatedPassword);
+        user.setRoles(updatedRoles);
+
+        assertEquals(4, userDao.count());
+
+        // Update and retrieve user.
+        userDao.update(user);
+        User updatedUser = userDao.findById(3L);
+
+        assertEquals(4, userDao.count());
+        assertEquals(firstName, updatedUser.getFirstName());
+        assertEquals(lastName, updatedUser.getLastName());
+        assertEquals(username, updatedUser.getUsername());
+
+        assertEquals(updatedPassword, updatedUser.getPassword());
+        assertEquals(updatedRoles, updatedUser.getRoles());
+
+        assertNotEquals(password, updatedUser.getPassword());
+        assertNotEquals(roles, updatedUser.getRoles());
+    }
+
+    @Test
+    @Transactional
+    public void testDelete() {
+
+        assertEquals(4, userDao.count());
+        assertNotNull(userDao.findByUsername("mjones"));
+
+        userDao.delete("mjones");
+
+        assertEquals(3, userDao.count());
+        assertNull(userDao.findByUsername("mjones"));
+    }
 }
