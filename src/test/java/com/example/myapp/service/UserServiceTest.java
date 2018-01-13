@@ -1,53 +1,58 @@
-package com.example.myapp.dao;
+package com.example.myapp.service;
 
 import static org.junit.Assert.*;
 
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
+import com.example.myapp.dto.UserRegistrationDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class UserDaoTest {
+public class UserServiceTest {
 
     @Autowired
-    private IUserDao userDao;
+    private IUserService userService;
 
     @Autowired
-    private IRoleDao roleDao;
+    private IRoleService roleService;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Test
     @Transactional
     public void testCount() {
-        assertEquals(4, userDao.count());
+        assertEquals(4, userService.count());
     }
 
     @Test
     @Transactional
     public void testFindAll() {
-        assertEquals(4, userDao.findAll().size());
+        assertEquals(4, userService.findAll().size());
     }
 
     @Test
     @Transactional
     @SuppressWarnings("Duplicates")
     public void testFindById() {
-        User user = userDao.findById(1L);
+        User user = userService.findById(1L);
 
-        Role userRole = roleDao.findByType("ROLE_USER");
-        Role adminRole = roleDao.findByType("ROLE_ADMIN");
+        Role userRole = roleService.findByType("ROLE_USER");
+        Role adminRole = roleService.findByType("ROLE_ADMIN");
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
         roles.add(adminRole);
@@ -63,11 +68,11 @@ public class UserDaoTest {
     @Test
     @Transactional
     @SuppressWarnings("Duplicates")
-    public void testFindByUsername() {
-        User user = userDao.findByUsername("mjones");
+    public void testFindByUserName() {
+        User user = userService.findByUsername("mjones");
 
-        Role userRole = roleDao.findByType("ROLE_USER");
-        Role adminRole = roleDao.findByType("ROLE_ADMIN");
+        Role userRole = roleService.findByType("ROLE_USER");
+        Role adminRole = roleService.findByType("ROLE_ADMIN");
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
         roles.add(adminRole);
@@ -84,82 +89,66 @@ public class UserDaoTest {
     @Transactional
     public void testAdd() {
 
-        User user = new User();
+        String firstName = "Joseph";
+        String lastName = "Manning";
+        String userName = "jmanning";
+        String password = "password123";
 
-        Role userRole = roleDao.findByType("ROLE_USER");
         Set<Role> roles = new HashSet<>();
-        roles.add(userRole);
+        roles.add(roleService.findByType("ROLE_USER"));
 
-        user.setFirstName("Joseph");
-        user.setLastName("Manning");
-        user.setUsername("jmanning");
-        user.setPassword("$2y$10$58hikU/OYmVojQkUwGQHRO9.oKPVPG6t3WShvU4NqHNTzzloZpwXC");
-        user.setRoles(roles);
+        UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
+        userRegistrationDto.setFirstName(firstName);
+        userRegistrationDto.setLastName(lastName);
+        userRegistrationDto.setUsername(userName);
+        userRegistrationDto.setPassword(password);
 
-        assertEquals(4, userDao.count());
+        assertEquals(4, userService.count());
 
-        User savedUser = userDao.add(user);
+        User user = userService.add(userRegistrationDto);
 
-        assertEquals(5, userDao.count());
-        assertEquals(5L, savedUser.getId().longValue());
-        assertEquals("Joseph", savedUser.getFirstName());
-        assertEquals("Manning", savedUser.getLastName());
-        assertEquals("jmanning", savedUser.getUsername());
-        assertEquals("$2y$10$58hikU/OYmVojQkUwGQHRO9.oKPVPG6t3WShvU4NqHNTzzloZpwXC", user.getPassword());
-        assertEquals(roles, savedUser.getRoles());
+        assertEquals(5, userService.count());
+        assertEquals(5L, user.getId().longValue());
+        assertEquals(firstName, user.getFirstName());
+        assertEquals(lastName, user.getLastName());
+        assertEquals(userName, user.getUsername());
+        assertTrue(bCryptPasswordEncoder.matches(password, user.getPassword()));
+        assertEquals(roles, user.getRoles());
     }
 
     @Test
     @Transactional
     public void testUpdate() {
 
-        // Get user and save original fields.
-        User user = userDao.findById(3L);
+        User user = userService.findById(3L);
         String firstName = user.getFirstName();
         String lastName = user.getLastName();
         String username = user.getUsername();
         String password = user.getPassword();
         Set<Role> roles = new HashSet<>(user.getRoles());
 
-        // Declare updated password.
-        String updatedPassword = "$2y$10$um0c/380Ny2oEDo5nS0OXegxVmWyoMd0.gIWyaX6PrseSqIdqinbK";
+        String updatedPassword = "password456";
 
-        // Declare updated roles.
         Set<Role> updatedRoles = user.getRoles();
-        updatedRoles.add(roleDao.findByType("ROLE_ADMIN"));
+        updatedRoles.add(roleService.findByType("ROLE_ADMIN"));
 
-        // Set user password and roles.
         user.setPassword(updatedPassword);
         user.setRoles(updatedRoles);
 
-        assertEquals(4, userDao.count());
+        assertEquals(4, userService.count());
 
-        // Update and retrieve user.
-        userDao.update(user);
-        User updatedUser = userDao.findById(3L);
+        userService.update(user);
+        User updatedUser = userService.findById(3L);
 
-        assertEquals(4, userDao.count());
+        assertEquals(4, userService.count());
         assertEquals(firstName, updatedUser.getFirstName());
         assertEquals(lastName, updatedUser.getLastName());
         assertEquals(username, updatedUser.getUsername());
 
-        assertEquals(updatedPassword, updatedUser.getPassword());
+        assertTrue(bCryptPasswordEncoder.matches(updatedPassword, updatedUser.getPassword()));
         assertEquals(updatedRoles, updatedUser.getRoles());
 
-        assertNotEquals(password, updatedUser.getPassword());
+        assertFalse(bCryptPasswordEncoder.matches(password, updatedUser.getPassword()));
         assertNotEquals(roles, updatedUser.getRoles());
-    }
-
-    @Test
-    @Transactional
-    public void testDelete() {
-
-        assertEquals(4, userDao.count());
-        assertNotNull(userDao.findByUsername("mjones"));
-
-        userDao.delete("mjones");
-
-        assertEquals(3, userDao.count());
-        assertNull(userDao.findByUsername("mjones"));
     }
 }
