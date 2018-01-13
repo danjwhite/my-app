@@ -1,6 +1,7 @@
 package com.example.myapp.service;
 
 import com.example.myapp.domain.User;
+import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserRegistrationDto;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface IUserService {
 
     User add(UserRegistrationDto userRegistrationDto);
 
-    User update(User user);
+    User update(UserDto userDto);
 
     void delete(String username);
 

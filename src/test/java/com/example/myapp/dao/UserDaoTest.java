@@ -56,7 +56,7 @@ public class UserDaoTest {
         assertEquals("Michael", user.getFirstName());
         assertEquals("Jones", user.getLastName());
         assertEquals("mjones", user.getUsername());
-        assertEquals("$2y$10$58hikU/OYmVojQkUwGQHRO9.oKPVPG6t3WShvU4NqHNTzzloZpwXC", user.getPassword());
+        assertEquals("$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS", user.getPassword());
         assertEquals(roles, user.getRoles());
     }
 
@@ -76,7 +76,7 @@ public class UserDaoTest {
         assertEquals("Michael", user.getFirstName());
         assertEquals("Jones", user.getLastName());
         assertEquals("mjones", user.getUsername());
-        assertEquals("$2y$10$58hikU/OYmVojQkUwGQHRO9.oKPVPG6t3WShvU4NqHNTzzloZpwXC", user.getPassword());
+        assertEquals("$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS", user.getPassword());
         assertEquals(roles, user.getRoles());
     }
 
@@ -93,7 +93,7 @@ public class UserDaoTest {
         user.setFirstName("Joseph");
         user.setLastName("Manning");
         user.setUsername("jmanning");
-        user.setPassword("$2y$10$58hikU/OYmVojQkUwGQHRO9.oKPVPG6t3WShvU4NqHNTzzloZpwXC");
+        user.setPassword("$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS");
         user.setRoles(roles);
 
         assertEquals(4, userDao.count());
@@ -105,7 +105,7 @@ public class UserDaoTest {
         assertEquals("Joseph", savedUser.getFirstName());
         assertEquals("Manning", savedUser.getLastName());
         assertEquals("jmanning", savedUser.getUsername());
-        assertEquals("$2y$10$58hikU/OYmVojQkUwGQHRO9.oKPVPG6t3WShvU4NqHNTzzloZpwXC", user.getPassword());
+        assertEquals("$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS", user.getPassword());
         assertEquals(roles, savedUser.getRoles());
     }
 

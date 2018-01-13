@@ -4,12 +4,14 @@ import static org.junit.Assert.*;
 
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
+import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserRegistrationDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -61,7 +63,7 @@ public class UserServiceTest {
         assertEquals("Michael", user.getFirstName());
         assertEquals("Jones", user.getLastName());
         assertEquals("mjones", user.getUsername());
-        assertEquals("$2y$10$58hikU/OYmVojQkUwGQHRO9.oKPVPG6t3WShvU4NqHNTzzloZpwXC", user.getPassword());
+        assertEquals("$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS", user.getPassword());
         assertEquals(roles, user.getRoles());
     }
 
@@ -81,7 +83,7 @@ public class UserServiceTest {
         assertEquals("Michael", user.getFirstName());
         assertEquals("Jones", user.getLastName());
         assertEquals("mjones", user.getUsername());
-        assertEquals("$2y$10$58hikU/OYmVojQkUwGQHRO9.oKPVPG6t3WShvU4NqHNTzzloZpwXC", user.getPassword());
+        assertEquals("$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS", user.getPassword());
         assertEquals(roles, user.getRoles());
     }
 
@@ -120,13 +122,15 @@ public class UserServiceTest {
     @Transactional
     public void testUpdate() {
 
-        // Get user.
+        // Get user and save original field values.
         User user = userService.findById(3L);
         String firstName = user.getFirstName();
         String lastName = user.getLastName();
         String username = user.getUsername();
         String password = user.getPassword();
         Set<Role> roles = new HashSet<>(user.getRoles());
+
+        UserDto userDto = new UserDto(user);
 
         // Declare updated password.
         String updatedPassword = "password456";
@@ -135,15 +139,15 @@ public class UserServiceTest {
         Set<Role> updatedRoles = user.getRoles();
         updatedRoles.add(roleService.findByType("ROLE_ADMIN"));
 
-        // Set user password and roles.
-        user.setPassword(updatedPassword);
-        user.setRoles(updatedRoles);
+        // Set new user password and roles.
+        userDto.setPassword(updatedPassword);
+        userDto.setRoles(updatedRoles);
 
         // Assert the user count.
         assertEquals(4, userService.count());
 
         // Update user and retrieve updated user.
-        userService.update(user);
+        userService.update(userDto);
         User updatedUser = userService.findById(3L);
 
         // Assert the user count.
@@ -155,11 +159,11 @@ public class UserServiceTest {
         assertEquals(username, updatedUser.getUsername());
 
         // Assert that user password and roles were updated.
-        assertTrue(bCryptPasswordEncoder.matches(updatedPassword, updatedUser.getPassword()));
+        assertTrue(BCrypt.checkpw(updatedPassword, updatedUser.getPassword()));
         assertEquals(updatedRoles, updatedUser.getRoles());
 
         // Assert that original password and roles do not match the updated ones.
-        assertFalse(bCryptPasswordEncoder.matches(password, updatedUser.getPassword()));
+        assertFalse(BCrypt.checkpw(password, updatedUser.getPassword()));
         assertNotEquals(roles, updatedUser.getRoles());
     }
 }

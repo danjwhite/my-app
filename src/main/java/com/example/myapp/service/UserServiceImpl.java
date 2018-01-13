@@ -4,13 +4,14 @@ import com.example.myapp.dao.IRoleDao;
 import com.example.myapp.dao.IUserDao;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
+import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserRegistrationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -75,35 +76,34 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public User update(User user) {
+    public User update(UserDto userDto) {
 
         // Find user.
-        User entity = userDao.findById(user.getId());
+        User user = userDao.findById(userDto.getId());
 
-        if (entity != null) {
+        if (user != null) {
 
-            // Set user entity fields to match any updated fields.
-            entity.setFirstName(user.getFirstName());
-            entity.setLastName(user.getLastName());
-            entity.setUsername(user.getUsername());
+            // Set user fields to match any updated fields.
+            user.setFirstName(userDto.getFirstName());
+            user.setLastName(userDto.getLastName());
+            user.setUsername(userDto.getUsername());
 
             // Encode and set password if it dose not match.
-            if (!bCryptPasswordEncoder.matches(user.getPassword(), entity.getPassword())) {
-                entity.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            }
+            if (!BCrypt.checkpw(userDto.getPassword(), user.getPassword()))
+                user.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
 
             // Add any new roles.
-            Set<Role> roles = entity.getRoles();
-            for (Role role : user.getRoles()) {
+            Set<Role> roles = user.getRoles();
+            for (Role role : userDto.getRoles()) {
                 if (!roles.contains(role)) {
                     roles.add(role);
                 }
             }
 
-            entity.setRoles(roles);
+            user.setRoles(roles);
         }
 
-        return userDao.update(entity);
+        return userDao.update(user);
     }
 
     @Override

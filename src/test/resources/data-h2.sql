@@ -1,12 +1,12 @@
 insert into user (id, first_name, last_name, username, password) values
   -- User and admin roles
-  (1, 'Michael', 'Jones', 'mjones', '$2y$10$58hikU/OYmVojQkUwGQHRO9.oKPVPG6t3WShvU4NqHNTzzloZpwXC'),
+  (1, 'Michael', 'Jones', 'mjones', '$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS'),
   -- User and admin roles
-  (2, 'Andrea', 'Cole', 'acole', '$2y$10$58hikU/OYmVojQkUwGQHRO9.oKPVPG6t3WShvU4NqHNTzzloZpwXC'),
+  (2, 'Andrea', 'Cole', 'acole', '$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS'),
   -- User role only
-  (3, 'Jennifer', 'Ellis', 'jellis', '$2a$10$CfqMgQAD1neowMElhzaStOqhrpZf0RZO7t9TTuU4zOytvRnsXIcny'),
+  (3, 'Jennifer', 'Ellis', 'jellis', '$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS'),
   -- User role only
-  (4, 'Dennis', 'Rodman', 'drodman', '$2y$10$58hikU/OYmVojQkUwGQHRO9.oKPVPG6t3WShvU4NqHNTzzloZpwXC');
+  (4, 'Dennis', 'Rodman', 'drodman', '$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS');
 
 insert into role (id, type) values
   (1, 'ROLE_USER'),
