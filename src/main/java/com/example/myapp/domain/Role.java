@@ -13,7 +13,7 @@ public class Role implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer Id;
+    private Long Id;
 
     @Column(name = "type", unique = true, nullable = false)
     private String type;
@@ -25,11 +25,11 @@ public class Role implements Serializable {
         this.type = type;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return Id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         Id = id;
     }
 
