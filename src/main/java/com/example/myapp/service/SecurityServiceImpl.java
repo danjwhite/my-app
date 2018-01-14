@@ -17,7 +17,7 @@ public class SecurityServiceImpl implements ISecurityService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    AuthenticationTrustResolver authenticationTrustResolver;
+    private AuthenticationTrustResolver authenticationTrustResolver;
 
     @Autowired
     private UserDetailsService userDetailsService;
