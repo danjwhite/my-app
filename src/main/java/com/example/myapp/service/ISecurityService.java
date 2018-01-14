@@ -1,8 +1,10 @@
 package com.example.myapp.service;
 
+import org.springframework.security.core.userdetails.UserDetails;
+
 public interface ISecurityService {
 
-    String findLoggedInUsername();
+    UserDetails getPrincipal();
 
     boolean isCurrentAuthenticationAnonymous();
 
