@@ -7,6 +7,6 @@ public interface ISecurityService {
     UserDetails getPrincipal();
 
     boolean isCurrentAuthenticationAnonymous();
-
-    void autoLogin(String username, String password);
+//
+//    void autoLogin(String username, String password);
 }

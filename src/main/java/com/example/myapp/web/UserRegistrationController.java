@@ -35,26 +35,26 @@ public class UserRegistrationController {
         return "registrationForm";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String registerUser(@ModelAttribute("user") @Valid UserRegistrationDto userRegistrationDto,
-                               BindingResult result,
-                               RedirectAttributes redirectAttributes) {
-        User existing = userService.findByUsername(userRegistrationDto().getUsername());
-        if (existing != null) {
-            result.rejectValue("username", null, "There is already an account registered with this username");
-        }
-
-        if (result.hasErrors()) {
-            return "registrationForm";
-        }
-
-        Long userId = userService.add(userRegistrationDto).getId();
-
-        securityService.autoLogin(userRegistrationDto.getUsername(), userRegistrationDto.getPassword());
-
-        redirectAttributes.addAttribute("userId", userId);
-        redirectAttributes.addAttribute("confirmation", "created");
-
-        return "redirect:/account/view";
-    }
+//    @RequestMapping(method = RequestMethod.POST)
+//    public String registerUser(@ModelAttribute("user") @Valid UserRegistrationDto userRegistrationDto,
+//                               BindingResult result,
+//                               RedirectAttributes redirectAttributes) {
+//        User existing = userService.findByUsername(userRegistrationDto().getUsername());
+//        if (existing != null) {
+//            result.rejectValue("username", null, "There is already an account registered with this username");
+//        }
+//
+//        if (result.hasErrors()) {
+//            return "registrationForm";
+//        }
+//
+//        Long userId = userService.add(userRegistrationDto).getId();
+//
+//        securityService.autoLogin(userRegistrationDto.getUsername(), userRegistrationDto.getPassword());
+//
+//        redirectAttributes.addAttribute("userId", userId);
+//        redirectAttributes.addAttribute("confirmation", "created");
+//
+//        return "redirect:/account/view";
+//    }
 }
