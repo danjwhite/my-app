@@ -3,9 +3,14 @@ package com.example.myapp.service;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import com.example.myapp.dao.UserDaoImpl;
+import com.example.myapp.domain.Role;
+import com.example.myapp.domain.User;
 import org.junit.Before;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -20,8 +25,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.Arrays;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RunWith(PowerMockRunner.class)
 @TestPropertySource("classpath:application-test.properties")
@@ -30,18 +40,29 @@ public class SecurityServiceTest {
 
     private SecurityServiceImpl securityService;
 
+    @Mock
+    private EntityManager entityManagerMock;
+
     @Before
     public void setUp() {
         securityService = new SecurityServiceImpl();
 
-        // Set the AuthenticationManager for SecurityServiceImpl
-        List<AuthenticationProvider> authenticationProviders = Arrays.asList(new TestingAuthenticationProvider());
-        AuthenticationManager authenticationManager = new ProviderManager(authenticationProviders);
+        // Set the AuthenticationManager for SecurityServiceImpl.
+        AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
         securityService.setAuthenticationManager(authenticationManager);
 
-        // Set the AuthenticationTrustResolver for SecurityServiceImpl
+        // Set the AuthenticationTrustResolver for SecurityServiceImpl.
         AuthenticationTrustResolverImpl authenticationTrustResolver = new AuthenticationTrustResolverImpl();
         securityService.setAuthenticationTrustResolver(authenticationTrustResolver);
+
+        // Create UserDaoImpl with EntityManager for UserDetailsServiceImpl used in SecurityServiceImpl.
+        UserDaoImpl userDao = new UserDaoImpl();
+        userDao.setEntityManager(entityManagerMock);
+
+        // Create UserDetailsServiceImpl for SecurityServiceImpl.
+        UserDetailsServiceImpl userDetailsService = new UserDetailsServiceImpl();
+        userDetailsService.setUserDao(userDao);
+        securityService.setUserDetailsService(userDetailsService);
     }
 
     @Test
@@ -89,5 +110,55 @@ public class SecurityServiceTest {
         when(securityContextMock.getAuthentication()).thenReturn(authentication);
 
         assertFalse(securityService.isCurrentAuthenticationAnonymous());
+    }
+
+    @Test
+    public void testAutoLogin() {
+
+        User user = new User();
+        user.setUsername("user");
+        user.setPassword("password");
+
+        Set<Role> roles = new HashSet<>();
+        Role role = new Role();
+        role.setType("ROLE_USER");
+        roles.add(role);
+        user.setRoles(roles);
+
+        // Set up mocks.
+        CriteriaBuilder criteriaBuilderMock = mock(CriteriaBuilder.class);
+        CriteriaQuery criteriaQueryMock1 = mock(CriteriaQuery.class);
+        CriteriaQuery criteriaQueryMock2 = mock(CriteriaQuery.class);
+        CriteriaQuery criteriaQueryMock3 = mock(CriteriaQuery.class);
+
+        Root rootMock = mock(Root.class);
+        Predicate predicateMock = mock(Predicate.class);
+        Path pathMock = mock(Path.class);
+
+        TypedQuery typedQueryMock = mock(TypedQuery.class);
+
+        // Mock methods.
+        when(entityManagerMock.getCriteriaBuilder()).thenReturn(criteriaBuilderMock);
+        when(criteriaBuilderMock.createQuery(any())).thenReturn(criteriaQueryMock1);
+        when(criteriaQueryMock1.from(User.class)).thenReturn(rootMock);
+
+        when(criteriaQueryMock1.select(rootMock)).thenReturn(criteriaQueryMock2);
+        when(criteriaQueryMock2.where(predicateMock)).thenReturn(criteriaQueryMock3);
+        when(criteriaBuilderMock.equal(eq(pathMock), anyObject())).thenReturn(predicateMock);
+        when(rootMock.get(anyString())).thenReturn(pathMock);
+
+        when(entityManagerMock.createQuery(criteriaQueryMock1)).thenReturn(typedQueryMock);
+        when(typedQueryMock.getSingleResult()).thenReturn(user);
+
+        securityService.autoLogin("user", "password");
+
+        // Expected principal
+        UserDetails expectedPrincipal = org.springframework.security.core.userdetails.User.withUsername("user")
+                .password("password")
+                .authorities("ROLE_USER").build();
+
+        UserDetails actualPrincipal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        assertEquals(expectedPrincipal, actualPrincipal);
     }
 }
