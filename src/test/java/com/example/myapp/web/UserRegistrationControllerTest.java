@@ -89,6 +89,5 @@ public class UserRegistrationControllerTest {
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasFieldErrors("user", "username"))
                 .andExpect(status().isOk());
-
     }
 }

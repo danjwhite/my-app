@@ -39,9 +39,10 @@ public class UserRegistrationController {
     public String registerUser(@ModelAttribute("user") @Valid UserRegistrationDto userRegistrationDto,
                                BindingResult result,
                                RedirectAttributes redirectAttributes) {
-        User existing = userService.findByUsername(userRegistrationDto().getUsername());
+        String username = userRegistrationDto.getUsername();
+        User existing = userService.findByUsername(username);
         if (existing != null) {
-            result.rejectValue("username","There is already an account registered with this username");
+            result.rejectValue("username", null,"There is already an account registered with this username");
         }
 
         if (result.hasErrors()) {
@@ -50,7 +51,7 @@ public class UserRegistrationController {
 
         Long userId = userService.add(userRegistrationDto).getId();
 
-        securityService.autoLogin(userRegistrationDto.getUsername(), userRegistrationDto.getPassword());
+        securityService.autoLogin(username, userRegistrationDto.getPassword());
 
         redirectAttributes.addAttribute("userId", userId);
         redirectAttributes.addAttribute("confirmation", "created");
