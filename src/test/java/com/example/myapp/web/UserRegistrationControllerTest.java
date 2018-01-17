@@ -48,7 +48,6 @@ public class UserRegistrationControllerTest {
     }
 
     @Test
-    @Ignore
     public void testRegisterUser() throws Exception {
 
         // Perform POST request to register a user on MockMvc and assert expectations.
