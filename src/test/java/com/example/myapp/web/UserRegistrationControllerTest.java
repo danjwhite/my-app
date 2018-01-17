@@ -48,15 +48,47 @@ public class UserRegistrationControllerTest {
     }
 
     @Test
-    public void testRegisterUser() throws Exception {
+    public void testRegisterUserSuccess() throws Exception {
 
         // Perform POST request to register a user on MockMvc and assert expectations.
         mockMvc.perform(post("/register")
             .param("firstName", "John")
             .param("lastName", "Smith")
             .param("username", "jsmith")
-            .param("password", "Password123")
-            .param("confirmPassword", "Password123"))
-            .andExpect(status().isOk());
+            .param("password", "password123")
+            .param("confirmPassword", "password123"))
+            .andExpect(redirectedUrl("/account/view?userId=5&confirmation=created"))
+            .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    public void testRegisterUserPasswordNotMatching() throws Exception {
+
+        // Perform POST request to register a user on MockMvc and assert expectations.
+        mockMvc.perform(post("/register")
+                .param("firstName", "John")
+                .param("lastName", "Smith")
+                .param("username", "jsmith")
+                .param("password", "password123")
+                .param("confirmPassword", "password456"))
+                .andExpect(model().hasErrors())
+                .andExpect(model().attributeHasErrors("user"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testRegisterUserAccountExists() throws Exception {
+
+        // Perform POST request to register a user on MockMvc and assert expectations.
+        mockMvc.perform(post("/register")
+                .param("firstName", "Michael")
+                .param("lastName", "Jones")
+                .param("username", "mjones")
+                .param("password", "password123")
+                .param("confirmPassword", "password123"))
+                .andExpect(model().hasErrors())
+                .andExpect(model().attributeHasFieldErrors("user", "username"))
+                .andExpect(status().isOk());
+
     }
 }
