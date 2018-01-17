@@ -41,7 +41,7 @@ public class UserRegistrationController {
                                RedirectAttributes redirectAttributes) {
         User existing = userService.findByUsername(userRegistrationDto().getUsername());
         if (existing != null) {
-            result.rejectValue("username", null, "There is already an account registered with this username");
+            result.rejectValue("username","There is already an account registered with this username");
         }
 
         if (result.hasErrors()) {
