@@ -1,5 +1,5 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
+<%-- <%@taglib prefix="sf" uri="http://www.springframework.org/tags/form" %> --%>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -30,23 +30,28 @@
     <div id="body">
         <h3>Login</h3>
         <div class="form-container">
-            <sf:form method="post" name="login-form" commandName="user">
-                <sf:errors path="*" element="div" cssClass="error-message"/>
+            <%-- <sf:form method="post" name="login-form" commandName="user"> --%>
+            <form method="post" action="<c:url value="/login"/>">
+                <%-- <sf:errors path="*" element="div" cssClass="error-message"/> --%>
                 <table class="form-table">
                     <tr>
                         <td class="table-left">
-                            <sf:label path="username" cssErrorClass="error-field-label">Username:</sf:label>
+                            <%-- <sf:label path="username" cssErrorClass="error-field-label">Username:</sf:label> --%>
+                            <label>Username:</label>
                         </td>
                         <td class="table-right">
-                            <sf:input path="username" cssErrorClass="error-field-input" size="30"/>
+                            <input name="username" type="text"/>
+                            <%-- <sf:input path="username" cssErrorClass="error-field-input" size="30"/> --%>
                         </td>
                     </tr>
                     <tr>
                         <td class="table-left">
-                            <sf:label path="password" cssErrorClass="error-field-label">Password:</sf:label>
+                            <%-- <sf:label path="password" cssErrorClass="error-field-label">Password:</sf:label> --%>
+                            <label>Password:</label>
                         </td>
                         <td class="table-right">
-                            <sf:input path="password" cssErrorClass="error-field-input" size="30"/>
+                            <input name="password" type="password"/>
+                            <%-- <sf:input path="password" cssErrorClass="error-field-input" size="30"/> --%>
                         </td>
                     </tr>
                     <tr>
@@ -56,7 +61,9 @@
                         </td>
                     </tr>
                 </table>
-            </sf:form>
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+            </form>
+            <%-- </sf:form> --%>
         </div>
     </div>
 
