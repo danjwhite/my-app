@@ -9,16 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/account")
+@RequestMapping("/")
 public class UserController {
 
     @Autowired
     private IUserService userService;
 
-    @RequestMapping("/view")
-    public String getUserAccount(@RequestParam(value = "userId") long userId,
-                                 @RequestParam(value = "confirmation", required = false) String confirmation,
-                                 Model model) {
+    @RequestMapping("account/view")
+    public String getUserAccount(@RequestParam(value = "userId") long userId, Model model) {
         User user = userService.findById(userId);
         model.addAttribute("user", user);
 
