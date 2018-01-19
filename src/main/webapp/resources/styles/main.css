@@ -150,9 +150,10 @@ input[type="button"], input[type="submit"] {
     font-size: 14px;
 }
 
-input[type="text"] {
+input[type="text"], input[type="password"], textarea {
     padding: 4px;
-    border: 1px groove black;
+    border: 1px solid black;
+    border-radius: 4px;
 }
 
 .form-table {
@@ -218,8 +219,6 @@ input[type="text"].error-field-input, textarea.error-field-input {
 }
 
 textarea {
-    border: 1px groove black;
-    border-radius: 4px;
     resize: none;
 }
 

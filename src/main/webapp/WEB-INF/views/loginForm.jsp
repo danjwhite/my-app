@@ -36,7 +36,7 @@
                             <label>Username:</label>
                         </td>
                         <td class="table-right">
-                            <input name="username" type="text"/>
+                            <input name="username" type="text" size="30"/>
                         </td>
                     </tr>
                     <tr>
@@ -44,7 +44,7 @@
                             <label>Password:</label>
                         </td>
                         <td class="table-right">
-                            <input name="password" type="password"/>
+                            <input name="password" type="password" size="30"/>
                         </td>
                     </tr>
                     <tr>
