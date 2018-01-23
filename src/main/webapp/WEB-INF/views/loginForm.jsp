@@ -13,22 +13,22 @@
     <!-------------------- Begin Header -------------------->
     <div id="header">
         <div id="banner">
-            <img id="banner-img" src="${pageContext.request.contextPath}/resources/images/spring-by-pivotal.png"
-                 alt=""/>
             <h1>My Spring App</h1>
         </div>
         <nav id="header-nav">
             <ul>
+                <%--
                 <li><a class="active" href="<c:url value="/login"/>">Login</a></li>
                 <li><a href="<c:url value="/register"/>">Register</a></li>
+                --%>
             </ul>
         </nav>
     </div>
 
     <!-------------------- Begin Body -------------------->
-    <div id="body">
-        <h3>Login</h3>
-        <div class="form-container">
+    <div id="login-form-body">
+        <div id="login-form-container">
+            <h5>Account Login</h5>
             <form method="post" action="<c:url value="/login"/>">
                 <table class="form-table">
                     <tr>

@@ -27,6 +27,13 @@ p {
     max-width: 1200px;
 }
 
+#login-form-body {
+    height: 800px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #account-body {
     padding: 10px;
     padding-bottom: 60px;
@@ -39,18 +46,19 @@ p {
     bottom: 0;
     width: 100%;
     height: 60px;
-    text-align: center;
+    display: flex;
+    justify-content: center;
 }
 
 #banner {
     width: 100%;
     overflow: hidden;
-    text-align: center;
     background-color: beige;
-}
-
-#banner #banner-img {
-    float: left;
+    background-image: url(/resources/images/spring-by-pivotal.png);
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #header-nav ul {
@@ -191,6 +199,14 @@ label.error-field-label {
     width: 550px;
 }
 
+#login-form-container {
+    width: 278px;
+}
+
+#login-form-container h5 {
+    text-align: center;
+}
+
 .form-table .form-buttons {
     padding-top: 5px;
 }
@@ -254,7 +270,6 @@ p, #filter-description {
     font-size: 12px;
     position: absolute;
     bottom: 0;
-    left: 50%;
 }
 
 .box-container {
