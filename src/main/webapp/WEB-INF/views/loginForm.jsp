@@ -26,36 +26,59 @@
     </div>
 
     <!-------------------- Begin Body -------------------->
-    <div id="login-form-body">
-        <div id="login-form-container">
-            <h5>Account Login</h5>
-            <form method="post" action="<c:url value="/login"/>">
-                <table class="form-table">
-                    <tr>
-                        <td class="table-left">
-                            <label>Username:</label>
-                        </td>
-                        <td class="table-right">
-                            <input name="username" type="text" size="30"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-left">
-                            <label>Password:</label>
-                        </td>
-                        <td class="table-right">
-                            <input name="password" type="password" size="30"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="table-left"></td>
-                        <td class="table-right form-buttons">
-                            <input type="submit" value="Login">
-                        </td>
-                    </tr>
-                </table>
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
-            </form>
+    <div id="login-body">
+        <div id="login-window-wrapper">
+            <c:if test="${param.error != null}">
+                <div id="login-error-message" class="error-message">
+                    Incorrect username and password
+                </div>
+            </c:if>
+            <div id="login-window-header-container">
+                <h5>Account Login</h5>
+            </div>
+            <div id="login-form-container">
+                <form method="post" id="login-form" name="login-form">
+                    <table class="form-table" id="login-form-table">
+                        <tr>
+                            <c:choose>
+                                <c:when test="${param.error != null}">
+                                    <td class="table-left"><label class="error-field-label">Username:</label></td>
+                                    <td class="table-right"><input type="text" class="error-field-input"/></td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td class="table-left"><label>Username:</label></td>
+                                    <td class="table-right"><input type="text"/></td>
+                                </c:otherwise>
+                            </c:choose>
+                        </tr>
+                        <tr>
+                            <c:choose>
+                                <c:when test="${param.error != null}">
+                                    <td class="table-left"><label class="error-field-label">Password:</label></td>
+                                    <td class="table-right"><input type="password" class="error-field-input"/></td>
+                                </c:when>
+                                <c:otherwise>
+                                    <td class="table-left"><label>Password:</label></td>
+                                    <td class="table-right"><input type="password"/></td>
+                                </c:otherwise>
+                            </c:choose>
+                        </tr>
+                        <tr>
+                            <td class="table-left"></td>
+                            <td class="table-right form-buttons">
+                                <div id="login-form-buttons">
+                                    <input type="submit" class="button" value="Login"/>
+                                    <input type="reset" class="button" value="Reset"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+                </form>
+            </div>
+            <div id="login-window-link-container">
+                <a href="<c:url value="/register"/>">Create account</a>
+            </div>
         </div>
     </div>
 

@@ -21,17 +21,13 @@ p {
     position: relative;
 }
 
-#body {
-    padding: 10px 10px 60px;
+#body, #login-body {
     width: 100%;
-    max-width: 1200px;
 }
 
-#login-form-body {
-    height: 800px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+#body {
+    padding: 10px 10px 60px;
+    max-width: 1200px;
 }
 
 #account-body {
@@ -53,12 +49,12 @@ p {
 #banner {
     width: 100%;
     overflow: hidden;
+    display: flex;
     background-color: beige;
     background-image: url(/resources/images/spring-by-pivotal.png);
     background-repeat: no-repeat;
-    display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 }
 
 #header-nav ul {
@@ -161,14 +157,14 @@ td.text-table-option {
     float: left;
 }
 
-input[type="button"], input[type="submit"] {
+input[type="button"], input[type="submit"], input[type="reset"] {
     font-size: 14px;
+    width: 80px;
 }
 
 input[type="text"], input[type="password"], textarea {
     padding: 4px;
-    border: 1px solid black;
-    border-radius: 4px;
+    border: 1px thin;
 }
 
 .form-table {
@@ -177,7 +173,7 @@ input[type="text"], input[type="password"], textarea {
 
 .form-table td.table-left {
     vertical-align: top;
-    padding-top: 10px;
+    padding-top: 14px;
     padding-bottom: 10px;
     padding-right: 10px;
 }
@@ -199,16 +195,73 @@ label.error-field-label {
     width: 550px;
 }
 
-#login-form-container {
-    width: 278px;
-}
-
-#login-form-container h5 {
-    text-align: center;
-}
-
 .form-table .form-buttons {
     padding-top: 5px;
+}
+
+.button:hover {
+    box-shadow: inset 1px 1px 5px #C7CACA;
+}
+
+#login-body {
+    height: 700px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#login-window-wrapper {
+    width: 360px;
+    height: 190px;
+}
+
+#login-window-header-container {
+    width: 360px;
+    height: 30px;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: -webkit-linear-gradient(top,
+    #F3F7F7,
+    #C6C9C9 );
+}
+
+#login-form-container {
+    width: 360px;
+    height: 130px;
+}
+
+#login-window-link-container {
+    width: 360px;
+    height: 30px;
+    font-size: 14px;
+    text-align: center;
+    display: table-cell;
+    vertical-align: bottom;
+}
+
+#login-form {
+    background-color: #F1F1F1;
+    border-bottom-right-radius: 2px;
+    border-bottom-left-radius: 2px;
+    padding-right: 10px;
+    padding-left: 10px;
+    width: 340px;
+    height: 130px;
+}
+
+#login-form-buttons {
+    float: right;
+}
+
+#login-form-table input[type="text"], input[type="password"] {
+    width: 245px;
+}
+
+#login-form-table {
+    border-collapse: collapse;
 }
 
 .success-message {
@@ -222,11 +275,16 @@ label.error-field-label {
     color: #E80000;
     background-color: #FEE;
     background-image: url(/resources/images/error.png);
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+#login-error-message {
+    position: absolute;
+    top: 318px;
+    width: 318px
 }
 
 .success-message, .error-message {
-    width: 508px;
     border: 1px solid #D8D8D8;
     line-height: 20px;
     font-size: 12px;
@@ -236,9 +294,9 @@ label.error-field-label {
     background-position: 5px center;
 }
 
-input[type="text"].error-field-input, textarea.error-field-input {
+input[type="text"].error-field-input, input[type="password"].error-field-input, textarea.error-field-input {
     border: 1px solid #E80000;
-    border-radius: 4px;
+
 }
 
 textarea {
