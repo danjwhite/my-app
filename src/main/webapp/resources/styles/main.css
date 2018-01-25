@@ -51,7 +51,7 @@ p {
     overflow: hidden;
     display: flex;
     background-color: beige;
-    background-image: url(/resources/images/spring-by-pivotal.png);
+    background-image: url(../../resources/images/spring-by-pivotal.png);
     background-repeat: no-repeat;
     align-items: center;
     justify-content: center;
@@ -167,20 +167,37 @@ input[type="text"], input[type="password"], textarea {
     border: 1px thin;
 }
 
+textarea {
+    border-color: #CCCCCC;
+}
+
 .form-table {
     border-collapse: collapse;
 }
 
-.form-table td.table-left {
+.form-table td.login-table-left {
     vertical-align: top;
     padding-top: 14px;
     padding-bottom: 10px;
     padding-right: 10px;
 }
 
-.form-table td.table-right {
+.form-table td.login-table-right {
     padding-top: 10px;
     padding-bottom: 10px;
+}
+
+.form-table td.table-left {
+    padding-right: 10px;
+    padding-top: 5px;
+    vertical-align: top;
+}
+
+.form-table td.error-cell {
+    height: 20px;
+    font-size: 11px;
+    vertical-align: top;
+    color: #E80000;
 }
 
 label {
@@ -267,14 +284,18 @@ label.error-field-label {
 .success-message {
     color: green;
     background-color: #ECFFD8;
-    background-image: url(/resources/images/success.png);
+    background-image: url(../../resources/images/success.png);
     margin-bottom: 20px;
+}
+
+#note-success-message {
+    width: 360px;
 }
 
 .error-message {
     color: #E80000;
     background-color: #FEE;
-    background-image: url(/resources/images/error.png);
+    background-image: url(../../resources/images/error.png);
     margin-bottom: 20px;
 }
 

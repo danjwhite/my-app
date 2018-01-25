@@ -18,58 +18,79 @@
         </div>
         <nav id="header-nav">
             <ul>
+                <%--
                 <li><a href="<c:url value="/login"/>">Login</a></li>
                 <li><a class="active" href="<c:url value="/register"/>">Register</a></li>
+                --%>
             </ul>
         </nav>
     </div>
 
     <!-------------------- Begin Body -------------------->
     <div id="body">
-        <h3>Register</h3>
+        <h4>Register</h4>
         <div class="form-container">
             <sf:form method="post" name="register-form" modelAttribute="user">
-                <sf:errors path="*" element="div" cssClass="error-message"/>
                 <table class="form-table">
                     <tr>
                         <td class="table-left">
-                            <sf:label path="firstName" cssErrorClass="error-field-label">First Name:</sf:label>
+                            <sf:label path="firstName">First Name:</sf:label>
                         </td>
                         <td class="table-right">
                             <sf:input path="firstName" cssErrorClass="error-field-input" size="30"/>
                         </td>
                     </tr>
                     <tr>
+                        <td></td>
+                        <td class="error-cell"><sf:errors path="firstName"/></td>
+                    </tr>
+                    <tr>
                         <td class="table-left">
-                            <sf:label path="lastName" cssErrorClass="error-field-label">Last Name:</sf:label>
+                            <sf:label path="lastName">Last Name:</sf:label>
                         </td>
                         <td class="table-right">
                             <sf:input path="lastName" cssErrorClass="error-field-input" size="30"/>
                         </td>
                     </tr>
                     <tr>
+                        <td></td>
+                        <td class="error-cell"><sf:errors path="lastName"/></td>
+                    </tr>
+                    <tr>
                         <td class="table-left">
-                            <sf:label path="username" cssErrorClass="error-field-label">Username:</sf:label>
+                            <sf:label path="username">Username:</sf:label>
                         </td>
                         <td class="table-right">
                             <sf:input path="username" cssErrorClass="error-field-input" size="30"/>
                         </td>
                     </tr>
                     <tr>
+                        <td></td>
+                        <td class="error-cell"><sf:errors path="username"/></td>
+                    </tr>
+                    <tr>
                         <td class="table-left">
-                            <sf:label path="password" cssErrorClass="error-field-label">Password:</sf:label>
+                            <sf:label path="password">Password:</sf:label>
                         </td>
                         <td class="table-right">
                             <sf:input path="password" cssErrorClass="error-field-input" size="30"/>
                         </td>
                     </tr>
                     <tr>
+                        <td></td>
+                        <td class="error-cell"><sf:errors path="password"/></td>
+                    </tr>
+                    <tr>
                         <td class="table-left">
-                            <sf:label path="confirmPassword" cssErrorClass="error-field-label">Confirm Password:</sf:label>
+                            <sf:label path="confirmPassword">Confirm Password:</sf:label>
                         </td>
                         <td class="table-right">
                             <sf:input path="confirmPassword" cssErrorClass="error-field-input" size="30"/>
                         </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="error-cell"><sf:errors path="confirmPassword"/></td>
                     </tr>
                     <tr>
                         <td class="table-left"></td>

@@ -35,20 +35,19 @@
     <div id="body">
         <c:choose>
             <c:when test="${formType == 'add'}">
-                <h3>New Note</h3>
+                <h4>New Note</h4>
             </c:when>
             <c:when test="${formType == 'edit'}">
-                <h3>Edit Note</h3>
+                <h4>Edit Note</h4>
             </c:when>
         </c:choose>
         <div class="form-container">
             <sf:form method="post" name="note-form" commandName="note">
                 <sf:hidden path="id"/>
-                <sf:errors path="*" element="div" cssClass="error-message"/>
                 <table class="form-table">
                     <tr>
                         <td class="table-left">
-                            <sf:label path="title" cssErrorClass="error-field-label">Title:</sf:label>
+                            <sf:label path="title">Title:</sf:label>
                         </td>
                         <td class="table-right">
                             <c:choose>
@@ -63,8 +62,12 @@
                         </td>
                     </tr>
                     <tr>
+                        <td></td>
+                        <td class="error-cell"><sf:errors path="title"/></td>
+                    </tr>
+                    <tr>
                         <td class="table-left">
-                            <sf:label path="body" cssErrorClass="error-field-label">Body:</sf:label>
+                            <sf:label path="body">Body:</sf:label>
                         </td>
                         <td class="table-right">
                             <c:choose>
@@ -77,6 +80,10 @@
                                 </c:when>
                             </c:choose>
                         </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="error-cell"><sf:errors path="body"/></td>
                     </tr>
                     <tr>
                         <td class="table-left"></td>

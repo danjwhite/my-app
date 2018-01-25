@@ -36,23 +36,30 @@
         <h3>Edit Account Info</h3>
         <div class="form-container">
             <sf:form method="post" name="password-form" commandName="user">
-                <sf:errors path="*" element="div" cssClass="error-message"/>
                 <table class="form-table">
                     <tr>
                         <td class="table-left">
-                            <sf:label path="firstName" cssErrorClass="error-field-label">First Name:</sf:label>
+                            <sf:label path="firstName">First Name:</sf:label>
                         </td>
                         <td class="table-right">
                             <sf:input path="firstName" cssErrorClass="error-field-input" size="30"/>
                         </td>
                     </tr>
                     <tr>
+                        <td></td>
+                        <td class="error-cell"><sf:errors path="firstName"/></td>
+                    </tr>
+                    <tr>
                         <td class="table-left">
-                            <sf:label path="lastName" cssErrorClass="error-field-label">Last Name:</sf:label>
+                            <sf:label path="lastName">Last Name:</sf:label>
                         </td>
                         <td class="table-right">
                             <sf:input path="lastName" cssErrorClass="error-field-input" size="30"/>
                         </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="error-cell"><sf:errors path="lastName"/></td>
                     </tr>
                     <tr>
                         <td class="table-left"></td>

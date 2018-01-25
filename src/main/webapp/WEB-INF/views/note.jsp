@@ -35,7 +35,7 @@
         <c:choose>
             <c:when test="${param.confirmation == 'added'}">
                 <h3>New Note</h3>
-                <div class="success-message">
+                <div id="note-success-message" class="success-message">
                     Note created successfully.
                 </div>
             </c:when>

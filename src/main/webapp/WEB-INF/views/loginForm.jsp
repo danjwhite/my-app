@@ -42,30 +42,30 @@
                         <tr>
                             <c:choose>
                                 <c:when test="${param.error != null}">
-                                    <td class="table-left"><label class="error-field-label">Username:</label></td>
-                                    <td class="table-right"><input type="text" class="error-field-input"/></td>
+                                    <td class="login-table-left"><label>Username:</label></td>
+                                    <td class="login-table-right"><input type="text" class="error-field-input"/></td>
                                 </c:when>
                                 <c:otherwise>
-                                    <td class="table-left"><label>Username:</label></td>
-                                    <td class="table-right"><input type="text"/></td>
+                                    <td class="login-table-left"><label>Username:</label></td>
+                                    <td class="login-table-right"><input type="text"/></td>
                                 </c:otherwise>
                             </c:choose>
                         </tr>
                         <tr>
                             <c:choose>
                                 <c:when test="${param.error != null}">
-                                    <td class="table-left"><label class="error-field-label">Password:</label></td>
-                                    <td class="table-right"><input type="password" class="error-field-input"/></td>
+                                    <td class="login-table-left"><label>Password:</label></td>
+                                    <td class="login-table-right"><input type="password" class="error-field-input"/></td>
                                 </c:when>
                                 <c:otherwise>
-                                    <td class="table-left"><label>Password:</label></td>
-                                    <td class="table-right"><input type="password"/></td>
+                                    <td class="login-table-left"><label>Password:</label></td>
+                                    <td class="login-table-right"><input type="password"/></td>
                                 </c:otherwise>
                             </c:choose>
                         </tr>
                         <tr>
-                            <td class="table-left"></td>
-                            <td class="table-right form-buttons">
+                            <td class="login-table-left"></td>
+                            <td class="login-table-right form-buttons">
                                 <div id="login-form-buttons">
                                     <input type="submit" class="button" value="Login"/>
                                     <input type="reset" class="button" value="Reset"/>
