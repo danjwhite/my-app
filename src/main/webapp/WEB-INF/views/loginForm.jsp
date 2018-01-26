@@ -37,7 +37,7 @@
                 <h5>Account Login</h5>
             </div>
             <div id="login-form-container">
-                <form method="post" id="login-form" name="login-form">
+                <form method="post" id="login-form" action="<c:url value="/login"/>">
                     <table class="form-table" id="login-form-table">
                         <tr>
                             <c:choose>
