@@ -22,7 +22,7 @@
                 <li>
                     <a class="active" href="<c:url value="#"/>">Account</a>
                     <ul>
-                        <li><a href="<c:url value="#"/>">Log Out</a></li>
+                        <li><a href="<c:url value="/logout"/>">Log Out</a></li>
                         <li><a href="<c:url value="#"/>">Settings</a></li>
                     </ul>
                 </li>

@@ -22,7 +22,7 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @RequestMapping(value = "account/view", method = RequestMethod.GET)
+    @RequestMapping(value = "/account/view", method = RequestMethod.GET)
     public String getUserAccount(@RequestParam(value = "userId") long userId, Model model) {
         User user = userService.findById(userId);
         model.addAttribute("user", user);
@@ -35,13 +35,13 @@ public class UserController {
         return "loginForm";
     }
 
-    @RequestMapping(value = "logout", method = RequestMethod.GET)
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
 
-        return "redirectL:/login?logout";
+        return "redirect:/login?logout";
     }
 }
