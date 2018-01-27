@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -91,8 +92,8 @@ public class NoteController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public String saveNote(@Valid Note note, RedirectAttributes redirectAttributes, Errors errors) {
-        if (errors.hasErrors()) {
+    public String saveNote(@Valid Note note, BindingResult result, RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
             return "noteForm";
         }
 
