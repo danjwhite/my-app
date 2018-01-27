@@ -1,5 +1,7 @@
 package com.example.myapp.domain;
 
+import com.example.myapp.constraint.EmtpyCheck;
+import com.example.myapp.constraint.SizeCheck;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -8,11 +10,14 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.*;
+import javax.validation.GroupSequence;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.validation.groups.Default;
 
 @Entity
 @Table(name = "note")
+@GroupSequence({Note.class, EmtpyCheck.class, SizeCheck.class})
 public class Note implements Serializable {
 
     @Id
@@ -24,13 +29,13 @@ public class Note implements Serializable {
     private Date createdAt;
 
     @Column(name = "title")
-    @NotEmpty(message = "Title is required.")
-    @Size(min = 1, max = 140, message = "Title must be within 140 characters.")
+    @NotEmpty(message = "Title is required.", groups = EmtpyCheck.class)
+    @Size(min = 1, max = 140, message = "Title must be within 140 characters.", groups = SizeCheck.class)
     private String title;
 
     @Column(name = "body")
-    @NotEmpty(message = "Body is required.")
-    @Size(min = 1, max = 5000, message = "Body must be within 5,000 characters.")
+    @NotEmpty(message = "Body is required.", groups = EmtpyCheck.class)
+    @Size(min = 1, max = 5000, message = "Body must be within 5,000 characters.", groups = SizeCheck.class)
     private String body;
 
     public Note() {
