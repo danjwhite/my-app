@@ -2,6 +2,7 @@ package com.example.myapp.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -23,12 +24,12 @@ public class Note implements Serializable {
     private Date createdAt;
 
     @Column(name = "title")
-    @NotNull(message = "Title is required.")
+    @NotEmpty(message = "Title is required.")
     @Size(min = 1, max = 140, message = "Title must be within 140 characters.")
     private String title;
 
     @Column(name = "body")
-    @NotNull(message = "Body is required.")
+    @NotEmpty(message = "Body is required.")
     @Size(min = 1, max = 5000, message = "Body must be within 5,000 characters.")
     private String body;
 
