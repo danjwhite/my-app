@@ -9,11 +9,13 @@ public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Obje
 
     private String firstFieldName;
     private String secondFieldName;
+    private String message;
 
     @Override
     public void initialize(final FieldMatch constraintAnnotation) {
         firstFieldName = constraintAnnotation.first();
         secondFieldName = constraintAnnotation.second();
+        message = constraintAnnotation.message();
     }
 
     @Override
@@ -23,13 +25,11 @@ public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Obje
             final Object firstObject = BeanUtils.getProperty(value, firstFieldName);
             final Object secondObject = BeanUtils.getProperty(value, secondFieldName);
 
-            String errorMessage = "Fields must match";
-
             fieldsMatch = (firstObject == null && secondObject == null) || (firstObject != null && firstObject.equals(secondObject));
 
             if (!fieldsMatch) {
                 context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate(errorMessage).addPropertyNode(secondFieldName).addConstraintViolation();
+                context.buildConstraintViolationWithTemplate(message).addPropertyNode(secondFieldName).addConstraintViolation();
 
                 return false;
             }
