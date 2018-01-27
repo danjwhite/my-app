@@ -273,7 +273,7 @@ label.error-field-label {
     float: right;
 }
 
-#login-form-table input[type="text"], input[type="password"] {
+#login-form-table .login-input {
     width: 245px;
 }
 

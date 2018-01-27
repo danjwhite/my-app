@@ -43,12 +43,14 @@
                             <c:choose>
                                 <c:when test="${param.error != null}">
                                     <td class="login-table-left"><label>Username:</label></td>
-                                    <td class="login-table-right"><input type="text" name="username"
-                                                                         class="error-field-input"/></td>
+                                    <td class="login-table-right"><input type="text"
+                                                                         class="login-input error-field-input"
+                                                                         name="username"/></td>
                                 </c:when>
                                 <c:otherwise>
                                     <td class="login-table-left"><label>Username:</label></td>
-                                    <td class="login-table-right"><input name="username" type="text"/></td>
+                                    <td class="login-table-right"><input type="text" class="login-input"
+                                                                         name="username"/></td>
                                 </c:otherwise>
                             </c:choose>
                         </tr>
@@ -56,12 +58,14 @@
                             <c:choose>
                                 <c:when test="${param.error != null}">
                                     <td class="login-table-left"><label>Password:</label></td>
-                                    <td class="login-table-right"><input type="password" name="password"
-                                                                         class="error-field-input"/></td>
+                                    <td class="login-table-right"><input type="password"
+                                                                         class="login-input error-field-input"
+                                                                         name="password"/></td>
                                 </c:when>
                                 <c:otherwise>
                                     <td class="login-table-left"><label>Password:</label></td>
-                                    <td class="login-table-right"><input type="password" name="password"/></td>
+                                    <td class="login-table-right"><input type="password" class="login-input"
+                                                                         name="password"/></td>
                                 </c:otherwise>
                             </c:choose>
                         </tr>

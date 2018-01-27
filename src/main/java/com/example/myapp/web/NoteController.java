@@ -1,6 +1,10 @@
 package com.example.myapp.web;
 
+import com.example.myapp.domain.User;
+import com.example.myapp.service.ISecurityService;
+import com.example.myapp.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -19,19 +23,32 @@ import java.util.List;
 @RequestMapping("/notes")
 public class NoteController {
 
+    private ISecurityService securityService;
+
+    private IUserService userService;
+
     private INoteService noteService;
 
     @Autowired
-    public NoteController(INoteService noteService) {
+    public NoteController(ISecurityService securityService, IUserService userService, INoteService noteService) {
+        this.securityService = securityService;
+        this.userService = userService;
         this.noteService = noteService;
     }
 
     public NoteController() {
     }
 
+    @ModelAttribute
+    public User user() {
+        UserDetails principal = securityService.getPrincipal();
+        return userService.findByUsername(principal.getUsername());
+    }
+
     @RequestMapping(value = "/view/entries", method = RequestMethod.GET)
     public String getNotes(@RequestParam(value = "display", required = false) String display,
                            @CookieValue(value = "displayCookie", required = false) String displayCookieValue,
+                           @ModelAttribute("user") User user,
                            Model model,
                            HttpServletResponse response) {
 
@@ -59,14 +76,14 @@ public class NoteController {
     }
 
     @RequestMapping(value = "/view/entry", method = RequestMethod.GET)
-    public String getNote(@RequestParam(value = "noteId") long noteId, Model model) {
+    public String getNote(@RequestParam(value = "noteId") long noteId, @ModelAttribute("user") User user, Model model) {
         model.addAttribute("note", noteService.findById(noteId));
 
         return "note";
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.GET)
-    public String addNote(Model model) {
+    public String addNote(@ModelAttribute("user") User user, Model model) {
         model.addAttribute("note", new Note());
         model.addAttribute("formType", "add");
 
@@ -86,7 +103,7 @@ public class NoteController {
     }
     
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
-    public String editNote(@RequestParam(value = "noteId") long noteId, Model model) {
+    public String editNote(@RequestParam(value = "noteId") long noteId, @ModelAttribute("user") User user, Model model) {
         Note note = noteService.findById(noteId);
         model.addAttribute("note", note);
         model.addAttribute("formType", "edit");

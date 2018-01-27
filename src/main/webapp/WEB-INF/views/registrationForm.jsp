@@ -73,7 +73,7 @@
                             <sf:label path="password">Password:</sf:label>
                         </td>
                         <td class="table-right">
-                            <sf:input path="password" cssErrorClass="error-field-input" size="30"/>
+                            <sf:password path="password" cssErrorClass="error-field-input" size="30"/>
                         </td>
                     </tr>
                     <tr>
@@ -85,7 +85,7 @@
                             <sf:label path="confirmPassword">Confirm Password:</sf:label>
                         </td>
                         <td class="table-right">
-                            <sf:input path="confirmPassword" cssErrorClass="error-field-input" size="30"/>
+                            <sf:password path="confirmPassword" cssErrorClass="error-field-input" size="30"/>
                         </td>
                     </tr>
                     <tr>

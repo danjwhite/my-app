@@ -24,7 +24,7 @@
                     <a href="<c:url value="#"/>">Account</a>
                     <ul>
                         <li><a href="<c:url value="/logout"/>">Log Out</a></li>
-                        <li><a href="<c:url value="#"/>">Settings</a></li>
+                        <li><a href="<c:url value="/account/view?userId=${user.id}"/>">Settings</a></li>
                     </ul>
                 </li>
             </ul>

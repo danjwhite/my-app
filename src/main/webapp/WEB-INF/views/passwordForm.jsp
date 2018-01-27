@@ -42,7 +42,7 @@
                             <sf:label path="password">Current Password:</sf:label>
                         </td>
                         <td class="table-right">
-                            <sf:input path="password" cssErrorClass="error-field-input" size="30"/>
+                            <sf:password path="password" cssErrorClass="error-field-input" size="30"/>
                         </td>
                     </tr>
                     <tr>
@@ -54,7 +54,7 @@
                             <sf:label path="newPassword">New Password</sf:label>
                         </td>
                         <td class="table-right">
-                            <sf:input path="newPassword" cssErrorClass="error-field-input" size="30"/>
+                            <sf:password path="newPassword" cssErrorClass="error-field-input" size="30"/>
                         </td>
                     </tr>
                     <tr>
@@ -66,7 +66,7 @@
                             <sf:label path="confirmNewPassword">Confirm New Password</sf:label>
                         </td>
                         <td class="table-right">
-                            <sf:input path="confirmNewPassword" cssErrorClass="error-field-input" size="30"/>
+                            <sf:password path="confirmNewPassword" cssErrorClass="error-field-input" size="30"/>
                         </td>
                     </tr>
                     <tr>
