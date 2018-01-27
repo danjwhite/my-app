@@ -20,7 +20,7 @@
                 <li><a href="<c:url value="/"/>">Home</a></li>
                 <li><a class="active" href="<c:url value="/notes/view/entries"/>">Notes</a></li>
                 <li>
-                    <a href="<c:url value="#"/>">Account</a>
+                    <a href="<c:url value="/account/view?userId=${user.id}"/>">Account</a>
                     <ul>
                         <li><a href="<c:url value="/logout"/>">Log Out</a></li>
                         <li><a href="<c:url value="/account/view?userId=${user.id}"/>">Settings</a></li>
