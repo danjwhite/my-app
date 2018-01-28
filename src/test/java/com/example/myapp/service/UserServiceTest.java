@@ -130,24 +130,18 @@ public class UserServiceTest {
         String password = user.getPassword();
         Set<Role> roles = new HashSet<>(user.getRoles());
 
-        UserDto userDto = new UserDto(user);
-
-        // Declare updated password.
-        String updatedPassword = "password456";
-
         // Declare updated roles.
         Set<Role> updatedRoles = user.getRoles();
         updatedRoles.add(roleService.findByType("ROLE_ADMIN"));
 
-        // Set new user password and roles.
-        userDto.setPassword(updatedPassword);
-        userDto.setRoles(updatedRoles);
+        // Set new user roles.
+        user.setRoles(updatedRoles);
 
         // Assert the user count.
         assertEquals(4, userService.count());
 
         // Update user and retrieve updated user.
-        userService.update(userDto);
+        userService.update(user);
         User updatedUser = userService.findById(3L);
 
         // Assert the user count.
@@ -157,9 +151,9 @@ public class UserServiceTest {
         assertEquals(firstName, updatedUser.getFirstName());
         assertEquals(lastName, updatedUser.getLastName());
         assertEquals(username, updatedUser.getUsername());
+        assertEquals(password, updatedUser.getPassword());
 
-        // Assert that user password and roles were updated.
-        assertTrue(BCrypt.checkpw(updatedPassword, updatedUser.getPassword()));
+        // Assert that user roles were updated.
         assertEquals(updatedRoles, updatedUser.getRoles());
 
         // Assert that original password and roles do not match the updated ones.
