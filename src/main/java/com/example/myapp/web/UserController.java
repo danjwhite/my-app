@@ -3,7 +3,6 @@ package com.example.myapp.web;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
-import com.example.myapp.service.ISecurityService;
 import com.example.myapp.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -30,9 +29,6 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @Autowired
-    private ISecurityService securityService;
-
     @RequestMapping(value = "/account/view", method = RequestMethod.GET)
     public String getUserAccount(@RequestParam(value = "userId") long userId, Model model) {
         User user = userService.findById(userId);
@@ -52,7 +48,6 @@ public class UserController {
 
     }
 
-    // TODO: Create test for this
     @RequestMapping(value = "account/edit/info", method = RequestMethod.POST)
     public String updateUserInfo(@ModelAttribute("user") @Valid UserDto user,
                                  @RequestParam(value = "userId") long userId,
@@ -68,7 +63,6 @@ public class UserController {
         return "redirect:/account/view";
     }
 
-    // TODO: Create test for this
     @RequestMapping(value = "/account/edit/password", method = RequestMethod.GET)
     public String editPassword(@RequestParam(value = "userId") long userId, Model model) {
         UserPasswordDto userPasswordDto = new UserPasswordDto();
@@ -79,13 +73,12 @@ public class UserController {
         return "passwordForm";
     }
 
-    // TODO: Create test for this
     @RequestMapping(value = "/account/edit/password", method = RequestMethod.POST)
     public String updatePassword(@ModelAttribute("userPasswordDto") @Valid UserPasswordDto userPasswordDto,
                                  @RequestParam(value = "userId") long userId,
                                  BindingResult result, RedirectAttributes redirectAttributes) {
 
-        String currentPassword = securityService.getPrincipal().getPassword();
+        String currentPassword = userService.findById(userId).getPassword();
 
         if (!BCrypt.checkpw(userPasswordDto.getPassword(), currentPassword)) {
             result.rejectValue("password", null, "Current password is invalid");

@@ -1,8 +1,6 @@
 package com.example.myapp.web;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
@@ -102,11 +100,37 @@ public class UserControllerTest {
         User user = userService.findById(1L);
         String lastName = user.getLastName();
 
-        // Perform GET request on MockMvc to update the user's first name and assert expectations.
+        // Perform POST request on MockMvc to update the user's first name and assert expectations.
         mockMvc.perform(post("/account/edit/info?userId=1")
                 .param("id", "1")
                 .param("firstName", "Mike")
                 .param("lastName", lastName))
                 .andExpect(redirectedUrl("/account/view?userId=1&confirmation=infoUpdated"));
+    }
+
+    @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
+    public void shouldShowPasswordForm() throws Exception {
+
+        // Perform GET request on MockMvc and assert expectations.
+        mockMvc.perform(get("/account/edit/password?userId=1"))
+                .andExpect(model().attributeExists("userPasswordDto"))
+                .andExpect(model().attribute("userPasswordDto", hasProperty("userId", equalTo(1L))))
+                .andExpect(model().attribute("userPasswordDto", hasProperty("password", nullValue())))
+                .andExpect(model().attribute("userPasswordDto", hasProperty("newPassword", nullValue())))
+                .andExpect(model().attribute("userPasswordDto", hasProperty("confirmNewPassword", nullValue())));
+    }
+
+    @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
+    public void testUpdatePassword() throws Exception {
+
+        // Perform POST request on MockMvc and assert expectations.
+        mockMvc.perform(post("/account/edit/password?userId=1")
+                .param("userId", "1")
+                .param("password", "password123")
+                .param("newPassword", "password456")
+                .param("confirmNewPassword", "password456"))
+                .andExpect(redirectedUrl("/account/view?userId=1&confirmation=passwordUpdated"));
     }
 }

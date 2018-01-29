@@ -35,7 +35,8 @@
     <div id="body">
         <h3>Change Password</h3>
         <div class="form-container">
-            <sf:form method="post" name="password-form" commandName="user">
+            <sf:form method="post" name="password-form" commandName="userPasswordDto">
+                <sf:hidden path="userId"/>
                 <table class="form-table">
                     <tr>
                         <td class="table-left">
