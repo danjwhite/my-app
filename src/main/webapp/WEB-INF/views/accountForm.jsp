@@ -35,7 +35,8 @@
     <div id="body">
         <h3>Edit Account Info</h3>
         <div class="form-container">
-            <sf:form method="post" name="password-form" commandName="user">
+            <sf:form method="post" name="account-form" modelAttribute="user">
+                <sf:hidden path="id"/>
                 <table class="form-table">
                     <tr>
                         <td class="table-left">

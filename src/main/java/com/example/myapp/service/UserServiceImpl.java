@@ -5,12 +5,12 @@ import com.example.myapp.dao.IUserDao;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
+import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.dto.UserRegistrationDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.util.HashSet;
 import java.util.List;
@@ -78,29 +78,22 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     public User update(UserDto userDto) {
 
-        // Find user.
-        User user = userDao.findById(userDto.getId());
+        User user = findById(userDto.getId());
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+
+        return userDao.update(user);
+    }
+
+    // TODO: Create test for this
+    @Override
+    @Transactional
+    public User updatePassword(UserPasswordDto userPasswordDto) {
+
+        User user = userDao.findById(userPasswordDto.getUserId());
 
         if (user != null) {
-
-            // Set user fields to match any updated fields.
-            user.setFirstName(userDto.getFirstName());
-            user.setLastName(userDto.getLastName());
-            user.setUsername(userDto.getUsername());
-
-            // Encode and set password if it dose not match.
-            if (!BCrypt.checkpw(userDto.getPassword(), user.getPassword()))
-                user.setPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
-
-            // Add any new roles.
-            Set<Role> roles = user.getRoles();
-            for (Role role : userDto.getRoles()) {
-                if (!roles.contains(role)) {
-                    roles.add(role);
-                }
-            }
-
-            user.setRoles(roles);
+            user.setPassword(bCryptPasswordEncoder.encode(userPasswordDto.getNewPassword()));
         }
 
         return userDao.update(user);
@@ -108,7 +101,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public void delete(String username) {
-        userDao.delete(username);
+    public void delete(long id) {
+        userDao.delete(id);
     }
 }

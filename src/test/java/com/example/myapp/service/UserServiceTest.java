@@ -120,45 +120,39 @@ public class UserServiceTest {
 
     @Test
     @Transactional
-    public void testUpdate() {
+    public void newTestUpdate() {
 
         // Get user and save original field values.
-        User user = userService.findById(3L);
+        User user = userService.findById(1L);
         String firstName = user.getFirstName();
         String lastName = user.getLastName();
         String username = user.getUsername();
         String password = user.getPassword();
         Set<Role> roles = new HashSet<>(user.getRoles());
 
-        // Declare updated roles.
-        Set<Role> updatedRoles = user.getRoles();
-        updatedRoles.add(roleService.findByType("ROLE_ADMIN"));
-
-        // Set new user roles.
-        user.setRoles(updatedRoles);
+        // Create UserDto from user and set first name.
+        UserDto userDto = new UserDto(user);
+        userDto.setFirstName("Mike");
 
         // Assert the user count.
         assertEquals(4, userService.count());
 
         // Update user and retrieve updated user.
-        userService.update(user);
-        User updatedUser = userService.findById(3L);
+        userService.update(userDto);
+        User updatedUser = userService.findById(1L);
 
         // Assert the user count.
         assertEquals(4, userService.count());
 
+        // Assert that the updated field is different.
+        assertNotEquals(firstName, updatedUser.getFirstName());
+        assertEquals("Mike", updatedUser.getFirstName());
+
         // Assert that non-updated fields remain the same.
-        assertEquals(firstName, updatedUser.getFirstName());
         assertEquals(lastName, updatedUser.getLastName());
         assertEquals(username, updatedUser.getUsername());
         assertEquals(password, updatedUser.getPassword());
-
-        // Assert that user roles were updated.
-        assertEquals(updatedRoles, updatedUser.getRoles());
-
-        // Assert that original password and roles do not match the updated ones.
-        assertFalse(BCrypt.checkpw(password, updatedUser.getPassword()));
-        assertNotEquals(roles, updatedUser.getRoles());
+        assertEquals(roles, updatedUser.getRoles());
     }
 
     @Test
@@ -166,11 +160,11 @@ public class UserServiceTest {
     @SuppressWarnings("Duplicates")
     public void testDelete() {
         assertEquals(4, userService.count());
-        assertNotNull(userService.findByUsername("mjones"));
+        assertNotNull(userService.findById(1L));
 
-        userService.delete("mjones");
+        userService.delete(1L);
 
         assertEquals(3, userService.count());
-        assertNull(userService.findByUsername("mjones"));
+        assertNull(userService.findById(1L));
     }
 }

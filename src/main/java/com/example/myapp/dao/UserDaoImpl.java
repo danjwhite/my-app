@@ -74,7 +74,7 @@ public class UserDaoImpl implements IUserDao {
     }
 
     @Override
-    public void delete(String username) {
-        entityManager.remove(findByUsername(username));
+    public void delete(long id) {
+        entityManager.remove(findById(id));
     }
 }

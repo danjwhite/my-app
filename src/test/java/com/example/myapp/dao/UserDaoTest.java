@@ -121,15 +121,11 @@ public class UserDaoTest {
         String password = user.getPassword();
         Set<Role> roles = new HashSet<>(user.getRoles());
 
-        // Declare updated password.
-        String updatedPassword = "$2y$10$um0c/380Ny2oEDo5nS0OXegxVmWyoMd0.gIWyaX6PrseSqIdqinbK";
-
         // Declare updated roles.
         Set<Role> updatedRoles = user.getRoles();
         updatedRoles.add(roleDao.findByType("ROLE_ADMIN"));
 
-        // Set user password and roles.
-        user.setPassword(updatedPassword);
+        // Set user roles.
         user.setRoles(updatedRoles);
 
         assertEquals(4, userDao.count());
@@ -142,24 +138,24 @@ public class UserDaoTest {
         assertEquals(firstName, updatedUser.getFirstName());
         assertEquals(lastName, updatedUser.getLastName());
         assertEquals(username, updatedUser.getUsername());
+        assertEquals(password, updatedUser.getPassword());
 
-        assertEquals(updatedPassword, updatedUser.getPassword());
         assertEquals(updatedRoles, updatedUser.getRoles());
 
-        assertNotEquals(password, updatedUser.getPassword());
         assertNotEquals(roles, updatedUser.getRoles());
     }
 
     @Test
     @Transactional
+    @SuppressWarnings("Duplicates")
     public void testDelete() {
 
         assertEquals(4, userDao.count());
-        assertNotNull(userDao.findByUsername("mjones"));
+        assertNotNull(userDao.findById(1L));
 
-        userDao.delete("mjones");
+        userDao.delete(1L);
 
         assertEquals(3, userDao.count());
-        assertNull(userDao.findByUsername("mjones"));
+        assertNull(userDao.findById(1L));
     }
 }

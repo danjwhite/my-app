@@ -2,6 +2,7 @@ package com.example.myapp.service;
 
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
+import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.dto.UserRegistrationDto;
 
 import java.util.List;
@@ -16,7 +17,9 @@ public interface IUserService {
 
     User update(UserDto userDto);
 
-    void delete(String username);
+    User updatePassword(UserPasswordDto userPasswordDto);
+
+    void delete(long id);
 
     List<User> findAll();
 

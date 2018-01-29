@@ -69,7 +69,7 @@
             <table class="text-table">
                 <tr>
                     <td class="text-table-option"><a
-                            href="<c:url value="/account/edit?info=general&userId=${note.id}"/>">Edit</a>
+                            href="<c:url value="/account/edit/info?userId=${user.id}"/>">Edit</a>
                     </td>
                 </tr>
             </table>
@@ -78,10 +78,10 @@
         <div class="box-container">
             <table id="settings-table" class="text-table">
                 <tr>
-                    <td class="text-table-data"><a href="<c:url value="/account/edit?info=password&userId=${note.id}"/>">Change password</a></td>
+                    <td class="text-table-data"><a href="<c:url value="/account/edit/password?userId=${user.id}"/>">Change password</a></td>
                 </tr>
                 <tr>
-                    <td class="text-table-data"><a href="<c:url value="/account/delete?userId=${note.id}"/>">Delete account</a></td>
+                    <td class="text-table-data"><a href="<c:url value="/account/delete?userId=${user.id}"/>">Delete account</a></td>
                 </tr>
             </table>
         </div>

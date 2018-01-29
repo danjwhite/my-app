@@ -1,23 +1,17 @@
 package com.example.myapp.dto;
 
-import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
-
-import java.util.Set;
+import org.hibernate.validator.constraints.NotBlank;
 
 public class UserDto {
 
     private Long id;
 
+    @NotBlank
     private String firstName;
 
+    @NotBlank
     private String lastName;
-
-    private String username;
-
-    private String password;
-
-    private Set<Role> roles;
 
     public UserDto() {
 
@@ -27,9 +21,6 @@ public class UserDto {
         id = user.getId();
         firstName = user.getFirstName();
         lastName = user.getLastName();
-        username = user.getUsername();
-        password = user.getPassword();
-        roles = user.getRoles();
     }
 
     public Long getId() {
@@ -54,29 +45,5 @@ public class UserDto {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
     }
 }
