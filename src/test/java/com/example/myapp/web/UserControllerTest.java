@@ -39,9 +39,6 @@ public class UserControllerTest {
     @Autowired
     private IUserService userService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     private MockMvc mockMvc;
 
     @Before
