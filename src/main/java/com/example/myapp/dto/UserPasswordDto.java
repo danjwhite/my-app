@@ -1,20 +1,27 @@
 package com.example.myapp.dto;
 
+import com.example.myapp.constraint.BlankCheck;
 import com.example.myapp.constraint.FieldMatch;
+import com.example.myapp.constraint.MatchCheck;
+
 import org.hibernate.validator.constraints.NotBlank;
 
-@FieldMatch(first = "newPassword", second = "confirmNewPassword", message = "The password fields must match")
+import javax.validation.GroupSequence;
+
+@GroupSequence({UserPasswordDto.class, BlankCheck.class, MatchCheck.class})
+@FieldMatch(first = "newPassword", second = "confirmNewPassword",
+        message = "The password fields must match",
+        groups = MatchCheck.class)
 public class UserPasswordDto {
 
     private Long userId;
 
-    @NotBlank
     private String password;
 
-    @NotBlank
+    @NotBlank(message = "This field is required.", groups = BlankCheck.class)
     private String newPassword;
 
-    @NotBlank
+    @NotBlank(message = "This field is required.", groups = BlankCheck.class)
     private String confirmNewPassword;
 
     public Long getUserId() {

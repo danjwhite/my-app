@@ -75,9 +75,9 @@ public class UserController {
 
     @RequestMapping(value = "/account/edit/password", method = RequestMethod.POST)
     public String updatePassword(@ModelAttribute("userPasswordDto") @Valid UserPasswordDto userPasswordDto,
-                                 @RequestParam(value = "userId") long userId,
                                  BindingResult result, RedirectAttributes redirectAttributes) {
 
+        long userId = userPasswordDto.getUserId();
         String currentPassword = userService.findById(userId).getPassword();
 
         if (!BCrypt.checkpw(userPasswordDto.getPassword(), currentPassword)) {
