@@ -1,6 +1,8 @@
 package com.example.myapp.web;
 
+import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
+import com.example.myapp.service.INoteService;
 import com.example.myapp.service.ISecurityService;
 import com.example.myapp.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.example.myapp.service.INoteService;
-import com.example.myapp.domain.Note;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;

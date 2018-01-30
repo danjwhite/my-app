@@ -1,7 +1,6 @@
 package com.example.myapp.dao;
 
 import com.example.myapp.domain.Note;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

@@ -6,12 +6,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import javax.persistence.*;
 import javax.validation.GroupSequence;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "note")

@@ -1,7 +1,5 @@
 package com.example.myapp.service;
 
-import static org.junit.Assert.*;
-
 import com.example.myapp.domain.Role;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +9,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

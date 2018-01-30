@@ -3,7 +3,6 @@ package com.example.myapp.dto;
 import com.example.myapp.constraint.BlankCheck;
 import com.example.myapp.constraint.FieldMatch;
 import com.example.myapp.constraint.MatchCheck;
-
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.GroupSequence;

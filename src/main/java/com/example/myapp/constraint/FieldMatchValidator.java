@@ -1,9 +1,9 @@
 package com.example.myapp.constraint;
 
+import org.apache.commons.beanutils.BeanUtils;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import org.apache.commons.beanutils.BeanUtils;
 
 public class FieldMatchValidator implements ConstraintValidator<FieldMatch, Object> {
 

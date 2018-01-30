@@ -1,7 +1,5 @@
 package com.example.myapp.web;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
-
 import com.example.myapp.domain.User;
 import com.example.myapp.service.ISecurityService;
 import com.example.myapp.service.IUserService;
@@ -10,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/")
