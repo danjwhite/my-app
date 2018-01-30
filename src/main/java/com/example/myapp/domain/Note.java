@@ -27,12 +27,12 @@ public class Note implements Serializable {
     private Date createdAt;
 
     @Column(name = "title")
-    @NotEmpty(message = "This field is required.", groups = BlankCheck.class)
+    @NotEmpty(message = "Cannot be blank", groups = BlankCheck.class)
     @Size(min = 1, max = 140, message = "Title must be within 140 characters.", groups = SizeCheck.class)
     private String title;
 
     @Column(name = "body")
-    @NotEmpty(message = "This field is required.", groups = BlankCheck.class)
+    @NotEmpty(message = "Cannot be blank", groups = BlankCheck.class)
     @Size(min = 1, max = 5000, message = "Body must be within 5,000 characters.", groups = SizeCheck.class)
     private String body;
 

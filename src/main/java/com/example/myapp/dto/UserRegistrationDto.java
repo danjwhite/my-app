@@ -3,22 +3,22 @@ package com.example.myapp.dto;
 import com.example.myapp.constraint.FieldMatch;
 import org.hibernate.validator.constraints.NotBlank;
 
-@FieldMatch(first = "password", second = "confirmPassword", message = "The password fields must match")
+@FieldMatch(first = "password", second = "confirmPassword", message = "Password fields must match")
 public class UserRegistrationDto {
 
-    @NotBlank
+    @NotBlank(message = "Cannot be blank")
     private String firstName;
 
-    @NotBlank
+    @NotBlank(message = "Cannot be blank")
     private String lastName;
 
-    @NotBlank
+    @NotBlank(message = "Cannot be blank")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "Cannot be blank")
     private String password;
 
-    @NotBlank
+    @NotBlank(message = "Cannot be blank")
     private String confirmPassword;
 
     public String getFirstName() {

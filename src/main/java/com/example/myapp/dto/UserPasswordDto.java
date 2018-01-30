@@ -18,10 +18,10 @@ public class UserPasswordDto {
 
     private String password;
 
-    @NotBlank(message = "This field is required.", groups = BlankCheck.class)
+    @NotBlank(message = "Cannot be blank", groups = BlankCheck.class)
     private String newPassword;
 
-    @NotBlank(message = "This field is required.", groups = BlankCheck.class)
+    @NotBlank(message = "Cannot be blank", groups = BlankCheck.class)
     private String confirmNewPassword;
 
     public Long getUserId() {
