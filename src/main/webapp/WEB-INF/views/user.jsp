@@ -78,10 +78,12 @@
         <div class="box-container">
             <table id="settings-table" class="text-table">
                 <tr>
-                    <td class="text-table-data"><a href="<c:url value="/account/edit/password?userId=${user.id}"/>">Change password</a></td>
+                    <td class="text-table-data"><a href="<c:url value="/account/edit/password?userId=${user.id}"/>">Change
+                        password</a></td>
                 </tr>
                 <tr>
-                    <td class="text-table-data"><a href="<c:url value="/account/delete?userId=${user.id}"/>">Delete account</a></td>
+                    <td class="text-table-data"><a href="<c:url value="/account/delete?userId=${user.id}"/>">Delete
+                        account</a></td>
                 </tr>
             </table>
         </div>

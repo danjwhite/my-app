@@ -87,7 +87,7 @@ p {
     height: auto;
     line-height: 16px;
     padding: 10px;
-    text-align:center;
+    text-align: center;
 }
 
 #header-nav ul li a:hover {
@@ -103,24 +103,24 @@ p {
 }
 
 #header-nav ul li:hover ul {
-    display:block;
-    position:absolute;
-    top:36px;
-    left:0;
-    height:auto;
+    display: block;
+    position: absolute;
+    top: 36px;
+    left: 0;
+    height: auto;
 }
 
 #header-nav ul li:hover ul li a {
-    display:block;
-    text-align:left;
-    border-bottom:1px solid #FFF;
+    display: block;
+    text-align: left;
+    border-bottom: 1px solid #FFF;
 }
 
 #header-nav ul li:hover ul li:hover ul {
-    display:block;
-    position:absolute;
-    left:124px;
-    top:0;
+    display: block;
+    position: absolute;
+    left: 124px;
+    top: 0;
 }
 
 table.text-table {
@@ -242,7 +242,7 @@ label.error-field-label {
     justify-content: center;
     background-image: -webkit-linear-gradient(top,
     #F3F7F7,
-    #C6C9C9 );
+    #C6C9C9);
 }
 
 #login-form-container {

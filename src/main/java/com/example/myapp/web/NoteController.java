@@ -101,7 +101,7 @@ public class NoteController {
         redirectAttributes.addAttribute("confirmation", "added");
         return "redirect:/notes/view/entry";
     }
-    
+
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String editNote(@RequestParam(value = "noteId") long noteId, @ModelAttribute("user") User user, Model model) {
         Note note = noteService.findById(noteId);
@@ -122,7 +122,7 @@ public class NoteController {
         redirectAttributes.addAttribute("confirmation", "edited");
         return "redirect:/notes/view/entry";
     }
-    
+
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     public String deleteNote(@RequestParam(value = "noteId") long noteId) {
         noteService.delete(noteId);

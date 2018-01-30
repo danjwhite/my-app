@@ -51,13 +51,13 @@ public class UserRegistrationControllerTest {
 
         // Perform POST request to register a user on MockMvc and assert expectations.
         mockMvc.perform(post("/register")
-            .param("firstName", "John")
-            .param("lastName", "Smith")
-            .param("username", "jsmith")
-            .param("password", "password123")
-            .param("confirmPassword", "password123"))
-            .andExpect(redirectedUrl("/account/view?userId=5&confirmation=created"))
-            .andExpect(status().is3xxRedirection());
+                .param("firstName", "John")
+                .param("lastName", "Smith")
+                .param("username", "jsmith")
+                .param("password", "password123")
+                .param("confirmPassword", "password123"))
+                .andExpect(redirectedUrl("/account/view?userId=5&confirmation=created"))
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
