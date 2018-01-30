@@ -72,7 +72,7 @@ public class UserRegistrationControllerTest {
                 .param("password", "password123")
                 .param("confirmPassword", "password456"))
                 .andExpect(model().hasErrors())
-                .andExpect(model().attributeHasErrors("user"))
+                .andExpect(model().attributeHasFieldErrorCode("user", "confirmPassword", "FieldMatch"))
                 .andExpect(status().isOk());
     }
 
@@ -88,6 +88,25 @@ public class UserRegistrationControllerTest {
                 .param("confirmPassword", "password123"))
                 .andExpect(model().hasErrors())
                 .andExpect(model().attributeHasFieldErrors("user", "username"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testRegisterUserBlankFields() throws Exception {
+
+        // Perform POST request to register a user on MockMvc with empty fields and assert expectations.
+        mockMvc.perform(post("/register")
+                .param("firstName", "")
+                .param("lastName", "")
+                .param("username", "")
+                .param("password", "")
+                .param("confirmPassword", ""))
+                .andExpect(model().hasErrors())
+                .andExpect(model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"))
+                .andExpect(model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"))
+                .andExpect(model().attributeHasFieldErrorCode("user", "username", "NotBlank"))
+                .andExpect(model().attributeHasFieldErrorCode("user", "password", "NotBlank"))
+                .andExpect(model().attributeHasFieldErrorCode("user", "confirmPassword", "NotBlank"))
                 .andExpect(status().isOk());
     }
 }
