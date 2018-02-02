@@ -12,10 +12,17 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
@@ -24,18 +31,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
 
     @Autowired
-    private UserController userController;
+    private IUserService userService;
 
     @Autowired
-    private IUserService userService;
+    private WebApplicationContext context;
 
     private MockMvc mockMvc;
 
     @Before
     public void setup() {
 
-        // Setup MockMvc to use UserRegistrationController.
-        this.mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+        // Setup MockMvc to use WebApplicationContext.
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(context)
+                .apply(springSecurity())
+                .alwaysDo(print())
+                .build();
     }
 
     @Test
@@ -45,6 +55,26 @@ public class UserControllerTest {
         mockMvc.perform(get("/login"))
                 .andExpect(view().name("loginForm"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testLoginSuccess() throws Exception {
+
+        // Perform login on MockMvc and assert expectations.
+        mockMvc.perform(formLogin().user("mjones").password("password123"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/"))
+                .andExpect(authenticated().withUsername("mjones"));
+    }
+
+    @Test
+    public void testLoginDenied() throws Exception {
+
+        // Perform login on MockMvc and assert expectations.
+        mockMvc.perform(formLogin().user("invalid").password("invalid"))
+                .andExpect(status().isFound())
+                .andExpect(redirectedUrl("/login?error"))
+                .andExpect(unauthenticated());
     }
 
     @Test
@@ -89,6 +119,7 @@ public class UserControllerTest {
 
         // Perform POST request on MockMvc to update the user's first name and assert expectations.
         mockMvc.perform(post("/account/edit/info?userId=1")
+                .with(csrf())
                 .param("id", "1")
                 .param("firstName", "Mike")
                 .param("lastName", lastName))
@@ -114,6 +145,7 @@ public class UserControllerTest {
 
         // Perform POST request on MockMvc and assert expectations.
         mockMvc.perform(post("/account/edit/password?userId=1")
+                .with(csrf())
                 .param("userId", "1")
                 .param("password", "password123")
                 .param("newPassword", "password456")
