@@ -30,18 +30,18 @@ public class UserController {
     private IUserService userService;
 
     @RequestMapping(value = "/account/view", method = RequestMethod.GET)
-    public String getUserAccount(@RequestParam(value = "userId") long userId, Model model) {
-        User user = userService.findById(userId);
+    public String getUserAccount(@RequestParam(value = "username") String username, Model model) {
+        User user = userService.findByUsername(username);
         model.addAttribute("user", user);
 
         return "user";
     }
 
     @RequestMapping(value = "/account/edit/info", method = RequestMethod.GET)
-    public String editUserInfo(@RequestParam(value = "userId") long userId,
+    public String editUserInfo(@RequestParam(value = "username") String username,
                                Model model) {
 
-        UserDto user = new UserDto(userService.findById(userId));
+        UserDto user = new UserDto(userService.findByUsername(username));
         model.addAttribute("user", user);
 
         return "accountForm";
@@ -50,23 +50,23 @@ public class UserController {
 
     @RequestMapping(value = "account/edit/info", method = RequestMethod.POST)
     public String updateUserInfo(@ModelAttribute("user") @Valid UserDto user,
-                                 @RequestParam(value = "userId") long userId,
+                                 @RequestParam(value = "username") String username,
                                  BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "accountForm";
         }
 
         userService.update(user);
-        redirectAttributes.addAttribute("userId", userId);
+        redirectAttributes.addAttribute("username", username);
         redirectAttributes.addAttribute("confirmation", "infoUpdated");
 
         return "redirect:/account/view";
     }
 
     @RequestMapping(value = "/account/edit/password", method = RequestMethod.GET)
-    public String editPassword(@RequestParam(value = "userId") long userId, Model model) {
+    public String editPassword(@RequestParam(value = "username") String username, Model model) {
         UserPasswordDto userPasswordDto = new UserPasswordDto();
-        userPasswordDto.setUserId(userId);
+        userPasswordDto.setUsername(username);
 
         model.addAttribute(userPasswordDto);
 
@@ -77,8 +77,8 @@ public class UserController {
     public String updatePassword(@ModelAttribute("userPasswordDto") @Valid UserPasswordDto userPasswordDto,
                                  BindingResult result, RedirectAttributes redirectAttributes) {
 
-        long userId = userPasswordDto.getUserId();
-        String currentPassword = userService.findById(userId).getPassword();
+        String username = userPasswordDto.getUsername();
+        String currentPassword = userService.findByUsername(username).getPassword();
 
         if (!BCrypt.checkpw(userPasswordDto.getPassword(), currentPassword)) {
             result.rejectValue("password", null, "Current password is invalid");
@@ -90,15 +90,15 @@ public class UserController {
 
         userService.updatePassword(userPasswordDto);
 
-        redirectAttributes.addAttribute("userId", userId);
+        redirectAttributes.addAttribute("username", username);
         redirectAttributes.addAttribute("confirmation", "passwordUpdated");
 
         return "redirect:/account/view";
     }
 
     @RequestMapping(value = "/account/delete", method = RequestMethod.GET)
-    public String deleteAccount(@RequestParam(value = "userId") long userId) {
-        userService.delete(userId);
+    public String deleteAccount(@RequestParam(value = "username") String username) {
+        userService.delete(username);
 
         return "redirect:/logout";
     }
