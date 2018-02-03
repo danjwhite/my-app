@@ -21,7 +21,7 @@ public interface IUserService {
 
     User updatePassword(UserPasswordDto userPasswordDto);
 
-    void delete(long id);
+    void delete(String username);
 
     List<User> findAll();
 

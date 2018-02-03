@@ -95,7 +95,7 @@ public class UserServiceImpl implements IUserService {
 
         return userDao.update(user);
     }
-    
+
     @Override
     @Transactional
     public User updatePassword(UserPasswordDto userPasswordDto) {
@@ -111,7 +111,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
-    public void delete(long id) {
-        userDao.delete(id);
+    public void delete(String username) {
+        userDao.delete(username);
     }
 }
