@@ -14,7 +14,7 @@ public interface IUserDao {
 
     User update(User user);
 
-    void delete(long id);
+    void delete(String username);
 
     List<User> findAll();
 
