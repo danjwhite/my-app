@@ -82,10 +82,10 @@ public class UserControllerTest {
     public void testGetUserAccount() throws Exception {
 
         // Create expected object.
-        User expectedUser = userService.findById(1L);
+        User expectedUser = userService.findByUsername("mjones");
 
         // Perform GET request on MockMvc and assert expectations.
-        mockMvc.perform(get("/account/view?userId=1"))
+        mockMvc.perform(get("/account/view?username=mjones"))
                 .andExpect(view().name("user"))
                 .andExpect(model().attributeExists("user"))
                 .andExpect(model().attribute("user", expectedUser));
@@ -96,14 +96,14 @@ public class UserControllerTest {
     public void shouldShowAccountForm() throws Exception {
 
         // Get user and user properties.
-        User user = userService.findById(1L);
+        User user = userService.findByUsername("mjones");
         String firstName = user.getFirstName();
         String lastName = user.getLastName();
 
         // Perform GET request on MockMvc and assert expectations.
-        mockMvc.perform(get("/account/edit/info?userId=1"))
+        mockMvc.perform(get("/account/edit/info?username=mjones"))
                 .andExpect(model().attributeExists("user"))
-                .andExpect(model().attribute("user", hasProperty("id", equalTo(1L))))
+                .andExpect(model().attribute("user", hasProperty("username", is("mjones"))))
                 .andExpect(model().attribute("user", hasProperty("firstName", is(firstName))))
                 .andExpect(model().attribute("user", hasProperty("lastName", is(lastName))))
                 .andExpect(status().isOk());
@@ -114,16 +114,16 @@ public class UserControllerTest {
     public void updateUserInfo() throws Exception {
 
         // Get user and user properties.
-        User user = userService.findById(1L);
+        User user = userService.findByUsername("mjones");
         String lastName = user.getLastName();
 
         // Perform POST request on MockMvc to update the user's first name and assert expectations.
-        mockMvc.perform(post("/account/edit/info?userId=1")
+        mockMvc.perform(post("/account/edit/info?username=mjones")
                 .with(csrf())
-                .param("id", "1")
+                .param("username", "mjones")
                 .param("firstName", "Mike")
                 .param("lastName", lastName))
-                .andExpect(redirectedUrl("/account/view?userId=1&confirmation=infoUpdated"));
+                .andExpect(redirectedUrl("/account/view?username=mjones&confirmation=infoUpdated"));
     }
 
     @Test
@@ -131,9 +131,9 @@ public class UserControllerTest {
     public void shouldShowPasswordForm() throws Exception {
 
         // Perform GET request on MockMvc and assert expectations.
-        mockMvc.perform(get("/account/edit/password?userId=1"))
+        mockMvc.perform(get("/account/edit/password?username=mjones"))
                 .andExpect(model().attributeExists("userPasswordDto"))
-                .andExpect(model().attribute("userPasswordDto", hasProperty("userId", equalTo(1L))))
+                .andExpect(model().attribute("userPasswordDto", hasProperty("username", is("mjones"))))
                 .andExpect(model().attribute("userPasswordDto", hasProperty("password", nullValue())))
                 .andExpect(model().attribute("userPasswordDto", hasProperty("newPassword", nullValue())))
                 .andExpect(model().attribute("userPasswordDto", hasProperty("confirmNewPassword", nullValue())));
@@ -144,12 +144,12 @@ public class UserControllerTest {
     public void testUpdatePassword() throws Exception {
 
         // Perform POST request on MockMvc and assert expectations.
-        mockMvc.perform(post("/account/edit/password?userId=1")
+        mockMvc.perform(post("/account/edit/password?username=mjones")
                 .with(csrf())
-                .param("userId", "1")
+                .param("username", "mjones")
                 .param("password", "password123")
                 .param("newPassword", "password456")
                 .param("confirmNewPassword", "password456"))
-                .andExpect(redirectedUrl("/account/view?userId=1&confirmation=passwordUpdated"));
+                .andExpect(redirectedUrl("/account/view?username=mjones&confirmation=passwordUpdated"));
     }
 }
