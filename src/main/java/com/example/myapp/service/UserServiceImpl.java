@@ -95,8 +95,7 @@ public class UserServiceImpl implements IUserService {
 
         return userDao.update(user);
     }
-
-    // TODO: Create test for this
+    
     @Override
     @Transactional
     public User updatePassword(UserPasswordDto userPasswordDto) {
