@@ -159,11 +159,11 @@ public class UserServiceTest {
     @SuppressWarnings("Duplicates")
     public void testDelete() {
         assertEquals(2, userService.count());
-        assertNotNull(userService.findById(1L));
+        assertNotNull(userService.findByUsername("mjones"));
 
-        userService.delete(1L);
+        userService.delete("mjones");
 
         assertEquals(1, userService.count());
-        assertNull(userService.findById(1L));
+        assertNull(userService.findByUsername("mjones"));
     }
 }
