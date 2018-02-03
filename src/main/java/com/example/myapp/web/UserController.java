@@ -55,7 +55,6 @@ public class UserController {
 
         userService.update(user);
 
-        // redirectAttributes.addAttribute("username", username);
         redirectAttributes.addAttribute("confirmation", "infoUpdated");
 
         return "redirect:/user/" + username + "/view";
@@ -88,7 +87,6 @@ public class UserController {
 
         userService.updatePassword(userPasswordDto);
 
-        // redirectAttributes.addAttribute("username", username);
         redirectAttributes.addAttribute("confirmation", "passwordUpdated");
 
         return "redirect:/user/" + username + "/view";
