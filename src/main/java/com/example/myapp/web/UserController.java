@@ -96,7 +96,6 @@ public class UserController {
         return "redirect:/account/view";
     }
 
-    // TODO: Create test for this
     @RequestMapping(value = "/account/delete", method = RequestMethod.GET)
     public String deleteAccount(@RequestParam(value = "userId") long userId) {
         userService.delete(userId);
@@ -104,13 +103,11 @@ public class UserController {
         return "redirect:/logout";
     }
 
-    // TODO: Create test for this
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login() {
         return "loginForm";
     }
-
-    // TODO: Create test for this
+    
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
