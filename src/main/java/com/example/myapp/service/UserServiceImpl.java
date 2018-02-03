@@ -89,7 +89,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     public User update(UserDto userDto) {
 
-        User user = findById(userDto.getId());
+        User user = findByUsername(userDto.getUsername());
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
 
@@ -100,7 +100,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     public User updatePassword(UserPasswordDto userPasswordDto) {
 
-        User user = userDao.findById(userPasswordDto.getUserId());
+        User user = userDao.findByUsername(userPasswordDto.getUsername());
 
         if (user != null) {
             user.setPassword(bCryptPasswordEncoder.encode(userPasswordDto.getNewPassword()));
