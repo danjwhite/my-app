@@ -36,7 +36,7 @@
         <h3>Edit Account Info</h3>
         <div class="form-container">
             <sf:form method="post" name="account-form" modelAttribute="user">
-                <sf:hidden path="id"/>
+                <sf:hidden path="username"/>
                 <table class="form-table">
                     <tr>
                         <td class="table-left">
