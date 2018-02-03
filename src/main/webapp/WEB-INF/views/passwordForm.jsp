@@ -24,7 +24,7 @@
                     <a class="active" href="<c:url value="/account/view?username=${user.username}"/>">Account</a>
                     <ul>
                         <li><a href="<c:url value="/logout"/>">Log Out</a></li>
-                        <li><a href="<c:url value="#"/>">Settings</a></li>
+                        <li><a href="<c:url value="/account/view?username=${user.username}"/>">Settings</a></li>
                     </ul>
                 </li>
             </ul>
