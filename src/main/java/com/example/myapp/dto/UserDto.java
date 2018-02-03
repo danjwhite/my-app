@@ -20,7 +20,7 @@ public class UserDto {
     }
 
     public UserDto(User user) {
-        id = user.getId();
+        username = user.getUsername();
         firstName = user.getFirstName();
         lastName = user.getLastName();
     }
