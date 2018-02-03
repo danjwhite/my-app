@@ -21,10 +21,10 @@
                 <li><a href="<c:url value="/"/>">Home</a></li>
                 <li><a class="active" href="<c:url value="/notes/view/entries"/>">Notes</a></li>
                 <li>
-                    <a href="<c:url value="/account/view?userId=${user.id}"/>">Account</a>
+                    <a href="<c:url value="/account/view?username=${user.username}"/>">Account</a>
                     <ul>
                         <li><a href="<c:url value="/logout"/>">Log Out</a></li>
-                        <li><a href="<c:url value="/account/view?userId=${user.id}"/>">Settings</a></li>
+                        <li><a href="<c:url value="/account/view?username=${user.username}"/>">Settings</a></li>
                     </ul>
                 </li>
             </ul>
