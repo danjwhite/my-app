@@ -85,7 +85,7 @@ public class UserControllerTest {
         User expectedUser = userService.findByUsername("mjones");
 
         // Perform GET request on MockMvc and assert expectations.
-        mockMvc.perform(get("/account/view?username=mjones"))
+        mockMvc.perform(get("/user/mjones/view"))
                 .andExpect(view().name("user"))
                 .andExpect(model().attributeExists("user"))
                 .andExpect(model().attribute("user", expectedUser));
@@ -101,7 +101,7 @@ public class UserControllerTest {
         String lastName = user.getLastName();
 
         // Perform GET request on MockMvc and assert expectations.
-        mockMvc.perform(get("/account/edit/info?username=mjones"))
+        mockMvc.perform(get("/user/mjones/edit/info"))
                 .andExpect(model().attributeExists("user"))
                 .andExpect(model().attribute("user", hasProperty("username", is("mjones"))))
                 .andExpect(model().attribute("user", hasProperty("firstName", is(firstName))))
@@ -118,12 +118,12 @@ public class UserControllerTest {
         String lastName = user.getLastName();
 
         // Perform POST request on MockMvc to update the user's first name and assert expectations.
-        mockMvc.perform(post("/account/edit/info?username=mjones")
+        mockMvc.perform(post("/user/mjones/edit/info")
                 .with(csrf())
                 .param("username", "mjones")
                 .param("firstName", "Mike")
                 .param("lastName", lastName))
-                .andExpect(redirectedUrl("/account/view?username=mjones&confirmation=infoUpdated"));
+                .andExpect(redirectedUrl("/user/mjones/view?confirmation=infoUpdated"));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class UserControllerTest {
     public void shouldShowPasswordForm() throws Exception {
 
         // Perform GET request on MockMvc and assert expectations.
-        mockMvc.perform(get("/account/edit/password?username=mjones"))
+        mockMvc.perform(get("/user/mjones/edit/password"))
                 .andExpect(model().attributeExists("userPasswordDto"))
                 .andExpect(model().attribute("userPasswordDto", hasProperty("username", is("mjones"))))
                 .andExpect(model().attribute("userPasswordDto", hasProperty("password", nullValue())))
@@ -144,12 +144,12 @@ public class UserControllerTest {
     public void testUpdatePassword() throws Exception {
 
         // Perform POST request on MockMvc and assert expectations.
-        mockMvc.perform(post("/account/edit/password?username=mjones")
+        mockMvc.perform(post("/user/mjones/edit/password")
                 .with(csrf())
                 .param("username", "mjones")
                 .param("password", "password123")
                 .param("newPassword", "password456")
                 .param("confirmNewPassword", "password456"))
-                .andExpect(redirectedUrl("/account/view?username=mjones&confirmation=passwordUpdated"));
+                .andExpect(redirectedUrl("/user/mjones/view?confirmation=passwordUpdated"));
     }
 }
