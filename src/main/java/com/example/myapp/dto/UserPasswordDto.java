@@ -15,6 +15,8 @@ public class UserPasswordDto {
 
     private Long userId;
 
+    private String username;
+
     private String password;
 
     @NotBlank(message = "Cannot be blank", groups = BlankCheck.class)
@@ -29,6 +31,14 @@ public class UserPasswordDto {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
