@@ -20,10 +20,10 @@
                 <li><a href="<c:url value="/"/>">Home</a></li>
                 <li><a href="<c:url value="/notes/view/entries"/>">Notes</a></li>
                 <li>
-                    <a class="active" href="<c:url value="/account/view?username=${user.username}"/>">Account</a>
+                    <a class="active" href="<c:url value="/user/${user.username}/view"/>">Account</a>
                     <ul>
                         <li><a href="<c:url value="/logout"/>">Log Out</a></li>
-                        <li><a href="<c:url value="/account/view?username=${user.username}"/>">Settings</a></li>
+                        <li><a href="<c:url value="/user/${user.username}/view"/>">Settings</a></li>
                     </ul>
                 </li>
             </ul>
@@ -69,7 +69,7 @@
             <table class="text-table">
                 <tr>
                     <td class="text-table-option"><a
-                            href="<c:url value="/account/edit/info?username=${user.username}"/>">Edit</a>
+                            href="<c:url value="/user/${user.username}/edit/info"/>">Edit</a>
                     </td>
                 </tr>
             </table>
@@ -78,11 +78,11 @@
         <div class="box-container">
             <table id="settings-table" class="text-table">
                 <tr>
-                    <td class="text-table-data"><a href="<c:url value="/account/edit/password?username=${user.username}"/>">Change
+                    <td class="text-table-data"><a href="<c:url value="/user/${user.username}/edit/password"/>">Change
                         password</a></td>
                 </tr>
                 <tr>
-                    <td class="text-table-data"><a href="<c:url value="/account/delete?username=${user.username}"/>">Delete
+                    <td class="text-table-data"><a href="<c:url value="/user/${user.username}/delete"/>">Delete
                         account</a></td>
                 </tr>
             </table>
