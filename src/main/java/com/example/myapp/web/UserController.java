@@ -50,14 +50,13 @@ public class UserController {
 
     @RequestMapping(value = "account/edit/info", method = RequestMethod.POST)
     public String updateUserInfo(@ModelAttribute("user") @Valid UserDto user,
-                                 @RequestParam(value = "username") String username,
                                  BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "accountForm";
         }
 
         userService.update(user);
-        redirectAttributes.addAttribute("username", username);
+        redirectAttributes.addAttribute("username", user.getUsername());
         redirectAttributes.addAttribute("confirmation", "infoUpdated");
 
         return "redirect:/account/view";
