@@ -151,11 +151,11 @@ public class UserDaoTest {
     public void testDelete() {
 
         assertEquals(2, userDao.count());
-        assertNotNull(userDao.findById(1L));
+        assertNotNull(userDao.findByUsername("mjones"));
 
-        userDao.delete(1L);
+        userDao.delete("mjones");
 
         assertEquals(1, userDao.count());
-        assertNull(userDao.findById(1L));
+        assertNull(userDao.findByUsername("mjones"));
     }
 }
