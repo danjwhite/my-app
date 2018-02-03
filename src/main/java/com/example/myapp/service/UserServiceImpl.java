@@ -8,6 +8,7 @@ import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.dto.UserRegistrationDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +24,15 @@ public class UserServiceImpl implements IUserService {
 
     private IRoleDao roleDao;
 
+    private ISecurityService securityService;
+
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(IUserDao userDao, IRoleDao roleDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(IUserDao userDao, IRoleDao roleDao, ISecurityService securityService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDao = userDao;
         this.roleDao = roleDao;
+        this.securityService = securityService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
@@ -42,6 +46,13 @@ public class UserServiceImpl implements IUserService {
     @Transactional(readOnly = true)
     public User findByUsername(String username) {
         return userDao.findByUsername(username);
+    }
+
+    @Override
+    @Transactional
+    public User getLoggedInUser() {
+        UserDetails userDetails = securityService.getPrincipal();
+        return userDao.findByUsername(userDetails.getUsername());
     }
 
     @Override

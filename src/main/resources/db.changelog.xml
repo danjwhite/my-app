@@ -112,6 +112,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="last_updated" type="TIMESTAMP"/>
+            <column name="user_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
             <column name="title" type="VARCHAR(140)">
                 <constraints nullable="false"/>
             </column>
@@ -119,6 +122,13 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
+
+    <!-- Create note.user_id FK -->
+    <changeSet id="2.0_create_note_user_fk" author="dwhite">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="note" constraintName="fk_note_user"
+                                 deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="id" referencedTableName="user"/>
     </changeSet>
 
 </databaseChangeLog>

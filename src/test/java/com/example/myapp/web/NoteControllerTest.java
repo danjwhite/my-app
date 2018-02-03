@@ -14,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class NoteControllerTest {
     public void shouldShowAllNotes() throws Exception {
 
         // Create expected object.
-        List<Note> expectedNotes = createNoteList(12);
+        List<Note> expectedNotes = noteService.findAll();
 
         // Perform GET request on MockMvc and assert expectations.
         mockMvc.perform(get("/notes/view/entries?display=all"))
@@ -63,7 +62,7 @@ public class NoteControllerTest {
     public void shouldShowRecentNotesWithoutRequestParameter() throws Exception {
 
         // Create expected object.
-        List<Note> expectedNotes = createNoteList(10);
+        List<Note> expectedNotes = noteService.findRecent();
 
         // Perform GET request on MockMvc without request parameters and assert expectations.
         mockMvc.perform(get("/notes/view/entries"))
@@ -76,7 +75,7 @@ public class NoteControllerTest {
     public void shouldShowRecentNotesWithRequestParameter() throws Exception {
 
         // Create expected object.
-        List<Note> expectedNotes = createNoteList(10);
+        List<Note> expectedNotes = noteService.findRecent();
 
         // Perform GET request on MockMvc with request parameters and assert expectations.
         mockMvc.perform(get("/notes/view/entries?display=recent&maxResults=10"))
@@ -103,7 +102,14 @@ public class NoteControllerTest {
 
         // Perform GET request on MockMvc to add a note and assert expectations.
         mockMvc.perform(get("/notes/add"))
-                .andExpect(view().name("noteForm"));
+                .andExpect(view().name("noteForm"))
+                .andExpect(model().attributeExists("note"))
+                .andExpect(model().attribute("note", hasProperty("id", is(nullValue()))))
+                .andExpect(model().attribute("note", hasProperty("createdAt", is(nullValue()))))
+                .andExpect(model().attribute("note", hasProperty("userId", is(nullValue()))))
+                .andExpect(model().attribute("note", hasProperty("title", is(nullValue()))))
+                .andExpect(model().attribute("note", hasProperty("body", is(nullValue()))))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -114,6 +120,7 @@ public class NoteControllerTest {
 
         // Get the expected properties of the attribute object.
         Date createdAt = note.getCreatedAt();
+        Long userId = note.getUserId();
         String title = note.getTitle();
         String body = note.getBody();
 
@@ -123,6 +130,7 @@ public class NoteControllerTest {
                 .andExpect(model().attributeExists("note"))
                 .andExpect(model().attribute("note", hasProperty("id", is(1L))))
                 .andExpect(model().attribute("note", hasProperty("createdAt", is(createdAt))))
+                .andExpect(model().attribute("note", hasProperty("userId", is(userId))))
                 .andExpect(model().attribute("note", hasProperty("title", is(title))))
                 .andExpect(model().attribute("note", hasProperty("body", is(body))));
     }
@@ -134,7 +142,8 @@ public class NoteControllerTest {
         mockMvc.perform(post("/notes/add")
                 .param("title", "Title")
                 .param("body", "Body"))
-                .andExpect(redirectedUrl("/notes/view/entry?noteId=13&confirmation=added"));
+                .andExpect(redirectedUrl("/notes/view/entry?noteId=25&confirmation=added"))
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
@@ -160,15 +169,5 @@ public class NoteControllerTest {
 
         // Assert note count after delete.
         assertEquals(11, noteService.count());
-    }
-
-    private List<Note> createNoteList(int count) {
-        List<Note> notes = new ArrayList<Note>();
-
-        for (int i = 0; i < count; i++) {
-            notes.add(new Note(new Date(), "Title", "Body"));
-        }
-
-        return notes;
     }
 }

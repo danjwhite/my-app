@@ -24,7 +24,23 @@ public class NoteDaoImpl implements INoteDao {
 
     @Override
     public long count() {
-        return findAll().size();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<Note> root = criteriaQuery.from(Note.class);
+        criteriaQuery.select(criteriaBuilder.count(root));
+
+        return entityManager.createQuery(criteriaQuery).getSingleResult();
+    }
+
+    @Override
+    public long count(long userId) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<Note> root = criteriaQuery.from(Note.class);
+        criteriaQuery.select(criteriaBuilder.count(root));
+        criteriaQuery.where(criteriaBuilder.equal(root.get("userId"), userId));
+
+        return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 
     @Override
@@ -32,24 +48,23 @@ public class NoteDaoImpl implements INoteDao {
         return entityManager.find(Note.class, id);
     }
 
-
     @Override
-    public List<Note> findRecent() {
+    public List<Note> findRecent(long userId) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Note> criteriaQuery = criteriaBuilder.createQuery(Note.class);
         Root<Note> root = criteriaQuery.from(Note.class);
-        criteriaQuery.select(root);
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("userId"), userId));
         TypedQuery<Note> typedQuery = entityManager.createQuery(criteriaQuery).setMaxResults(10);
 
         return typedQuery.getResultList();
     }
 
     @Override
-    public List<Note> findAll() {
+    public List<Note> findAll(long userId) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Note> criteriaQuery = criteriaBuilder.createQuery(Note.class);
         Root<Note> root = criteriaQuery.from(Note.class);
-        criteriaQuery.select(root);
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("userId"), userId));
         TypedQuery<Note> typedQuery = entityManager.createQuery(criteriaQuery);
 
         return typedQuery.getResultList();
@@ -58,7 +73,6 @@ public class NoteDaoImpl implements INoteDao {
     @Override
     public Note add(Note note) {
 
-        note.setCreatedAt(new Date());
         entityManager.persist(note);
         entityManager.flush();
 

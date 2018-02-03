@@ -22,8 +22,11 @@ public class Note implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at")
     private Date createdAt;
+
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(name = "title")
     @NotEmpty(message = "Cannot be blank", groups = BlankCheck.class)
@@ -38,14 +41,10 @@ public class Note implements Serializable {
     public Note() {
     }
 
-    public Note(Date createdAt, String title, String body) {
-        this(null, createdAt, title, body);
-    }
-
-    public Note(Long id, Date createdAt, String title, String body) {
-        this.id = id;
-        this.title = title;
+    public Note(Date createdAt, Long userId, String title, String body) {
         this.createdAt = createdAt;
+        this.userId = userId;
+        this.title = title;
         this.body = body;
     }
 
@@ -71,6 +70,14 @@ public class Note implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getBody() {

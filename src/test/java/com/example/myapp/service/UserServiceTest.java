@@ -37,13 +37,13 @@ public class UserServiceTest {
     @Test
     @Transactional
     public void testCount() {
-        assertEquals(4, userService.count());
+        assertEquals(2, userService.count());
     }
 
     @Test
     @Transactional
     public void testFindAll() {
-        assertEquals(4, userService.findAll().size());
+        assertEquals(2, userService.findAll().size());
     }
 
     @Test
@@ -104,12 +104,12 @@ public class UserServiceTest {
         userRegistrationDto.setUsername(userName);
         userRegistrationDto.setPassword(password);
 
-        assertEquals(4, userService.count());
+        assertEquals(2, userService.count());
 
         User user = userService.add(userRegistrationDto);
 
-        assertEquals(5, userService.count());
-        assertEquals(5L, user.getId().longValue());
+        assertEquals(3, userService.count());
+        assertEquals(3L, user.getId().longValue());
         assertEquals(firstName, user.getFirstName());
         assertEquals(lastName, user.getLastName());
         assertEquals(userName, user.getUsername());
@@ -119,7 +119,7 @@ public class UserServiceTest {
 
     @Test
     @Transactional
-    public void newTestUpdate() {
+    public void testUpdate() {
 
         // Get user and save original field values.
         User user = userService.findById(1L);
@@ -134,14 +134,14 @@ public class UserServiceTest {
         userDto.setFirstName("Mike");
 
         // Assert the user count.
-        assertEquals(4, userService.count());
+        assertEquals(2, userService.count());
 
         // Update user and retrieve updated user.
         userService.update(userDto);
         User updatedUser = userService.findById(1L);
 
         // Assert the user count.
-        assertEquals(4, userService.count());
+        assertEquals(2, userService.count());
 
         // Assert that the updated field is different.
         assertNotEquals(firstName, updatedUser.getFirstName());
@@ -158,12 +158,12 @@ public class UserServiceTest {
     @Transactional
     @SuppressWarnings("Duplicates")
     public void testDelete() {
-        assertEquals(4, userService.count());
+        assertEquals(2, userService.count());
         assertNotNull(userService.findById(1L));
 
         userService.delete(1L);
 
-        assertEquals(3, userService.count());
+        assertEquals(1, userService.count());
         assertNull(userService.findById(1L));
     }
 }

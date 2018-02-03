@@ -13,6 +13,8 @@ public interface IUserService {
 
     User findByUsername(String username);
 
+    User getLoggedInUser();
+
     User add(UserRegistrationDto userRegistrationDto);
 
     User update(UserDto userDto);

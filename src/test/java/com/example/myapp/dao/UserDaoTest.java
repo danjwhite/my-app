@@ -31,13 +31,13 @@ public class UserDaoTest {
     @Test
     @Transactional
     public void testCount() {
-        assertEquals(4, userDao.count());
+        assertEquals(2, userDao.count());
     }
 
     @Test
     @Transactional
     public void testFindAll() {
-        assertEquals(4, userDao.findAll().size());
+        assertEquals(2, userDao.findAll().size());
     }
 
     @Test
@@ -96,12 +96,12 @@ public class UserDaoTest {
         user.setPassword("$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS");
         user.setRoles(roles);
 
-        assertEquals(4, userDao.count());
+        assertEquals(2, userDao.count());
 
         User savedUser = userDao.add(user);
 
-        assertEquals(5, userDao.count());
-        assertEquals(5L, savedUser.getId().longValue());
+        assertEquals(3, userDao.count());
+        assertEquals(3L, savedUser.getId().longValue());
         assertEquals("Joseph", savedUser.getFirstName());
         assertEquals("Manning", savedUser.getLastName());
         assertEquals("jmanning", savedUser.getUsername());
@@ -114,7 +114,7 @@ public class UserDaoTest {
     public void testUpdate() {
 
         // Get user and save original fields.
-        User user = userDao.findById(3L);
+        User user = userDao.findById(2L);
         String firstName = user.getFirstName();
         String lastName = user.getLastName();
         String username = user.getUsername();
@@ -128,13 +128,13 @@ public class UserDaoTest {
         // Set user roles.
         user.setRoles(updatedRoles);
 
-        assertEquals(4, userDao.count());
+        assertEquals(2, userDao.count());
 
         // Update and retrieve user.
         userDao.update(user);
-        User updatedUser = userDao.findById(3L);
+        User updatedUser = userDao.findById(2L);
 
-        assertEquals(4, userDao.count());
+        assertEquals(2, userDao.count());
         assertEquals(firstName, updatedUser.getFirstName());
         assertEquals(lastName, updatedUser.getLastName());
         assertEquals(username, updatedUser.getUsername());
@@ -150,12 +150,12 @@ public class UserDaoTest {
     @SuppressWarnings("Duplicates")
     public void testDelete() {
 
-        assertEquals(4, userDao.count());
+        assertEquals(2, userDao.count());
         assertNotNull(userDao.findById(1L));
 
         userDao.delete(1L);
 
-        assertEquals(3, userDao.count());
+        assertEquals(1, userDao.count());
         assertNull(userDao.findById(1L));
     }
 }

@@ -26,26 +26,35 @@ public class NoteDaoTest {
     @Test
     @Transactional
     public void testCount() {
-        assertEquals(12, noteDao.count());
+
+        // Count all notes and assert expectations.
+        assertEquals(24, noteDao.count());
     }
 
     @Test
     @Transactional
     public void testFindAll() {
-        assertEquals(12, noteDao.findAll().size());
+
+        // Find all notes for specified user and assert expectations.
+        assertEquals(12, noteDao.findAll(1).size());
     }
 
     @Test
     @Transactional
     public void testFindRecent() {
-        assertEquals(10, noteDao.findRecent().size());
+
+        // Find recent notes for specified user and assert expectations.
+        assertEquals(10, noteDao.findRecent(1).size());
     }
 
     @Test
     @Transactional
     public void testFindOne() {
+
+        // Find specific note by id and assert expectations.
         Note note = noteDao.findById(1L);
         assertEquals(1L, note.getId().longValue());
+        assertEquals(1L, note.getUserId().longValue());
         assertEquals("Title", note.getTitle());
         assertEquals("Body", note.getBody());
     }
@@ -54,14 +63,20 @@ public class NoteDaoTest {
     @Transactional
     @SuppressWarnings("Duplicates")
     public void testAdd() {
-        assertEquals(12, noteDao.count());
 
-        Note newNote = new Note(null, null, "Title", "Body");
-        Note savedNote = noteDao.add(newNote);
+        assertEquals(24, noteDao.count());
 
-        assertEquals(13, noteDao.count());
-        assertEquals(13L, savedNote.getId().longValue());
+        // Create, add, and retrieve new note
+        Note newNote = new Note(new Date(), 1L, "Title", "Body");
+        noteDao.add(newNote);
+
+        Note savedNote = noteDao.findById(25L);
+
+        // Assert expectations
+        assertEquals(25, noteDao.count());
+        assertEquals(25L, savedNote.getId().longValue());
         assertNotNull(savedNote.getCreatedAt());
+        assertEquals(1L, savedNote.getUserId().longValue());
         assertEquals("Title", savedNote.getTitle());
         assertEquals("Body", savedNote.getBody());
     }
@@ -70,10 +85,11 @@ public class NoteDaoTest {
     @Transactional
     @SuppressWarnings("Duplicates")
     public void testUpdate() {
-        assertEquals(12, noteDao.count());
+        assertEquals(24, noteDao.count());
 
         Note originalNote = noteDao.findById(1L);
         Date originalCreatedAt = originalNote.getCreatedAt();
+        Long originalUserId = originalNote.getUserId();
         String originalTitle = originalNote.getTitle();
         String originalBody = originalNote.getBody();
 
@@ -83,9 +99,10 @@ public class NoteDaoTest {
 
         Note updatedNote = noteDao.findById(1L);
 
-        assertEquals(12, noteDao.count());
+        assertEquals(24, noteDao.count());
         assertEquals(1L, updatedNote.getId().longValue());
         assertEquals(originalCreatedAt, updatedNote.getCreatedAt());
+        assertEquals(originalUserId, updatedNote.getUserId());
         assertNotEquals(originalTitle, updatedNote.getTitle());
         assertNotEquals(originalBody, updatedNote.getBody());
     }
@@ -94,12 +111,12 @@ public class NoteDaoTest {
     @Transactional
     @SuppressWarnings("Duplicates")
     public void testDelete() {
-        assertEquals(12, noteDao.count());
+        assertEquals(24, noteDao.count());
         assertNotNull(noteDao.findById(1L));
 
         noteDao.delete(1L);
 
-        assertEquals(11, noteDao.count());
+        assertEquals(23, noteDao.count());
         assertNull(noteDao.findById(1L));
     }
 

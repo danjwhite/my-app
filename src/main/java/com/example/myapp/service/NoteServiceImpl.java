@@ -2,10 +2,12 @@ package com.example.myapp.service;
 
 import com.example.myapp.dao.INoteDao;
 import com.example.myapp.domain.Note;
+import com.example.myapp.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -13,21 +15,28 @@ public class NoteServiceImpl implements INoteService {
 
     private INoteDao noteDao;
 
+    private IUserService userService;
+
     @Autowired
-    public NoteServiceImpl(INoteDao noteDao) {
+    public NoteServiceImpl(INoteDao noteDao, IUserService userService) {
         this.noteDao = noteDao;
+        this.userService = userService;
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Note> findAll() {
-        return noteDao.findAll();
+        User user = userService.getLoggedInUser();
+
+        return noteDao.findAll(user.getId());
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Note> findRecent() {
-        return noteDao.findRecent();
+        User user = userService.getLoggedInUser();
+
+        return noteDao.findRecent(user.getId());
     }
 
     @Transactional(readOnly = true)
@@ -39,6 +48,10 @@ public class NoteServiceImpl implements INoteService {
     @Transactional
     @Override
     public Note add(Note note) {
+        User user = userService.getLoggedInUser();
+        note.setUserId(user.getId());
+        note.setCreatedAt(new Date());
+
         return noteDao.add(note);
     }
 
@@ -57,6 +70,8 @@ public class NoteServiceImpl implements INoteService {
     @Transactional(readOnly = true)
     @Override
     public long count() {
-        return noteDao.count();
+        User user = userService.getLoggedInUser();
+
+        return noteDao.count(user.getId());
     }
 }

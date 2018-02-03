@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface INoteDao {
 
-    List<Note> findAll();
+    List<Note> findAll(long userId);
 
-    List<Note> findRecent();
+    List<Note> findRecent(long userId);
 
     Note findById(long id);
 
@@ -19,4 +19,6 @@ public interface INoteDao {
     void delete(long id);
 
     long count();
+
+    long count(long userId);
 }
