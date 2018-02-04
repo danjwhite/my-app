@@ -85,6 +85,6 @@ public class NoteDaoImpl implements INoteDao {
 
     @Override
     public void delete(Note note) {
-        entityManager.remove(note);
+        entityManager.remove(entityManager.merge(note));
     }
 }
