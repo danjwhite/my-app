@@ -16,7 +16,7 @@ public interface INoteService {
 
     Note update(Note note);
 
-    void delete(long id);
+    void delete(Note note);
 
     long count();
 }

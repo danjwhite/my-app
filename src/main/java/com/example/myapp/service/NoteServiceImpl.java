@@ -67,8 +67,8 @@ public class NoteServiceImpl implements INoteService {
 
     @Transactional
     @Override
-    public void delete(long id) {
-        noteDao.delete(id);
+    public void delete(Note note) {
+        noteDao.delete(note);
     }
 
     @Transactional(readOnly = true)
