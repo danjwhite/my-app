@@ -1,6 +1,7 @@
 package com.example.myapp.dao;
 
 import com.example.myapp.domain.Note;
+import com.example.myapp.domain.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static org.junit.Assert.*;
@@ -22,6 +25,9 @@ public class NoteDaoTest {
 
     @Autowired
     private INoteDao noteDao;
+
+    @Autowired
+    private IUserDao userDao;
 
     @Test
     @Transactional
@@ -49,12 +55,16 @@ public class NoteDaoTest {
 
     @Test
     @Transactional
-    public void testFindOne() {
+    public void testFindOne() throws Exception {
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = dateFormat.parse("2018-02-02 00:00:00");
 
         // Find specific note by id and assert expectations.
         Note note = noteDao.findById(1L);
         assertEquals(1L, note.getId().longValue());
-        assertEquals(1L, note.getUserId().longValue());
+        assertEquals(date, note.getCreatedAt());
+        assertEquals("mjones", note.getUser().getUsername());
         assertEquals("Title", note.getTitle());
         assertEquals("Body", note.getBody());
     }
@@ -66,8 +76,11 @@ public class NoteDaoTest {
 
         assertEquals(24, noteDao.count());
 
+        // Get user for new note.
+        User user = userDao.findByUsername("mjones");
+
         // Create, add, and retrieve new note
-        Note newNote = new Note(new Date(), 1L, "Title", "Body");
+        Note newNote = new Note(new Date(), user, "Title", "Body");
         noteDao.add(newNote);
 
         Note savedNote = noteDao.findById(25L);
@@ -76,7 +89,7 @@ public class NoteDaoTest {
         assertEquals(25, noteDao.count());
         assertEquals(25L, savedNote.getId().longValue());
         assertNotNull(savedNote.getCreatedAt());
-        assertEquals(1L, savedNote.getUserId().longValue());
+        assertEquals("mjones", savedNote.getUser().getUsername());
         assertEquals("Title", savedNote.getTitle());
         assertEquals("Body", savedNote.getBody());
     }
@@ -89,7 +102,7 @@ public class NoteDaoTest {
 
         Note originalNote = noteDao.findById(1L);
         Date originalCreatedAt = originalNote.getCreatedAt();
-        Long originalUserId = originalNote.getUserId();
+        String originalUsername = originalNote.getUser().getUsername();
         String originalTitle = originalNote.getTitle();
         String originalBody = originalNote.getBody();
 
@@ -102,7 +115,7 @@ public class NoteDaoTest {
         assertEquals(24, noteDao.count());
         assertEquals(1L, updatedNote.getId().longValue());
         assertEquals(originalCreatedAt, updatedNote.getCreatedAt());
-        assertEquals(originalUserId, updatedNote.getUserId());
+        assertEquals(originalUsername, updatedNote.getUser().getUsername());
         assertNotEquals(originalTitle, updatedNote.getTitle());
         assertNotEquals(originalBody, updatedNote.getBody());
     }
