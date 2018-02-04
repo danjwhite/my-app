@@ -4,6 +4,8 @@ import com.example.myapp.constraint.BlankCheck;
 import com.example.myapp.constraint.SizeCheck;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
@@ -27,6 +29,7 @@ public class Note implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @Column(name = "title")
