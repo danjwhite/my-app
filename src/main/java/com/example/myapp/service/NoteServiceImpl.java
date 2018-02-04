@@ -4,6 +4,7 @@ import com.example.myapp.dao.INoteDao;
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,7 @@ public class NoteServiceImpl implements INoteService {
         return noteDao.findRecent(user.getId());
     }
 
+    @PostAuthorize("returnObject.user.username == authentication.name")
     @Transactional(readOnly = true)
     @Override
     public Note findById(long id) {
