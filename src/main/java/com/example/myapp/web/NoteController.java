@@ -2,6 +2,7 @@ package com.example.myapp.web;
 
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
+import com.example.myapp.dto.NoteDto;
 import com.example.myapp.service.INoteService;
 import com.example.myapp.service.ISecurityService;
 import com.example.myapp.service.IUserService;
@@ -104,20 +105,20 @@ public class NoteController {
 
     @RequestMapping(value = "/note/{noteId}/edit", method = RequestMethod.GET)
     public String editNote(@PathVariable(value = "noteId") long noteId, @ModelAttribute("user") User user, Model model) {
-        Note note = noteService.findById(noteId);
-        model.addAttribute("note", note);
+        NoteDto noteDto = new NoteDto(noteService.findById(noteId));
+        model.addAttribute("noteDto", noteDto);
         model.addAttribute("formType", "edit");
 
         return "noteForm";
     }
 
     @RequestMapping(value = "/note/{noteId}/edit", method = RequestMethod.POST)
-    public String updateNote(@Valid Note note, @PathVariable(value = "noteId") long noteId, RedirectAttributes redirectAttributes, Errors errors) {
+    public String updateNote(@Valid NoteDto noteDto, @PathVariable(value = "noteId") long noteId, RedirectAttributes redirectAttributes, Errors errors) {
         if (errors.hasErrors()) {
             return "noteForm";
         }
 
-        noteService.update(note);
+        noteService.update(noteDto);
         redirectAttributes.addAttribute("confirmation", "edited");
 
         return "redirect:/note/" + noteId + "/view";
