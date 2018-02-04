@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -69,6 +70,7 @@ public class UserServiceTest {
     @Test
     @Transactional
     @SuppressWarnings("Duplicates")
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void testFindByUserName() {
         User user = userService.findByUsername("mjones");
 
@@ -119,6 +121,7 @@ public class UserServiceTest {
 
     @Test
     @Transactional
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void testUpdate() {
 
         // Get user and save original field values.
@@ -157,6 +160,7 @@ public class UserServiceTest {
     @Test
     @Transactional
     @SuppressWarnings("Duplicates")
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void testDelete() {
 
         // Get user to delete.
