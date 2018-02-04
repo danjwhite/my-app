@@ -5,8 +5,6 @@ import org.hibernate.validator.constraints.NotBlank;
 
 public class UserDto {
 
-    private Long id;
-
     private String username;
 
     @NotBlank
@@ -15,22 +13,10 @@ public class UserDto {
     @NotBlank
     private String lastName;
 
-    public UserDto() {
-
-    }
-
     public UserDto(User user) {
         username = user.getUsername();
         firstName = user.getFirstName();
         lastName = user.getLastName();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getUsername() {
