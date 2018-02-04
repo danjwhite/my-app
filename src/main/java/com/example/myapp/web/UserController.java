@@ -101,7 +101,9 @@ public class UserController {
     @PreAuthorize("#username == authentication.name")
     @RequestMapping(value = "/user/{username}/delete", method = RequestMethod.GET)
     public String deleteAccount(@PathVariable(value = "username") String username) {
-        userService.delete(username);
+
+        User user = userService.findByUsername(username);
+        userService.delete(user);
 
         return "redirect:/logout";
     }
