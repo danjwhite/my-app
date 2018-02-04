@@ -65,6 +65,7 @@ public class NoteServiceImpl implements INoteService {
         return noteDao.update(note);
     }
 
+    @PreAuthorize("#note.user.username == authentication.name")
     @Transactional
     @Override
     public void delete(Note note) {
