@@ -115,7 +115,7 @@ public class UserServiceImpl implements IUserService {
     // TODO: Pre-auth this
     @Override
     @Transactional
-    public void delete(String username) {
-        userDao.delete(username);
+    public void delete(User user) {
+        userDao.delete(user);
     }
 }
