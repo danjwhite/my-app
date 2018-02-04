@@ -27,7 +27,6 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @PreAuthorize("#username == authentication.name")
     @RequestMapping(value = "/user/{username}/view", method = RequestMethod.GET)
     public String getUserAccount(@PathVariable(value = "username") String username, Model model) {
         User user = userService.findByUsername(username);
@@ -36,7 +35,6 @@ public class UserController {
         return "user";
     }
 
-    @PreAuthorize("#username == authentication.name")
     @RequestMapping(value = "/user/{username}/edit/info", method = RequestMethod.GET)
     public String editUserInfo(@PathVariable(value = "username") String username,
                                Model model) {
@@ -48,7 +46,6 @@ public class UserController {
 
     }
 
-    @PreAuthorize("#username == authentication.name")
     @RequestMapping(value = "/user/{username}/edit/info", method = RequestMethod.POST)
     public String updateUserInfo(@PathVariable(value = "username") String username,
                                  @ModelAttribute("user") @Valid UserDto user,
@@ -64,7 +61,6 @@ public class UserController {
         return "redirect:/user/" + username + "/view";
     }
 
-    @PreAuthorize("#username == authentication.name")
     @RequestMapping(value = "/user/{username}/edit/password", method = RequestMethod.GET)
     public String editPassword(@PathVariable(value = "username") String username, Model model) {
         UserPasswordDto userPasswordDto = new UserPasswordDto();
@@ -75,7 +71,6 @@ public class UserController {
         return "passwordForm";
     }
 
-    @PreAuthorize("#username == authentication.name")
     @RequestMapping(value = "/user/{username}/edit/password", method = RequestMethod.POST)
     public String updatePassword(@PathVariable("username") String username,
                                  @ModelAttribute("userPasswordDto") @Valid UserPasswordDto userPasswordDto,
@@ -98,7 +93,6 @@ public class UserController {
         return "redirect:/user/" + username + "/view";
     }
 
-    @PreAuthorize("#username == authentication.name")
     @RequestMapping(value = "/user/{username}/delete", method = RequestMethod.GET)
     public String deleteAccount(@PathVariable(value = "username") String username) {
 
