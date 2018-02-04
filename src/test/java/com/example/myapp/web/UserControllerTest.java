@@ -79,7 +79,7 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
-    public void testGetUserAccount() throws Exception {
+    public void testGetUserAccountSuccess() throws Exception {
 
         // Create expected object.
         User expectedUser = userService.findByUsername("mjones");
@@ -89,6 +89,15 @@ public class UserControllerTest {
                 .andExpect(view().name("user"))
                 .andExpect(model().attributeExists("user"))
                 .andExpect(model().attribute("user", expectedUser));
+    }
+
+    @Test
+    @WithMockUser(username = "drodman", password = "password123", roles = {"USER"})
+    public void testGetUserAccountForbidden() throws Exception {
+
+        // Perform GET request on MockMvc and assert expectations.
+        mockMvc.perform(get("/user/mjones/view"))
+                .andExpect(status().isForbidden());
     }
 
     @Test
