@@ -2,6 +2,7 @@ package com.example.myapp.service;
 
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
+import com.example.myapp.dto.NoteDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,18 +73,22 @@ public class NoteServiceTest {
 
         assertEquals(12, noteService.count());
 
-        // Get user for new note.
-        User user = userService.findByUsername("mjones");
+        // Get expected user.
+        User user = userService.getLoggedInUser();
 
-        Note newNote = new Note(new Date(), user, "Title", "Body");
-        noteService.add(newNote);
+        // Create new NoteDto.
+        NoteDto noteDto = new NoteDto();
+        noteDto.setTitle("Title");
+        noteDto.setBody("Body");
+
+        noteService.add(noteDto);
 
         Note savedNote = noteService.findById(25L);
 
         assertEquals(13, noteService.count());
         assertEquals(25L, savedNote.getId().longValue());
         assertNotNull(savedNote.getCreatedAt());
-        assertEquals("mjones", savedNote.getUser().getUsername());
+        assertEquals(user, savedNote.getUser());
         assertEquals("Title", savedNote.getTitle());
         assertEquals("Body", savedNote.getBody());
     }
@@ -94,24 +99,27 @@ public class NoteServiceTest {
     public void testUpdate() {
         assertEquals(12, noteService.count());
 
-        Note originalNote = noteService.findById(1L);
-        Date originalCreatedAt = originalNote.getCreatedAt();
-        String originalUsername = originalNote.getUser().getUsername();
-        String originalTitle = originalNote.getTitle();
-        String originalBody = originalNote.getBody();
+        Note note = noteService.findById(1L);
+        Date createdAt = note.getCreatedAt();
+        User user = note.getUser();
+        String title = note.getTitle();
+        String body = note.getBody();
 
-        originalNote.setTitle("New Title");
-        originalNote.setBody("New Body");
-        noteService.update(originalNote);
+        NoteDto noteDto = new NoteDto(note);
+        noteDto.setTitle("New Title");
+        noteDto.setBody("New Body");
+
+        noteService.update(noteDto);
 
         Note updatedNote = noteService.findById(1L);
 
         assertEquals(12, noteService.count());
         assertEquals(1L, updatedNote.getId().longValue());
-        assertEquals(originalCreatedAt, updatedNote.getCreatedAt());
-        assertEquals(originalUsername, updatedNote.getUser().getUsername());
-        assertNotEquals(originalTitle, updatedNote.getTitle());
-        assertNotEquals(originalBody, updatedNote.getBody());
+        assertEquals(createdAt, updatedNote.getCreatedAt());
+        assertEquals(user, updatedNote.getUser());
+
+        assertNotEquals(title, updatedNote.getTitle());
+        assertNotEquals(body, updatedNote.getBody());
     }
 
     @Test
