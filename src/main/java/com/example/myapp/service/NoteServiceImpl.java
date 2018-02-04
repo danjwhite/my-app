@@ -51,10 +51,13 @@ public class NoteServiceImpl implements INoteService {
 
     @Transactional
     @Override
-    public Note add(Note note) {
-        User user = userService.getLoggedInUser();
-        note.setUser(user);
+    public Note add(NoteDto noteDto) {
+        
+        Note note = new Note();
         note.setCreatedAt(new Date());
+        note.setUser(userService.getLoggedInUser());
+        note.setTitle(noteDto.getTitle());
+        note.setBody(noteDto.getBody());
 
         return noteDao.add(note);
     }

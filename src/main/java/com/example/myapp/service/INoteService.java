@@ -13,7 +13,7 @@ public interface INoteService {
 
     Note findById(long id);
 
-    Note add(Note note);
+    Note add(NoteDto noteDto);
 
     Note update(NoteDto noteDto);
 
