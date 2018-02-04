@@ -45,9 +45,9 @@ public class Note implements Serializable {
     public Note() {
     }
 
-    public Note(Date createdAt, Long userId, String title, String body) {
+    public Note(Date createdAt, User user, String title, String body) {
         this.createdAt = createdAt;
-        this.userId = userId;
+        this.user = user;
         this.title = title;
         this.body = body;
     }
