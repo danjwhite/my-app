@@ -55,6 +55,7 @@ public class NoteDaoTest {
 
     @Test
     @Transactional
+    @SuppressWarnings("Duplicates")
     public void testFindOne() throws Exception {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
