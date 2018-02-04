@@ -13,6 +13,9 @@ public class UserDto {
     @NotBlank
     private String lastName;
 
+    public UserDto() {
+    }
+
     public UserDto(User user) {
         username = user.getUsername();
         firstName = user.getFirstName();
