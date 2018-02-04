@@ -9,7 +9,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -85,7 +84,7 @@ public class NoteDaoImpl implements INoteDao {
     }
 
     @Override
-    public void delete(long id) {
-        entityManager.remove(findById(id));
+    public void delete(Note note) {
+        entityManager.remove(note);
     }
 }
