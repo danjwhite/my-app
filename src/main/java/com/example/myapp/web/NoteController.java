@@ -20,7 +20,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping("/notes")
+@RequestMapping("/")
 public class NoteController {
 
     private ISecurityService securityService;
@@ -45,7 +45,7 @@ public class NoteController {
         return userService.findByUsername(principal.getUsername());
     }
 
-    @RequestMapping(value = "/view/entries", method = RequestMethod.GET)
+    @RequestMapping(value = "/notes/view", method = RequestMethod.GET)
     public String getNotes(@RequestParam(value = "display", required = false) String display,
                            @CookieValue(value = "displayCookie", required = false) String displayCookieValue,
                            @ModelAttribute("user") User user,
@@ -75,14 +75,14 @@ public class NoteController {
         return "notes";
     }
 
-    @RequestMapping(value = "/view/entry", method = RequestMethod.GET)
-    public String getNote(@RequestParam(value = "noteId") long noteId, @ModelAttribute("user") User user, Model model) {
+    @RequestMapping(value = "/note/{noteId}/view", method = RequestMethod.GET)
+    public String getNote(@PathVariable(value = "noteId") long noteId, @ModelAttribute("user") User user, Model model) {
         model.addAttribute("note", noteService.findById(noteId));
 
         return "note";
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.GET)
+    @RequestMapping(value = "/note/add", method = RequestMethod.GET)
     public String addNote(@ModelAttribute("user") User user, Model model) {
         model.addAttribute("note", new Note());
         model.addAttribute("formType", "add");
@@ -90,20 +90,20 @@ public class NoteController {
         return "noteForm";
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/note/add", method = RequestMethod.POST)
     public String saveNote(@Valid Note note, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "noteForm";
         }
 
         Long noteId = noteService.add(note).getId();
-        redirectAttributes.addAttribute("noteId", noteId);
         redirectAttributes.addAttribute("confirmation", "added");
-        return "redirect:/notes/view/entry";
+
+        return "redirect:/note/" + noteId + "/view";
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.GET)
-    public String editNote(@RequestParam(value = "noteId") long noteId, @ModelAttribute("user") User user, Model model) {
+    @RequestMapping(value = "/note/{noteId}/edit", method = RequestMethod.GET)
+    public String editNote(@PathVariable(value = "noteId") long noteId, @ModelAttribute("user") User user, Model model) {
         Note note = noteService.findById(noteId);
         model.addAttribute("note", note);
         model.addAttribute("formType", "edit");
@@ -111,22 +111,22 @@ public class NoteController {
         return "noteForm";
     }
 
-    @RequestMapping(value = "/edit", method = RequestMethod.POST)
-    public String updateNote(@Valid Note note, @RequestParam(value = "noteId") long noteId, RedirectAttributes redirectAttributes, Errors errors) {
+    @RequestMapping(value = "/note/{noteId}/edit", method = RequestMethod.POST)
+    public String updateNote(@Valid Note note, @PathVariable(value = "noteId") long noteId, RedirectAttributes redirectAttributes, Errors errors) {
         if (errors.hasErrors()) {
             return "noteForm";
         }
 
         noteService.update(note);
-        redirectAttributes.addAttribute("noteId", noteId);
         redirectAttributes.addAttribute("confirmation", "edited");
-        return "redirect:/notes/view/entry";
+
+        return "redirect:/note/" + noteId + "/view";
     }
 
-    @RequestMapping(value = "/delete", method = RequestMethod.GET)
-    public String deleteNote(@RequestParam(value = "noteId") long noteId) {
+    @RequestMapping(value = "/note/{noteId}/delete", method = RequestMethod.GET)
+    public String deleteNote(@PathVariable(value = "noteId") long noteId) {
         noteService.delete(noteId);
 
-        return "redirect:/notes/view/entries";
+        return "redirect:/notes/view";
     }
 }
