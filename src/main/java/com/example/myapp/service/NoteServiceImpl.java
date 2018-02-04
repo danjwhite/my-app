@@ -3,6 +3,7 @@ package com.example.myapp.service;
 import com.example.myapp.dao.INoteDao;
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
+import com.example.myapp.dto.NoteDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,10 +59,15 @@ public class NoteServiceImpl implements INoteService {
         return noteDao.add(note);
     }
 
-    @PreAuthorize("#note.user.username == authentication.name")
+    @PreAuthorize("#noteDto.username == authentication.name")
     @Transactional
     @Override
-    public Note update(Note note) {
+    public Note update(NoteDto noteDto) {
+
+        Note note = findById(noteDto.getNoteId());
+        note.setTitle(noteDto.getTitle());
+        note.setBody(noteDto.getBody());
+
         return noteDao.update(note);
     }
 
