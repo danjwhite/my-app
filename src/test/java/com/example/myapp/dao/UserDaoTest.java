@@ -150,10 +150,13 @@ public class UserDaoTest {
     @SuppressWarnings("Duplicates")
     public void testDelete() {
 
-        assertEquals(2, userDao.count());
-        assertNotNull(userDao.findByUsername("mjones"));
+        // Get user to delete.
+        User user = userDao.findByUsername("mjones");
 
-        userDao.delete("mjones");
+        assertEquals(2, userDao.count());
+        assertNotNull(user);
+
+        userDao.delete(user);
 
         assertEquals(1, userDao.count());
         assertNull(userDao.findByUsername("mjones"));

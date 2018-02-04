@@ -158,10 +158,14 @@ public class UserServiceTest {
     @Transactional
     @SuppressWarnings("Duplicates")
     public void testDelete() {
-        assertEquals(2, userService.count());
-        assertNotNull(userService.findByUsername("mjones"));
 
-        userService.delete("mjones");
+        // Get user to delete.
+        User user = userService.findByUsername("mjones");
+
+        assertEquals(2, userService.count());
+        assertNotNull(user);
+
+        userService.delete(user);
 
         assertEquals(1, userService.count());
         assertNull(userService.findByUsername("mjones"));
