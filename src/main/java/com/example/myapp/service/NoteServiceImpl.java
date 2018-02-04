@@ -49,7 +49,7 @@ public class NoteServiceImpl implements INoteService {
     @Override
     public Note add(Note note) {
         User user = userService.getLoggedInUser();
-        note.setUserId(user.getId());
+        note.setUser(user);
         note.setCreatedAt(new Date());
 
         return noteDao.add(note);
