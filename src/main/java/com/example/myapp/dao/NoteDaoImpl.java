@@ -38,7 +38,7 @@ public class NoteDaoImpl implements INoteDao {
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<Note> root = criteriaQuery.from(Note.class);
         criteriaQuery.select(criteriaBuilder.count(root));
-        criteriaQuery.where(criteriaBuilder.equal(root.get("userId"), userId));
+        criteriaQuery.where(criteriaBuilder.equal(root.get("user"), userId));
 
         return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
@@ -53,7 +53,7 @@ public class NoteDaoImpl implements INoteDao {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Note> criteriaQuery = criteriaBuilder.createQuery(Note.class);
         Root<Note> root = criteriaQuery.from(Note.class);
-        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("userId"), userId));
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("user"), userId));
         TypedQuery<Note> typedQuery = entityManager.createQuery(criteriaQuery).setMaxResults(10);
 
         return typedQuery.getResultList();
@@ -64,7 +64,7 @@ public class NoteDaoImpl implements INoteDao {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Note> criteriaQuery = criteriaBuilder.createQuery(Note.class);
         Root<Note> root = criteriaQuery.from(Note.class);
-        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("userId"), userId));
+        criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("user"), userId));
         TypedQuery<Note> typedQuery = entityManager.createQuery(criteriaQuery);
 
         return typedQuery.getResultList();
