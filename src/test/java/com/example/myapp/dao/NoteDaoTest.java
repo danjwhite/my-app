@@ -125,10 +125,14 @@ public class NoteDaoTest {
     @Transactional
     @SuppressWarnings("Duplicates")
     public void testDelete() {
-        assertEquals(24, noteDao.count());
-        assertNotNull(noteDao.findById(1L));
 
-        noteDao.delete(1L);
+        // Get note to delete.
+        Note note = noteDao.findById(1L);
+
+        assertEquals(24, noteDao.count());
+        assertNotNull(note);
+
+        noteDao.delete(note);
 
         assertEquals(23, noteDao.count());
         assertNull(noteDao.findById(1L));
