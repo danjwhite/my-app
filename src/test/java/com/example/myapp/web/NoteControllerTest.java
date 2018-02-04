@@ -1,6 +1,7 @@
 package com.example.myapp.web;
 
 import com.example.myapp.domain.Note;
+import com.example.myapp.domain.User;
 import com.example.myapp.service.INoteService;
 import org.junit.Before;
 import org.junit.Test;
@@ -106,7 +107,7 @@ public class NoteControllerTest {
                 .andExpect(model().attributeExists("note"))
                 .andExpect(model().attribute("note", hasProperty("id", is(nullValue()))))
                 .andExpect(model().attribute("note", hasProperty("createdAt", is(nullValue()))))
-                .andExpect(model().attribute("note", hasProperty("userId", is(nullValue()))))
+                .andExpect(model().attribute("note", hasProperty("user", is(nullValue()))))
                 .andExpect(model().attribute("note", hasProperty("title", is(nullValue()))))
                 .andExpect(model().attribute("note", hasProperty("body", is(nullValue()))))
                 .andExpect(status().isOk());
@@ -120,7 +121,7 @@ public class NoteControllerTest {
 
         // Get the expected properties of the attribute object.
         Date createdAt = note.getCreatedAt();
-        Long userId = note.getUserId();
+        User user = note.getUser();
         String title = note.getTitle();
         String body = note.getBody();
 
@@ -130,7 +131,7 @@ public class NoteControllerTest {
                 .andExpect(model().attributeExists("note"))
                 .andExpect(model().attribute("note", hasProperty("id", is(1L))))
                 .andExpect(model().attribute("note", hasProperty("createdAt", is(createdAt))))
-                .andExpect(model().attribute("note", hasProperty("userId", is(userId))))
+                .andExpect(model().attribute("note", hasProperty("user", is(user))))
                 .andExpect(model().attribute("note", hasProperty("title", is(title))))
                 .andExpect(model().attribute("note", hasProperty("body", is(body))));
     }
