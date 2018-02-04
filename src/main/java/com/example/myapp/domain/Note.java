@@ -28,6 +28,10 @@ public class Note implements Serializable {
     @Column(name = "user_id")
     private Long userId;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Column(name = "title")
     @NotEmpty(message = "Cannot be blank", groups = BlankCheck.class)
     @Size(min = 1, max = 140, message = "Title must be within 140 characters.", groups = SizeCheck.class)
@@ -78,6 +82,14 @@ public class Note implements Serializable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getBody() {
