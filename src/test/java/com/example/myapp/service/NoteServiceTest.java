@@ -1,6 +1,7 @@
 package com.example.myapp.service;
 
 import com.example.myapp.domain.Note;
+import com.example.myapp.domain.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,10 @@ import static org.junit.Assert.*;
 public class NoteServiceTest {
 
     @Autowired
-    INoteService noteService;
+    private INoteService noteService;
+
+    @Autowired
+    private IUserService userService;
 
     @Test
     @Transactional
@@ -47,6 +51,7 @@ public class NoteServiceTest {
 
     @Test
     @Transactional
+    @SuppressWarnings("Duplicates")
     public void testFindOne() throws Exception {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -55,7 +60,7 @@ public class NoteServiceTest {
         Note note = noteService.findById(1L);
         assertEquals(1L, note.getId().longValue());
         assertEquals(date, note.getCreatedAt());
-        assertEquals(1L, note.getUserId().longValue());
+        assertEquals("mjones", note.getUser().getUsername());
         assertEquals("Title", note.getTitle());
         assertEquals("Body", note.getBody());
     }
@@ -67,7 +72,10 @@ public class NoteServiceTest {
 
         assertEquals(12, noteService.count());
 
-        Note newNote = new Note(new Date(), 1L, "Title", "Body");
+        // Get user for new note.
+        User user = userService.findByUsername("mjones");
+
+        Note newNote = new Note(new Date(), user, "Title", "Body");
         noteService.add(newNote);
 
         Note savedNote = noteService.findById(25L);
@@ -75,7 +83,7 @@ public class NoteServiceTest {
         assertEquals(13, noteService.count());
         assertEquals(25L, savedNote.getId().longValue());
         assertNotNull(savedNote.getCreatedAt());
-        assertEquals(1L, savedNote.getUserId().longValue());
+        assertEquals("mjones", savedNote.getUser().getUsername());
         assertEquals("Title", savedNote.getTitle());
         assertEquals("Body", savedNote.getBody());
     }
@@ -88,7 +96,7 @@ public class NoteServiceTest {
 
         Note originalNote = noteService.findById(1L);
         Date originalCreatedAt = originalNote.getCreatedAt();
-        Long originalUserId = originalNote.getUserId();
+        String originalUsername = originalNote.getUser().getUsername();
         String originalTitle = originalNote.getTitle();
         String originalBody = originalNote.getBody();
 
@@ -101,8 +109,7 @@ public class NoteServiceTest {
         assertEquals(12, noteService.count());
         assertEquals(1L, updatedNote.getId().longValue());
         assertEquals(originalCreatedAt, updatedNote.getCreatedAt());
-        assertEquals(originalUserId, updatedNote.getUserId());
-        assertEquals(originalUserId, updatedNote.getUserId());
+        assertEquals(originalUsername, updatedNote.getUser().getUsername());
         assertNotEquals(originalTitle, updatedNote.getTitle());
         assertNotEquals(originalBody, updatedNote.getBody());
     }
