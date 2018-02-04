@@ -42,8 +42,9 @@
             </c:when>
         </c:choose>
         <div class="form-container">
-            <sf:form method="post" name="note-form" modelAttribute="note">
-                <sf:hidden path="id"/>
+            <sf:form method="post" name="note-form" modelAttribute="noteDto">
+                <sf:hidden path="noteId"/>
+                <sf:hidden path="username"/>
                 <table class="form-table">
                     <tr>
                         <td class="table-left">
@@ -56,7 +57,7 @@
                                 </c:when>
                                 <c:when test="${formType == 'edit'}">
                                     <sf:input path="title" cssErrorClass="error-field-input" size="50"
-                                              value="${note.title}"/>
+                                              value="${noteDto.title}"/>
                                 </c:when>
                             </c:choose>
                         </td>
@@ -76,7 +77,7 @@
                                 </c:when>
                                 <c:when test="${formType == 'edit'}">
                                     <sf:textarea path="body" cssErrorClass="error-field-input" cols="80" rows="15"
-                                                 value="${note.body}"/>
+                                                 value="${noteDto.body}"/>
                                 </c:when>
                             </c:choose>
                         </td>
