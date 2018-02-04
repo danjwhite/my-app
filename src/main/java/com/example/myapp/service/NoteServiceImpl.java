@@ -5,6 +5,7 @@ import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +58,7 @@ public class NoteServiceImpl implements INoteService {
         return noteDao.add(note);
     }
 
+    @PreAuthorize("#note.user.username == authentication.name")
     @Transactional
     @Override
     public Note update(Note note) {
