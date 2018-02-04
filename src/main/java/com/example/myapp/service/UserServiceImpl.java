@@ -52,6 +52,12 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional
+    public boolean userExists(String username) {
+        return userDao.findByUsername(username) != null;
+    }
+
+    @Override
+    @Transactional
     public User getLoggedInUser() {
         UserDetails userDetails = securityService.getPrincipal();
         return userDao.findByUsername(userDetails.getUsername());
