@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.GroupSequence;
 import javax.validation.constraints.Size;
 
-@GroupSequence({Note.class, BlankCheck.class, SizeCheck.class})
+@GroupSequence({NoteDto.class, BlankCheck.class, SizeCheck.class})
 public class NoteDto {
 
     private Long noteId;
