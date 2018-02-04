@@ -153,6 +153,7 @@ public class NoteControllerTest {
         // Perform POST request to edit a note on MockMvc and assert expectations.
         mockMvc.perform(post("/note/1/edit")
                 .param("id", "1")
+                .param("username", "mjones")
                 .param("title", "New title")
                 .param("body", "New body"))
                 .andExpect(redirectedUrl("/note/1/view?confirmation=edited"));
