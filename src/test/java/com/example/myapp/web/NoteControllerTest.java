@@ -104,12 +104,11 @@ public class NoteControllerTest {
         // Perform GET request on MockMvc to add a note and assert expectations.
         mockMvc.perform(get("/note/add"))
                 .andExpect(view().name("noteForm"))
-                .andExpect(model().attributeExists("note"))
-                .andExpect(model().attribute("note", hasProperty("id", is(nullValue()))))
-                .andExpect(model().attribute("note", hasProperty("createdAt", is(nullValue()))))
-                .andExpect(model().attribute("note", hasProperty("user", is(nullValue()))))
-                .andExpect(model().attribute("note", hasProperty("title", is(nullValue()))))
-                .andExpect(model().attribute("note", hasProperty("body", is(nullValue()))))
+                .andExpect(model().attributeExists("noteDto"))
+                .andExpect(model().attribute("noteDto", hasProperty("noteId", is(nullValue()))))
+                .andExpect(model().attribute("noteDto", hasProperty("username", is(nullValue()))))
+                .andExpect(model().attribute("noteDto", hasProperty("title", is(nullValue()))))
+                .andExpect(model().attribute("noteDto", hasProperty("body", is(nullValue()))))
                 .andExpect(status().isOk());
     }
 
@@ -120,20 +119,19 @@ public class NoteControllerTest {
         Note note = noteService.findById(1L);
 
         // Get the expected properties of the attribute object.
-        Date createdAt = note.getCreatedAt();
-        User user = note.getUser();
+        String username = note.getUser().getUsername();
         String title = note.getTitle();
         String body = note.getBody();
 
         // Perform GET request on MockMvc to edit a note and assert expectations.
         mockMvc.perform(get("/note/1/edit"))
                 .andExpect(view().name("noteForm"))
-                .andExpect(model().attributeExists("note"))
-                .andExpect(model().attribute("note", hasProperty("id", is(1L))))
-                .andExpect(model().attribute("note", hasProperty("createdAt", is(createdAt))))
-                .andExpect(model().attribute("note", hasProperty("user", is(user))))
-                .andExpect(model().attribute("note", hasProperty("title", is(title))))
-                .andExpect(model().attribute("note", hasProperty("body", is(body))));
+                .andExpect(model().attributeExists("noteDto"))
+                .andExpect(model().attribute("noteDto", hasProperty("noteId", is(1L))))
+                .andExpect(model().attribute("noteDto", hasProperty("username", is(username))))
+                .andExpect(model().attribute("noteDto", hasProperty("title", is(title))))
+                .andExpect(model().attribute("noteDto", hasProperty("body", is(body))))
+                .andExpect(status().isOk());
     }
 
     @Test
