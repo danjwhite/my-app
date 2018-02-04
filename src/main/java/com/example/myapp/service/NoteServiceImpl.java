@@ -41,7 +41,7 @@ public class NoteServiceImpl implements INoteService {
         return noteDao.findRecent(user.getId());
     }
 
-    @PostAuthorize("returnObject.user.username == authentication.name")
+    @PostAuthorize("returnObject == null || returnObject.user.username == authentication.name")
     @Transactional(readOnly = true)
     @Override
     public Note findById(long id) {
