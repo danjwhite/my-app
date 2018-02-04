@@ -1,22 +1,16 @@
 package com.example.myapp.domain;
 
-import com.example.myapp.constraint.BlankCheck;
-import com.example.myapp.constraint.SizeCheck;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
-import javax.validation.GroupSequence;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "note")
-@GroupSequence({Note.class, BlankCheck.class, SizeCheck.class})
 public class Note implements Serializable {
 
     @Id
@@ -33,13 +27,9 @@ public class Note implements Serializable {
     private User user;
 
     @Column(name = "title")
-    @NotEmpty(message = "Cannot be blank", groups = BlankCheck.class)
-    @Size(min = 1, max = 140, message = "Title must be within 140 characters.", groups = SizeCheck.class)
     private String title;
 
     @Column(name = "body")
-    @NotEmpty(message = "Cannot be blank", groups = BlankCheck.class)
-    @Size(min = 1, max = 5000, message = "Body must be within 5,000 characters.", groups = SizeCheck.class)
     private String body;
 
     public Note() {
