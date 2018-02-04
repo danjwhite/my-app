@@ -19,7 +19,7 @@
         <nav id="header-nav">
             <ul>
                 <li><a href="<c:url value="/"/>">Home</a></li>
-                <li><a class="active" href="<c:url value="/notes/view/entries"/>">Notes</a></li>
+                <li><a class="active" href="<c:url value="/notes/view"/>">Notes</a></li>
                 <li>
                     <a href="<c:url value="/user/${user.username}/view"/>">Account</a>
                     <ul>
@@ -58,19 +58,19 @@
                                 <c:when test="${display == 'recent' && fn:length(notes) > 0}">
                                     <input type="button"
                                            onClick="window.location.href='<c:url
-                                                   value="/notes/view/entries?display=all"/>'"
+                                                   value="/notes/view?display=all"/>'"
                                            value="Show All">
                                     &nbsp;
                                 </c:when>
                                 <c:when test="${display == 'all' && fn:length(notes) > 0}">
                                     <input type="button"
                                            onClick="window.location.href='<c:url
-                                                   value="/notes/view/entries?display=recent"/>'"
+                                                   value="/notes/view?display=recent"/>'"
                                            value="Show Recent">
                                     &nbsp;
                                 </c:when>
                             </c:choose>
-                            <input type="button" onClick="window.location.href='<c:url value="/notes/add"/>'"
+                            <input type="button" onClick="window.location.href='<c:url value="/note/add"/>'"
                                    value="Create Note">
                         </div>
                     </form>
@@ -96,12 +96,12 @@
                 <table class="text-table">
                     <tr>
                         <td class="text-table-option"><a
-                                href="${pageContext.request.contextPath}/notes/view/entry?noteId=${note.id}">View</a>
+                                href="${pageContext.request.contextPath}/note/${note.id}/view">View</a>
                         </td>
                         <td class="text-table-option"><a
-                                href="${pageContext.request.contextPath}/notes/edit?noteId=${note.id}">Edit</a></td>
+                                href="${pageContext.request.contextPath}/note/${note.id}/edit">Edit</a></td>
                         <td class="text-table-option"><a
-                                href="${pageContext.request.contextPath}/notes/delete?noteId=${note.id}">Delete</a></td>
+                                href="${pageContext.request.contextPath}/note/${note.id}/delete">Delete</a></td>
                     </tr>
                 </table>
             </div>

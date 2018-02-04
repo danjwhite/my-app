@@ -18,7 +18,7 @@
         <nav id="header-nav">
             <ul>
                 <li><a class="active" href="<c:url value="/"/>">Home</a></li>
-                <li><a href="<c:url value="/notes/view/entries"/>">Notes</a></li>
+                <li><a href="<c:url value="/notes/view"/>">Notes</a></li>
                 <li>
                     <a href="<c:url value="/user/${user.username}/view"/>">Account</a>
                     <ul>
