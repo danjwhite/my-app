@@ -52,8 +52,7 @@ public class UserRegistrationController {
             return "registrationForm";
         }
 
-        Long userId = userService.add(userRegistrationDto).getId();
-
+        userService.add(userRegistrationDto);
         securityService.autoLogin(username, userRegistrationDto.getPassword());
 
         redirectAttributes.addAttribute("confirmation", "created");
