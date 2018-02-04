@@ -42,6 +42,7 @@ public class UserServiceImpl implements IUserService {
         return userDao.findById(id);
     }
 
+    //TODO: Post-auth this
     @Override
     @Transactional(readOnly = true)
     public User findByUsername(String username) {
@@ -85,6 +86,7 @@ public class UserServiceImpl implements IUserService {
         return userDao.add(user);
     }
 
+    // TODO: Pre-auth this
     @Override
     @Transactional
     public User update(UserDto userDto) {
@@ -96,6 +98,7 @@ public class UserServiceImpl implements IUserService {
         return userDao.update(user);
     }
 
+    // TODO: Pre-auth this
     @Override
     @Transactional
     public User updatePassword(UserPasswordDto userPasswordDto) {
@@ -109,6 +112,7 @@ public class UserServiceImpl implements IUserService {
         return userDao.update(user);
     }
 
+    // TODO: Pre-auth this
     @Override
     @Transactional
     public void delete(String username) {
