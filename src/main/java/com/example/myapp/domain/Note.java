@@ -25,9 +25,6 @@ public class Note implements Serializable {
     @Column(name = "created_at")
     private Date createdAt;
 
-    @Column(name = "user_id")
-    private Long userId;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -74,14 +71,6 @@ public class Note implements Serializable {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public User getUser() {
