@@ -125,7 +125,8 @@ public class NoteController {
 
     @RequestMapping(value = "/note/{noteId}/delete", method = RequestMethod.GET)
     public String deleteNote(@PathVariable(value = "noteId") long noteId) {
-        noteService.delete(noteId);
+        Note note = noteService.findById(noteId);
+        noteService.delete(note);
 
         return "redirect:/notes/view";
     }
