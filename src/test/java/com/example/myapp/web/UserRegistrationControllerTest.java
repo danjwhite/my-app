@@ -56,7 +56,7 @@ public class UserRegistrationControllerTest {
                 .param("username", "jsmith")
                 .param("password", "password123")
                 .param("confirmPassword", "password123"))
-                .andExpect(redirectedUrl("/account/view?userId=3&confirmation=created"))
+                .andExpect(redirectedUrl("/user/jsmith/view?confirmation=created"))
                 .andExpect(status().is3xxRedirection());
     }
 

@@ -55,9 +55,8 @@ public class UserRegistrationController {
 
         securityService.autoLogin(username, userRegistrationDto.getPassword());
 
-        redirectAttributes.addAttribute("userId", userId);
         redirectAttributes.addAttribute("confirmation", "created");
 
-        return "redirect:/account/view";
+        return "redirect:/user/" + username + "/view";
     }
 }
