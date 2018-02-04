@@ -118,10 +118,14 @@ public class NoteServiceTest {
     @Transactional
     @SuppressWarnings("Duplicates")
     public void testDelete() {
-        assertEquals(12, noteService.count());
-        assertNotNull(noteService.findById(1L));
 
-        noteService.delete(1L);
+        // Get note to delete.
+        Note note = noteService.findById(1L);
+
+        assertEquals(12, noteService.count());
+        assertNotNull(note);
+
+        noteService.delete(note);
 
         assertEquals(11, noteService.count());
         assertNull(noteService.findById(1L));
