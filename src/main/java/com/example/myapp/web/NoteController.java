@@ -85,19 +85,19 @@ public class NoteController {
 
     @RequestMapping(value = "/note/add", method = RequestMethod.GET)
     public String addNote(@ModelAttribute("user") User user, Model model) {
-        model.addAttribute("note", new Note());
+        model.addAttribute("noteDto", new NoteDto());
         model.addAttribute("formType", "add");
 
         return "noteForm";
     }
 
     @RequestMapping(value = "/note/add", method = RequestMethod.POST)
-    public String saveNote(@Valid Note note, BindingResult result, RedirectAttributes redirectAttributes) {
+    public String saveNote(@Valid NoteDto noteDto, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "noteForm";
         }
 
-        Long noteId = noteService.add(note).getId();
+        Long noteId = noteService.add(noteDto).getId();
         redirectAttributes.addAttribute("confirmation", "added");
 
         return "redirect:/note/" + noteId + "/view";
