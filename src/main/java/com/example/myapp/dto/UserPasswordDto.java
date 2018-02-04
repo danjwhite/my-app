@@ -13,8 +13,6 @@ import javax.validation.GroupSequence;
         groups = MatchCheck.class)
 public class UserPasswordDto {
 
-    private Long userId;
-
     private String username;
 
     private String password;
@@ -24,14 +22,6 @@ public class UserPasswordDto {
 
     @NotBlank(message = "Cannot be blank", groups = BlankCheck.class)
     private String confirmNewPassword;
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 
     public String getUsername() {
         return username;
