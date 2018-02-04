@@ -8,6 +8,7 @@ import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.dto.UserRegistrationDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class UserServiceImpl implements IUserService {
         return userDao.findById(id);
     }
 
-    //TODO: Post-auth this
+    @PreAuthorize("#username == authentication.name")
     @Override
     @Transactional(readOnly = true)
     public User findByUsername(String username) {
@@ -86,7 +87,7 @@ public class UserServiceImpl implements IUserService {
         return userDao.add(user);
     }
 
-    // TODO: Pre-auth this
+    @PreAuthorize("#userDto.username == authentication.name")
     @Override
     @Transactional
     public User update(UserDto userDto) {
@@ -98,7 +99,7 @@ public class UserServiceImpl implements IUserService {
         return userDao.update(user);
     }
 
-    // TODO: Pre-auth this
+    @PreAuthorize("#userPasswordDto.username == authentication.name")
     @Override
     @Transactional
     public User updatePassword(UserPasswordDto userPasswordDto) {
@@ -112,7 +113,7 @@ public class UserServiceImpl implements IUserService {
         return userDao.update(user);
     }
 
-    // TODO: Pre-auth this
+    @PreAuthorize("#user.username == authentication.name")
     @Override
     @Transactional
     public void delete(User user) {
