@@ -32,8 +32,8 @@
 
     <!-------------------- Begin Body -------------------->
     <div id="body">
-        <h3>Error Title</h3>
-        <p>Error description</p>
+        <h3><c:out value="${errorTitle}"/></h3>
+        <p><c:out value="${errorDescription}"/></p>
 
     </div>
 
