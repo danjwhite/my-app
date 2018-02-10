@@ -77,7 +77,12 @@ public class NoteController {
     }
 
     @RequestMapping(value = "/note/{noteId}/view", method = RequestMethod.GET)
-    public String getNote(@PathVariable(value = "noteId") long noteId, @ModelAttribute("user") User user, Model model) {
+    public String getNote(@PathVariable(value = "noteId") long noteId,
+                          @ModelAttribute("user") User user, Model model) throws ResourceNotFoundException {
+        Note note = noteService.findById(noteId);
+        if (note == null) {
+            throw new ResourceNotFoundException("No note found with id = " + noteId);
+        }
         model.addAttribute("note", noteService.findById(noteId));
 
         return "note";
