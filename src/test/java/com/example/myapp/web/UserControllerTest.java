@@ -92,12 +92,13 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "drodman", password = "password123", roles = {"USER"})
+    @WithMockUser(username = "drodman", password = "password123")
     public void testGetUserAccountForbidden() throws Exception {
 
         // Perform GET request on MockMvc and assert expectations.
         mockMvc.perform(get("/user/mjones/view"))
-                .andExpect(status().isForbidden());
+                .andExpect(redirectedUrl("/error/403"))
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
