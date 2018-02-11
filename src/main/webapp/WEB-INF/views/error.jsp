@@ -34,7 +34,6 @@
     <div id="body">
         <h3><c:out value="${errorTitle}"/></h3>
         <p><c:out value="${errorDescription}"/></p>
-
     </div>
 
     <!-------------------- Begin Footer -------------------->
