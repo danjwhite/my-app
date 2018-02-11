@@ -19,11 +19,15 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
     private UserDetailsService userDetailsService;
 
-    @Autowired
     private AccessDeniedHandler accessDeniedHandler;
+
+    @Autowired
+    public SecurityConfig(UserDetailsService userDetailsService, AccessDeniedHandler accessDeniedHandler) {
+        this.userDetailsService = userDetailsService;
+        this.accessDeniedHandler = accessDeniedHandler;
+    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
