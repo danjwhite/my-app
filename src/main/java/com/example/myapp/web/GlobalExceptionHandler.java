@@ -20,6 +20,6 @@ public class GlobalExceptionHandler {
         model.addAttribute("errorTitle", "404: Resource Not Found");
         model.addAttribute("errorDescription", "The requested resource could not be found.");
 
-        return "error";
+        return "errorPage";
     }
 }
