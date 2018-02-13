@@ -1,6 +1,5 @@
 package com.example.myapp.web;
 
-import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserRegistrationDto;
 import com.example.myapp.service.ISecurityService;
 import com.example.myapp.service.IUserService;

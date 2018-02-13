@@ -5,7 +5,6 @@ import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
