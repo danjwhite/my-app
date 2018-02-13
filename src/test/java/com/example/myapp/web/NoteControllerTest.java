@@ -38,6 +38,9 @@ public class NoteControllerTest {
     private NoteController noteController;
 
     @Autowired
+    private GlobalExceptionHandler globalExceptionHandler;
+
+    @Autowired
     private INoteService noteService;
 
     @Rule
@@ -49,7 +52,9 @@ public class NoteControllerTest {
     public void setup() {
 
         // Setup MockMvc to use NoteController.
-        this.mockMvc = MockMvcBuilders.standaloneSetup(noteController).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(noteController)
+                .setControllerAdvice(globalExceptionHandler)
+                .build();
     }
 
     @Test
@@ -119,6 +124,16 @@ public class NoteControllerTest {
 
         // Assert the expected cause of the thrown exception.
         expectedException.expectCause(isA(org.springframework.security.access.AccessDeniedException.class));
+    }
+
+    @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
+    public void testGetNoteInvalid() throws Exception {
+
+        // Perform GET request on MockMvc with path variable and assert expectations.
+        mockMvc.perform(get("/note/45/view"))
+                .andExpect(redirectedUrl("/error/404"))
+                .andExpect(status().is3xxRedirection());
     }
 
     @Test
