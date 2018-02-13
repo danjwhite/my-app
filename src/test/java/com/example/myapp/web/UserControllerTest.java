@@ -103,6 +103,16 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
+    public void testGetUserInvalid() throws Exception {
+
+        // Perform GET request on MockMvc and assert expectations.
+        mockMvc.perform(get("/user/invalid/view"))
+                .andExpect(redirectedUrl("/error/403"))
+                .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void shouldShowAccountForm() throws Exception {
 
         // Get user and user properties.
