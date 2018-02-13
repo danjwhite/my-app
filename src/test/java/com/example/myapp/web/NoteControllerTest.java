@@ -1,7 +1,6 @@
 package com.example.myapp.web;
 
 import com.example.myapp.domain.Note;
-import com.example.myapp.domain.User;
 import com.example.myapp.service.INoteService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,8 +17,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.util.NestedServletException;
 
-import java.nio.file.AccessDeniedException;
-import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
