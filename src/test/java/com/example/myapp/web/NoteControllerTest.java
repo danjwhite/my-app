@@ -4,7 +4,9 @@ import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
 import com.example.myapp.service.INoteService;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +16,9 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.util.NestedServletException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
 public class NoteControllerTest {
 
     @Autowired
@@ -36,6 +39,9 @@ public class NoteControllerTest {
 
     @Autowired
     private INoteService noteService;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     private MockMvc mockMvc;
 
@@ -47,6 +53,7 @@ public class NoteControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void shouldShowAllNotes() throws Exception {
 
         // Create expected object.
@@ -60,6 +67,7 @@ public class NoteControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void shouldShowRecentNotesWithoutRequestParameter() throws Exception {
 
         // Create expected object.
@@ -73,6 +81,7 @@ public class NoteControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void shouldShowRecentNotesWithRequestParameter() throws Exception {
 
         // Create expected object.
@@ -86,6 +95,7 @@ public class NoteControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void testGetNote() throws Exception {
 
         // Create expected object.
@@ -98,7 +108,21 @@ public class NoteControllerTest {
                 .andExpect(model().attribute("note", expectedNote));
     }
 
+    @Test(expected = NestedServletException.class)
+    @WithMockUser(username = "drodman", password = "password123")
+    public void testGetNoteAccessDenied() throws Exception {
+
+        // Perform GET request on MockMvc with path variable and assert expectations.
+        mockMvc.perform(get("/note/1/view"))
+                .andExpect(redirectedUrl("/error/403"))
+                .andExpect(status().is3xxRedirection());
+
+        // Assert the expected cause of the thrown exception.
+        expectedException.expectCause(isA(org.springframework.security.access.AccessDeniedException.class));
+    }
+
     @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void shouldShowNoteFormForAdding() throws Exception {
 
         // Perform GET request on MockMvc to add a note and assert expectations.
@@ -113,6 +137,7 @@ public class NoteControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void shouldShowNoteFormForEditing() throws Exception {
 
         // Get the expected model attribute object.
@@ -135,6 +160,7 @@ public class NoteControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void testAddNote() throws Exception {
 
         // Perform POST request to add a note on MockMvc and assert expectations.
@@ -146,6 +172,7 @@ public class NoteControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void testEditNote() throws Exception {
 
         // Perform POST request to edit a note on MockMvc and assert expectations.
@@ -158,6 +185,7 @@ public class NoteControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
     public void testDeleteNote() throws Exception {
 
         // Assert note count before delete.
