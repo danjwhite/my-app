@@ -1,5 +1,6 @@
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -18,10 +19,18 @@
         </div>
         <nav id="header-nav">
             <ul>
-                <%--
-                <li><a href="<c:url value="/login"/>">Login</a></li>
-                <li><a class="active" href="<c:url value="/register"/>">Register</a></li>
-                --%>
+                <sec:authorize access="hasRole('ROLE_ADMIN')">
+                    <li><a href="<c:url value="/"/>">Home</a></li>
+                    <li><a href="<c:url value="/notes/view"/>">Notes</a></li>
+                    <li><a class="active" href="<c:url value="/admin"/>">Administration</a></li>
+                    <li>
+                        <a href="<c:url value="/user/${user.username}/view"/>">Account</a>
+                        <ul>
+                            <li><a href="<c:url value="/logout"/>">Log Out</a></li>
+                            <li><a href="<c:url value="/user/${user.username}/view"/>">Settings</a></li>
+                        </ul>
+                    </li>
+                </sec:authorize>
             </ul>
         </nav>
     </div>
