@@ -131,4 +131,22 @@
                                  referencedColumnNames="id" referencedTableName="user"/>
     </changeSet>
 
+    <!-- Create admin user -->
+    <changeSet id="2.1_create_admin_user" author="dwhite">
+        <insert tableName="user">
+            <column name="first_name" value="Admin"/>
+            <column name="last_name" value="User"/>
+            <column name="username" value="admin"/>
+            <column name="password" value="$2a$10$2BrhdEcH9oHRm6ZJ.HvwPuDuC.NUy1WuS4HHTw175alSLYh5nx.zC"/>
+        </insert>
+        <insert tableName="user_role">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="1"/>
+        </insert>
+        <insert tableName="user_role">
+            <column name="user_id" value="1"/>
+            <column name="role_id" value="2"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
