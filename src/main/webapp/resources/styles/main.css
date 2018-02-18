@@ -217,6 +217,11 @@ th.wide-col, td.wide-col {
     border-radius: 4px;
 }
 
+#role-options {
+    width: 100%;
+    font-size: 14px
+}
+
 input[type="button"], input[type="submit"], input[type="reset"] {
     font-size: 14px;
     width: 80px;
@@ -227,7 +232,7 @@ input[type="text"], input[type="password"], textarea {
     border: 1px thin;
 }
 
-textarea {
+textarea, select {
     border-color: #CCCCCC;
 }
 
