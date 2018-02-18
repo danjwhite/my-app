@@ -1,8 +1,11 @@
 package com.example.myapp.web;
 
+import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
+import com.example.myapp.editor.RoleEditor;
+import com.example.myapp.service.IRoleService;
 import com.example.myapp.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -12,12 +15,14 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/")
@@ -25,6 +30,22 @@ public class UserController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private IRoleService roleService;
+
+    @Autowired
+    private RoleEditor roleEditor;
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(Role.class, roleEditor);
+    }
+
+    @ModelAttribute("allRoles")
+    public List<Role> roles() {
+        return roleService.findAll();
+    }
 
     @RequestMapping(value = "/user/{username}/view", method = RequestMethod.GET)
     public String getUserAccount(@PathVariable(value = "username") String username, Model model) {
