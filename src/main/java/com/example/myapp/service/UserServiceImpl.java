@@ -65,6 +65,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<User> findAll() {
         return userDao.findAll();
     }
