@@ -21,7 +21,7 @@
                 <li><a href="<c:url value="/"/>">Home</a></li>
                 <li><a href="<c:url value="/notes/view"/>">Notes</a></li>
                 <sec:authorize access="hasRole('ROLE_ADMIN')">
-                    <li><a class="active"  href="<c:url value="/admin"/>">Administration</a></li>
+                    <li><a class="active" href="<c:url value="/admin"/>">Administration</a></li>
                 </sec:authorize>
                 <li>
                     <a href="<c:url value="/user/${user.username}/view"/>">Account</a>
@@ -44,7 +44,8 @@
             <td>
                 <form name="filter" method="get">
                     <div id="filter-buttons">
-                        <input type="button" onClick="" value="Create User">
+                        <input type="button" onClick="window.location.href='<c:url value="/register"/>'"
+                               value="Create User">
                     </div>
                 </form>
             </td>
@@ -59,17 +60,23 @@
                     <th class="admin-table-header med-col">Username</th>
                     <th class="admin-table-header wide-col"></th>
                 </tr>
-                <tr>
-                    <td class="admin-table-data narrow-col">1</td>
-                    <td class="admin-table-data med-col">Mike</td>
-                    <td class="admin-table-data med-col">Jones</td>
-                    <td class="admin-table-data med-col">mjones</td>
-                    <td class="button-cell wide-col">
-                        <input type="button" onClick="" value="Edit">
-                        &nbsp;
-                        <input type="button" onClick="" value="Delete">
-                    </td>
-                </tr>
+                <c:forEach items="${users}" var="account">
+                    <tr>
+                        <td class="admin-table-data narrow-col"><c:out value="${account.id}"/></td>
+                        <td class="admin-table-data med-col"><c:out value="${account.firstName}"/></td>
+                        <td class="admin-table-data med-col"><c:out value="${account.lastName}"/></td>
+                        <td class="admin-table-data med-col"><c:out value="${account.username}"/></td>
+                        <td class="button-cell wide-col">
+                            <input type="button"
+                                   onClick="window.location.href='<c:url value="/user/${account.username}/edit/info"/>'"
+                                   value="Edit">
+                            &nbsp;
+                            <input type="button"
+                                   onClick="window.location.href='<c:url value="/user/${account.username}/delete"/>'"
+                                   value="Delete">
+                        </td>
+                    </tr>
+                </c:forEach>
             </table>
         </div>
     </div>
