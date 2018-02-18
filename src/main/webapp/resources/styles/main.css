@@ -21,8 +21,13 @@ p {
     position: relative;
 }
 
-#body, #login-body {
+#body, #login-body, #admin-body {
     width: 100%;
+}
+
+#admin-body {
+    padding: 10px 10px 60px;
+    max-width: 875px;
 }
 
 #body {
@@ -157,6 +162,61 @@ td.text-table-option {
     float: left;
 }
 
+th.admin-table-header, td.admin-table-data {
+    font-size: 14px;
+    float: left;
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 5px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+td.button-cell {
+    font-size: 14px;
+    float: left;
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 5px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+#admin-table td {
+    border-top: 1px solid #000000;
+}
+
+th.admin-table-header, th.admin-table-data {
+    height: 15px;
+}
+
+th.narrow-col, td.narrow-col {
+    width: 50px;
+}
+
+th.med-col, td.med-col {
+    width: 175px;
+}
+
+th.wide-col, td.wide-col {
+    width: 223px;
+}
+
+#admin-header-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#admin-table {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0px;
+    border: 1px solid #000000;
+    border-radius: 4px;
+}
+
 input[type="button"], input[type="submit"], input[type="reset"] {
     font-size: 14px;
     width: 80px;
@@ -288,10 +348,6 @@ label.error-field-label {
     margin-bottom: 20px;
 }
 
-#note-success-message {
-    width: 360px;
-}
-
 .error-message {
     color: #E80000;
     background-color: #FEE;
@@ -313,6 +369,10 @@ label.error-field-label {
     border-radius: 4px;
     background-repeat: no-repeat;
     background-position: 5px center;
+}
+
+#note-success-message {
+    width: 360px;
 }
 
 input[type="text"].error-field-input, input[type="password"].error-field-input, textarea.error-field-input {
