@@ -102,6 +102,7 @@ public class UserServiceImpl implements IUserService {
         User user = findByUsername(userDto.getUsername());
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
+        user.setRoles(userDto.getRoles());
 
         return userDao.update(user);
     }
