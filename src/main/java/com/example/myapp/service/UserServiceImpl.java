@@ -43,9 +43,9 @@ public class UserServiceImpl implements IUserService {
         return userDao.findById(id);
     }
 
-    @PreAuthorize("#username == authentication.name")
     @Override
     @Transactional(readOnly = true)
+    @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
     public User findByUsername(String username) {
         return userDao.findByUsername(username);
     }
@@ -93,9 +93,9 @@ public class UserServiceImpl implements IUserService {
         return userDao.add(user);
     }
 
-    @PreAuthorize("#userDto.username == authentication.name")
     @Override
     @Transactional
+    @PreAuthorize("#userDto.username == authentication.name or hasRole('ROLE_ADMIN')")
     public User update(UserDto userDto) {
 
         User user = findByUsername(userDto.getUsername());
@@ -105,9 +105,9 @@ public class UserServiceImpl implements IUserService {
         return userDao.update(user);
     }
 
-    @PreAuthorize("#userPasswordDto.username == authentication.name")
     @Override
     @Transactional
+    @PreAuthorize("#userPasswordDto.username == authentication.name")
     public User updatePassword(UserPasswordDto userPasswordDto) {
 
         User user = userDao.findByUsername(userPasswordDto.getUsername());
@@ -119,9 +119,9 @@ public class UserServiceImpl implements IUserService {
         return userDao.update(user);
     }
 
-    @PreAuthorize("#user.username == authentication.name")
     @Override
     @Transactional
+    @PreAuthorize("#user.username == authentication.name or hasRole('ROLE_ADMIN')")
     public void delete(User user) {
         userDao.delete(user);
     }
