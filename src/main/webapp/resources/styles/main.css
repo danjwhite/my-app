@@ -376,7 +376,7 @@ label.error-field-label {
     background-position: 5px center;
 }
 
-#note-success-message {
+#note-success-message, #admin-success-message {
     width: 360px;
 }
 
