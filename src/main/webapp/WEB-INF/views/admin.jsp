@@ -58,7 +58,7 @@
             <td>
                 <form name="filter" method="get">
                     <div id="filter-buttons">
-                        <input type="button" onClick="window.location.href='<c:url value="/register"/>'"
+                        <input type="button" onClick="window.location.href='<c:url value="/register?mode=admin"/>'"
                                value="Create User">
                     </div>
                 </form>

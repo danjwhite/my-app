@@ -37,7 +37,14 @@
 
     <!-------------------- Begin Body -------------------->
     <div id="body">
-        <h4>Register</h4>
+        <sec:authorize access="!hasRole('ROLE_ADMIN')">
+            <h4>Register</h4>
+        </sec:authorize>
+        <sec:authorize access="hasRole('ROLE_ADMIN')">
+            <c:if test="${param.mode == 'admin'}">
+                <h4>New User</h4>
+            </c:if>
+        </sec:authorize>
         <div class="form-container">
             <sf:form method="post" name="register-form" modelAttribute="user">
                 <table class="form-table">
@@ -119,7 +126,7 @@
                     <tr>
                         <td class="table-left"></td>
                         <td class="table-right form-buttons">
-                            <input type="submit" value="Register">
+                            <input type="submit" value="Submit">
                             &nbsp;
                             <input type="button" onClick="history.back()" value="Cancel">
                         </td>
