@@ -107,19 +107,19 @@ public class UserServiceImpl implements IUserService {
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
 
-        Set<Role> userDtoRoles = userDto.getRoles();
-        Set<Role> userRoles = user.getRoles();
+        Set<Role> newRoles = userDto.getRoles();
+        Set<Role> originalRoles = user.getRoles();
 
         // Add any new roles.
-        for (Role role : userDtoRoles) {
-            if (!userRoles.contains(role)) {
+        for (Role role : newRoles) {
+            if (!originalRoles.contains(role)) {
                 Role entity = roleDao.findById(role.getId());
                 user.getRoles().add(entity);
             }
         }
 
         // Remove roles that were removed.
-        user.getRoles().removeIf(role -> !userDtoRoles.contains(role));
+        user.getRoles().removeIf(role -> !newRoles.contains(role));
 
         return user;
     }
