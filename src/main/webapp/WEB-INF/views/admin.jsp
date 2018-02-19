@@ -40,12 +40,12 @@
 
         <c:choose>
             <c:when test="${param.confirmation == 'created'}">
-                <div id="admin-success-message" class="success-message">
+                <div class="success-message">
                     User created successfully.
                 </div>
             </c:when>
             <c:when test="${param.confirmation == 'edited'}">
-                <div id="admin-success-message" class="success-message">
+                <div class="success-message">
                     User created successfully.
                 </div>
             </c:when>

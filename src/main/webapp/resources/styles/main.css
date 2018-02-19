@@ -363,7 +363,6 @@ label.error-field-label {
 #login-error-message {
     position: absolute;
     top: 318px;
-    width: 318px
 }
 
 .success-message, .error-message {
@@ -374,10 +373,7 @@ label.error-field-label {
     border-radius: 4px;
     background-repeat: no-repeat;
     background-position: 5px center;
-}
-
-#note-success-message, #admin-success-message {
-    width: 360px;
+    width: 318px;
 }
 
 input[type="text"].error-field-input, input[type="password"].error-field-input, textarea.error-field-input, select.error-field-input {
