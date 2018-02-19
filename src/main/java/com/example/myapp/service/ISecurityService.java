@@ -8,5 +8,7 @@ public interface ISecurityService {
 
     boolean isCurrentAuthenticationAnonymous();
 
+    boolean currentAuthenticationHasRole(String role);
+
     void autoLogin(String username, String password);
 }

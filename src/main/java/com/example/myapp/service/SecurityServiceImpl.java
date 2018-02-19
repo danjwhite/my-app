@@ -56,6 +56,12 @@ public class SecurityServiceImpl implements ISecurityService {
     }
 
     @Override
+    public boolean currentAuthenticationHasRole(String role) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(role));
+    }
+
+    @Override
     public void autoLogin(String username, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
