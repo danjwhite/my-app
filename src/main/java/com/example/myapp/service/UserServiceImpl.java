@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -99,12 +100,28 @@ public class UserServiceImpl implements IUserService {
     @PreAuthorize("#userDto.username == authentication.name or hasRole('ROLE_ADMIN')")
     public User update(UserDto userDto) {
 
+
+        // The persisted user will automatically be updated in the database at the end of the transaction
+        // without the need to call the DAO to issue an update.
         User user = findByUsername(userDto.getUsername());
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
-        user.setRoles(userDto.getRoles());
 
-        return userDao.update(user);
+        Set<Role> userDtoRoles = userDto.getRoles();
+        Set<Role> userRoles = user.getRoles();
+
+        // Add any new roles.
+        for (Role role : userDtoRoles) {
+            if (!userRoles.contains(role)) {
+                Role entity = roleDao.findById(role.getId());
+                user.getRoles().add(entity);
+            }
+        }
+
+        // Remove roles that were removed.
+        user.getRoles().removeIf(role -> !userDtoRoles.contains(role));
+
+        return user;
     }
 
     @Override
@@ -112,13 +129,15 @@ public class UserServiceImpl implements IUserService {
     @PreAuthorize("#userPasswordDto.username == authentication.name")
     public User updatePassword(UserPasswordDto userPasswordDto) {
 
+        // The persisted user will automatically be updated in the database at the end of the transaction
+        // without the need to call the DAO to issue an update.
         User user = userDao.findByUsername(userPasswordDto.getUsername());
 
         if (user != null) {
             user.setPassword(bCryptPasswordEncoder.encode(userPasswordDto.getNewPassword()));
         }
 
-        return userDao.update(user);
+        return user;
     }
 
     @Override
