@@ -87,10 +87,9 @@ public class UserServiceImpl implements IUserService {
         user.setUsername(userRegistrationDto.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(userRegistrationDto.getPassword()));
 
-        Role role = roleDao.findByType("ROLE_USER");
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
-        user.setRoles(roles);
+        for (Role role : userRegistrationDto.getRoles()) {
+            user.getRoles().add(roleDao.findById(role.getId()));
+        }
 
         return userDao.add(user);
     }

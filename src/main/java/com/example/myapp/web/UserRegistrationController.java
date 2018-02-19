@@ -1,9 +1,14 @@
 package com.example.myapp.web;
 
+import com.example.myapp.domain.Role;
 import com.example.myapp.dto.UserRegistrationDto;
+import com.example.myapp.service.IRoleService;
 import com.example.myapp.service.ISecurityService;
 import com.example.myapp.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/register")
@@ -22,6 +28,9 @@ public class UserRegistrationController {
     private IUserService userService;
 
     @Autowired
+    private IRoleService roleService;
+
+    @Autowired
     private ISecurityService securityService;
 
     @ModelAttribute("user")
@@ -29,9 +38,20 @@ public class UserRegistrationController {
         return new UserRegistrationDto();
     }
 
+    @ModelAttribute("allRoles")
+    public List<Role> roles() {
+        return roleService.findAll();
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new UserRegistrationDto());
+
+        // Have standard user role in the select box selected by default.
+        UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
+        Role role = roleService.findByType("ROLE_USER");
+
+        userRegistrationDto.getRoles().add(role);
+        model.addAttribute("user", userRegistrationDto);
 
         return "registrationForm";
     }
@@ -52,10 +72,17 @@ public class UserRegistrationController {
         }
 
         userService.add(userRegistrationDto);
-        securityService.autoLogin(username, userRegistrationDto.getPassword());
-
         redirectAttributes.addAttribute("confirmation", "created");
 
-        return "redirect:/user/" + username + "/view";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean createdByAdmin = authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
+
+        if (createdByAdmin) {
+            return "redirect:/admin";
+        } else {
+            securityService.autoLogin(username, userRegistrationDto.getPassword());
+
+            return "redirect:/user/" + username + "/view";
+        }
     }
 }

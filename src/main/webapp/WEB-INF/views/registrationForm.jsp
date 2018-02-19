@@ -101,6 +101,20 @@
                         <td></td>
                         <td class="error-cell"><sf:errors path="confirmPassword"/></td>
                     </tr>
+                    <sec:authorize access="hasRole('ROLE_ADMIN')">
+                        <tr>
+                            <td class="table-left">
+                                <sf:label path="roles">Roles:</sf:label>
+                            </td>
+                            <td class="table-right">
+                                <sf:select path="roles" items="${allRoles}" multiple="true" itemValue="id" itemLabel="type" id="role-options"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="error-cell"><sf:errors path="roles"/></td>
+                        </tr>
+                    </sec:authorize>
                     <tr>
                         <td class="table-left"></td>
                         <td class="table-right form-buttons">
