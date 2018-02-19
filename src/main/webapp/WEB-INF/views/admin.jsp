@@ -37,6 +37,20 @@
     <!-------------------- Begin Body -------------------->
     <div id="admin-body">
         <h3>Administration</h3>
+
+        <c:choose>
+            <c:when test="${param.confirmation == 'created'}">
+                <div id="admin-success-message" class="success-message">
+                    User created successfully.
+                </div>
+            </c:when>
+            <c:when test="${param.confirmation == 'edited'}">
+                <div id="admin-success-message" class="success-message">
+                    User created successfully.
+                </div>
+            </c:when>
+        </c:choose>
+
         <table id="admin-header-table">
             <td>
                 <p id="filter-description">User Accounts</p>
