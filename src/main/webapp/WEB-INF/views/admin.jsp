@@ -82,7 +82,7 @@
                         <td class="admin-table-data med-col"><c:out value="${account.username}"/></td>
                         <td class="button-cell wide-col">
                             <input type="button"
-                                   onClick="window.location.href='<c:url value="/user/${account.username}/edit/info"/>'"
+                                   onClick="window.location.href='<c:url value="/user/${account.username}/edit/info?mode=admin"/>'"
                                    value="Edit">
                             &nbsp;
                             <input type="button"

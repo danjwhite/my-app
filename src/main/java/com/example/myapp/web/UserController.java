@@ -5,6 +5,7 @@ import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.service.IRoleService;
+import com.example.myapp.service.ISecurityService;
 import com.example.myapp.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -32,6 +33,9 @@ public class UserController {
     @Autowired
     private IRoleService roleService;
 
+    @Autowired
+    private ISecurityService securityService;
+
     @ModelAttribute("allRoles")
     public List<Role> roles() {
         return roleService.findAll();
@@ -58,6 +62,7 @@ public class UserController {
 
     @RequestMapping(value = "/user/{username}/edit/info", method = RequestMethod.POST)
     public String updateUserInfo(@PathVariable(value = "username") String username,
+                                 @RequestParam(value = "mode", required = false) String mode,
                                  @ModelAttribute("user") @Valid UserDto user,
                                  BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
@@ -66,9 +71,13 @@ public class UserController {
 
         userService.update(user);
 
-        redirectAttributes.addAttribute("confirmation", "infoUpdated");
-
-        return "redirect:/user/" + username + "/view";
+        if (mode != null && mode.equals("admin") && securityService.currentAuthenticationHasRole("ROLE_ADMIN")) {
+            redirectAttributes.addAttribute("confirmation", "edited");
+            return "redirect:/admin";
+        } else {
+            redirectAttributes.addAttribute("confirmation", "infoUpdated");
+            return "redirect:/user/" + username + "/view";
+        }
     }
 
     @RequestMapping(value = "/user/{username}/edit/password", method = RequestMethod.GET)
