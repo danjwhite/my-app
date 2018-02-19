@@ -4,6 +4,7 @@ import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class UserDto {
@@ -16,7 +17,7 @@ public class UserDto {
     @NotBlank
     private String lastName;
 
-    private Set<Role> roles;
+    private Set<Role> roles = new LinkedHashSet<>(0);
 
     public UserDto() {
     }
