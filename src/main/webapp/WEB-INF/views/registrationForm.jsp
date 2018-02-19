@@ -22,7 +22,7 @@
                 <li><a href="<c:url value="/"/>">Home</a></li>
                 <li><a href="<c:url value="/notes/view"/>">Notes</a></li>
                 <sec:authorize access="hasRole('ROLE_ADMIN')">
-                    <li><a class="active"  href="<c:url value="/admin"/>">Administration</a></li>
+                    <li><a class="active" href="<c:url value="/admin"/>">Administration</a></li>
                 </sec:authorize>
                 <li>
                     <a href="<c:url value="/user/${user.username}/view"/>">Account</a>
@@ -107,7 +107,8 @@
                                 <sf:label path="roles">Roles:</sf:label>
                             </td>
                             <td class="table-right">
-                                <sf:select path="roles" items="${allRoles}" multiple="true" itemValue="id" itemLabel="type" id="role-options"/>
+                                <sf:select path="roles" items="${allRoles}" multiple="true" itemValue="id"
+                                           itemLabel="type" id="role-options" cssErrorClass="error-field-input"/>
                             </td>
                         </tr>
                         <tr>

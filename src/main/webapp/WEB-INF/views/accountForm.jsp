@@ -72,7 +72,8 @@
                                 <sf:label path="roles">Roles:</sf:label>
                             </td>
                             <td class="table-right">
-                                <sf:select path="roles" items="${allRoles}" multiple="true" itemValue="id" itemLabel="type" id="role-options"/>
+                                <sf:select path="roles" items="${allRoles}" multiple="true" itemValue="id"
+                                           itemLabel="type" id="role-options" cssErrorClass="error-field-input"/>
                             </td>
                         </tr>
                         <tr>

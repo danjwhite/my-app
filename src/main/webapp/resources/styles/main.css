@@ -380,9 +380,8 @@ label.error-field-label {
     width: 360px;
 }
 
-input[type="text"].error-field-input, input[type="password"].error-field-input, textarea.error-field-input {
+input[type="text"].error-field-input, input[type="password"].error-field-input, textarea.error-field-input, select.error-field-input {
     border: 1px solid #E80000;
-
 }
 
 textarea {

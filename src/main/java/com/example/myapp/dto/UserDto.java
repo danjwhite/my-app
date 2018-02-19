@@ -4,6 +4,7 @@ import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.Size;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ public class UserDto {
     @NotBlank
     private String lastName;
 
+    @Size(min = 1, message = "At least one role must be selected")
     private Set<Role> roles = new LinkedHashSet<>(0);
 
     public UserDto() {

@@ -4,6 +4,7 @@ import com.example.myapp.constraint.FieldMatch;
 import com.example.myapp.domain.Role;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.Size;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -25,6 +26,7 @@ public class UserRegistrationDto {
     @NotBlank(message = "Cannot be blank")
     private String confirmPassword;
 
+    @Size(min = 1, message = "At least one role must be selected")
     private Set<Role> roles = new LinkedHashSet<>(0);
 
     public String getFirstName() {
