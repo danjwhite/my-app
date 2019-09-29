@@ -130,6 +130,53 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <configuration>
+                    <driver>${jdbc.driver}</driver>
+                    <url>${jdbc.url}</url>
+                    <username>${jdbc.username}</username>
+                    <password>${jdbc.password}</password>
+                    <changeLogFile>src/main/resources/db.changelog.xml</changeLogFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>update</goal>
+                        </goals>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdbc.driver>com.mysql.cj.jdbc.Driver</jdbc.driver>
+                <jdbc.url>jdbc:mysql://localhost:3306/myapp_dev?createDatabaseIfNotExist=true&amp;serverTimezone=UTC</jdbc.url>
+                <jdbc.username>root</jdbc.username>
+                <jdbc.password>Apple2012</jdbc.password>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <jdbc.driver>com.mysql.cj.jdbc.Driver</jdbc.driver>
+                <jdbc.url>jdbc:mysql://localhost:3306/myapp_prod?createDatabaseIfNotExist=true&amp;serverTimezone=UTC</jdbc.url>
+                <jdbc.username>root</jdbc.username>
+                <jdbc.password>Apple2012</jdbc.password>
+            </properties>
+        </profile>
+    </profiles>
 </project>
