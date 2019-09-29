@@ -15,13 +15,14 @@ public class Role implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(name = "type", unique = true, nullable = false)
-    private String type;
+    private RoleType type;
 
     public Role() {
     }
 
-    public Role(String type) {
+    public Role(RoleType type) {
         this.type = type;
     }
 
@@ -33,11 +34,11 @@ public class Role implements Serializable {
         this.id = id;
     }
 
-    public String getType() {
+    public RoleType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(RoleType type) {
         this.type = type;
     }
 

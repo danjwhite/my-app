@@ -1,6 +1,7 @@
 package com.example.myapp.dao;
 
 import com.example.myapp.domain.Role;
+import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class UserDaoTest {
     private IUserDao userDao;
 
     @Autowired
-    private IRoleDao roleDao;
+    private RoleRepository roleRepository;
 
     @Test
     @Transactional
@@ -47,8 +48,8 @@ public class UserDaoTest {
     public void findByIdShouldReturnExpectedResult() {
         User user = userDao.findById(1L);
 
-        Role userRole = roleDao.findByType("ROLE_USER");
-        Role adminRole = roleDao.findByType("ROLE_ADMIN");
+        Role userRole = roleRepository.findByType(RoleType.ROLE_USER);
+        Role adminRole = roleRepository.findByType(RoleType.ROLE_ADMIN);
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
         roles.add(adminRole);
@@ -68,8 +69,8 @@ public class UserDaoTest {
     public void findByUsernameShouldReturnExpectedResult() {
         User user = userDao.findByUsername("mjones");
 
-        Role userRole = roleDao.findByType("ROLE_USER");
-        Role adminRole = roleDao.findByType("ROLE_ADMIN");
+        Role userRole = roleRepository.findByType(RoleType.ROLE_USER);
+        Role adminRole = roleRepository.findByType(RoleType.ROLE_ADMIN);
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
         roles.add(adminRole);
@@ -90,7 +91,7 @@ public class UserDaoTest {
 
         User user = new User();
 
-        Role userRole = roleDao.findByType("ROLE_USER");
+        Role userRole = roleRepository.findByType(RoleType.ROLE_USER);
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
 
@@ -129,7 +130,7 @@ public class UserDaoTest {
 
         // Declare updated roles.
         Set<Role> updatedRoles = user.getRoles();
-        updatedRoles.add(roleDao.findByType("ROLE_ADMIN"));
+        updatedRoles.add(roleRepository.findByType(RoleType.ROLE_ADMIN));
 
         // Set user roles.
         user.setRoles(updatedRoles);

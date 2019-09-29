@@ -1,6 +1,7 @@
 package com.example.myapp.service;
 
 import com.example.myapp.domain.Role;
+import com.example.myapp.domain.RoleType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class RoleServiceTest {
     public void testFindById() {
         Role expectedRole = new Role();
         expectedRole.setId(1L);
-        expectedRole.setType("ROLE_USER");
+        expectedRole.setType(RoleType.ROLE_USER);
 
         assertEquals(expectedRole, roleService.findById(1L));
     }
@@ -42,7 +43,7 @@ public class RoleServiceTest {
     public void testFindByType() {
         Role expectedRole = new Role();
         expectedRole.setId(1L);
-        expectedRole.setType("ROLE_USER");
+        expectedRole.setType(RoleType.ROLE_USER);
 
         assertEquals(expectedRole, roleService.findByType("ROLE_USER"));
     }

@@ -1,6 +1,7 @@
 package com.example.myapp.dao;
 
 import com.example.myapp.domain.Role;
+import com.example.myapp.domain.RoleType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,19 +12,27 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
-public class RoleDaoTest {
+public class RoleRepositoryTest {
 
     @Autowired
-    private IRoleDao roleDao;
+    private RoleRepository roleRepository;
 
     @Test
     @Transactional
     @Rollback
     public void findAllShouldReturnExpectedResult() {
-        Assert.assertEquals(2, roleDao.findAll().size());
+        List<Role> roles = (List<Role>) roleRepository.findAll();
+
+        Assert.assertEquals(RoleType.values().length, roles.size());
+
+        Set<RoleType> roleTypes = roles.stream().map(Role::getType).collect(Collectors.toSet());
+        Assert.assertEquals(new HashSet<>(Arrays.asList(RoleType.values())), roleTypes);
     }
 
     @Test
@@ -32,9 +41,12 @@ public class RoleDaoTest {
     public void findByIdShouldReturnExpectedResult() {
         Role expectedRole = new Role();
         expectedRole.setId(1L);
-        expectedRole.setType("ROLE_USER");
+        expectedRole.setType(RoleType.ROLE_USER);
 
-        Assert.assertEquals(expectedRole, roleDao.findById(1L));
+        Optional<Role> result = roleRepository.findById(1L);
+
+        Assert.assertTrue(result.isPresent());
+        Assert.assertEquals(expectedRole, result.get());
     }
 
     @Test
@@ -43,8 +55,8 @@ public class RoleDaoTest {
     public void findByTypeShouldReturnExpectedResult() {
         Role expectedRole = new Role();
         expectedRole.setId(1L);
-        expectedRole.setType("ROLE_USER");
+        expectedRole.setType(RoleType.ROLE_USER);
 
-        Assert.assertEquals(expectedRole, roleDao.findByType("ROLE_USER"));
+        Assert.assertEquals(expectedRole, roleRepository.findByType(RoleType.ROLE_USER));
     }
 }

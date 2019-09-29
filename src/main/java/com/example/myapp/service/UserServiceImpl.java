@@ -1,6 +1,6 @@
 package com.example.myapp.service;
 
-import com.example.myapp.dao.IRoleDao;
+import com.example.myapp.dao.RoleRepository;
 import com.example.myapp.dao.IUserDao;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
@@ -14,8 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Iterator;
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Set;
 
@@ -24,16 +23,16 @@ public class UserServiceImpl implements IUserService {
 
     private IUserDao userDao;
 
-    private IRoleDao roleDao;
+    private RoleRepository roleRepository;
 
     private ISecurityService securityService;
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(IUserDao userDao, IRoleDao roleDao, ISecurityService securityService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(IUserDao userDao, RoleRepository roleRepository, ISecurityService securityService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDao = userDao;
-        this.roleDao = roleDao;
+        this.roleRepository = roleRepository;
         this.securityService = securityService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
@@ -88,7 +87,9 @@ public class UserServiceImpl implements IUserService {
         user.setPassword(bCryptPasswordEncoder.encode(userRegistrationDto.getPassword()));
 
         for (Role role : userRegistrationDto.getRoles()) {
-            user.getRoles().add(roleDao.findById(role.getId()));
+            Role userRole = roleRepository.findById(role.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Role not found for id: " + role.getId()));
+            user.getRoles().add(userRole);
         }
 
         return userDao.add(user);
@@ -112,8 +113,9 @@ public class UserServiceImpl implements IUserService {
         // Add any new roles.
         for (Role role : newRoles) {
             if (!originalRoles.contains(role)) {
-                Role entity = roleDao.findById(role.getId());
-                user.getRoles().add(entity);
+                Role userRole = roleRepository.findById(role.getId())
+                        .orElseThrow(() -> new EntityNotFoundException("Role not found for id: " + role.getId()));
+                user.getRoles().add(userRole);
             }
         }
 

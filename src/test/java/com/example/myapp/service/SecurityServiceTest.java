@@ -2,6 +2,7 @@ package com.example.myapp.service;
 
 import com.example.myapp.dao.UserDaoImpl;
 import com.example.myapp.domain.Role;
+import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -120,7 +121,7 @@ public class SecurityServiceTest {
 
         Set<Role> roles = new HashSet<>();
         Role role = new Role();
-        role.setType("ROLE_USER");
+        role.setType(RoleType.ROLE_USER);
         roles.add(role);
         user.setRoles(roles);
 
