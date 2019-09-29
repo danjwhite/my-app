@@ -2,11 +2,12 @@ package com.example.myapp.dao;
 
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +16,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.junit.Assert.*;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class NoteDaoTest {
 
     @Autowired
@@ -31,51 +29,57 @@ public class NoteDaoTest {
 
     @Test
     @Transactional
-    public void testCount() {
+    @Rollback
+    public void countShouldReturnExpectedResult() {
 
         // Count all notes and assert expectations.
-        assertEquals(24, noteDao.count());
+        Assert.assertEquals(24, noteDao.count());
     }
 
     @Test
     @Transactional
-    public void testFindAll() {
+    @Rollback
+    public void findAllShouldReturnAllNotes() {
 
         // Find all notes for specified user and assert expectations.
-        assertEquals(12, noteDao.findAll(1).size());
+        Assert.assertEquals(12, noteDao.findAll(1).size());
     }
 
     @Test
     @Transactional
-    public void testFindRecent() {
+    @Rollback
+    public void findRecentShouldReturnTenMostRecentNotes() {
 
         // Find recent notes for specified user and assert expectations.
-        assertEquals(10, noteDao.findRecent(1).size());
+        Assert.assertEquals(10, noteDao.findRecent(1).size());
     }
 
     @Test
     @Transactional
+    @Rollback
     @SuppressWarnings("Duplicates")
-    public void testFindOne() throws Exception {
+    public void findByIdShouldReturnExpectedResult() throws Exception {
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = dateFormat.parse("2018-02-02 00:00:00");
 
         // Find specific note by id and assert expectations.
         Note note = noteDao.findById(1L);
-        assertEquals(1L, note.getId().longValue());
-        assertEquals(date, note.getCreatedAt());
-        assertEquals("mjones", note.getUser().getUsername());
-        assertEquals("Title", note.getTitle());
-        assertEquals("Body", note.getBody());
+        Assert.assertEquals(1L, note.getId().longValue());
+        Assert.assertEquals(date, note.getCreatedAt());
+        Assert.assertEquals("mjones", note.getUser().getUsername());
+        Assert.assertEquals("Title", note.getTitle());
+        Assert.assertEquals("Body", note.getBody());
     }
 
+    // TODO: Break down into smaller tests.
     @Test
     @Transactional
+    @Rollback
     @SuppressWarnings("Duplicates")
-    public void testAdd() {
+    public void addShouldSetExpectedFieldValues() {
 
-        assertEquals(24, noteDao.count());
+        Assert.assertEquals(24, noteDao.count());
 
         // Get user for new note.
         User user = userDao.findByUsername("mjones");
@@ -87,19 +91,21 @@ public class NoteDaoTest {
         Note savedNote = noteDao.findById(25L);
 
         // Assert expectations
-        assertEquals(25, noteDao.count());
-        assertEquals(25L, savedNote.getId().longValue());
-        assertNotNull(savedNote.getCreatedAt());
-        assertEquals("mjones", savedNote.getUser().getUsername());
-        assertEquals("Title", savedNote.getTitle());
-        assertEquals("Body", savedNote.getBody());
+        Assert.assertEquals(25, noteDao.count());
+        Assert.assertEquals(25L, savedNote.getId().longValue());
+        Assert.assertNotNull(savedNote.getCreatedAt());
+        Assert.assertEquals("mjones", savedNote.getUser().getUsername());
+        Assert.assertEquals("Title", savedNote.getTitle());
+        Assert.assertEquals("Body", savedNote.getBody());
     }
 
+    // TODO: Break down into smaller tests.
     @Test
     @Transactional
+    @Rollback
     @SuppressWarnings("Duplicates")
-    public void testUpdate() {
-        assertEquals(24, noteDao.count());
+    public void updateShouldSetExpectedFieldValues() {
+        Assert.assertEquals(24, noteDao.count());
 
         Note originalNote = noteDao.findById(1L);
         Date originalCreatedAt = originalNote.getCreatedAt();
@@ -113,29 +119,30 @@ public class NoteDaoTest {
 
         Note updatedNote = noteDao.findById(1L);
 
-        assertEquals(24, noteDao.count());
-        assertEquals(1L, updatedNote.getId().longValue());
-        assertEquals(originalCreatedAt, updatedNote.getCreatedAt());
-        assertEquals(originalUsername, updatedNote.getUser().getUsername());
-        assertNotEquals(originalTitle, updatedNote.getTitle());
-        assertNotEquals(originalBody, updatedNote.getBody());
+        Assert.assertEquals(24, noteDao.count());
+        Assert.assertEquals(1L, updatedNote.getId().longValue());
+        Assert.assertEquals(originalCreatedAt, updatedNote.getCreatedAt());
+        Assert.assertEquals(originalUsername, updatedNote.getUser().getUsername());
+        Assert.assertNotEquals(originalTitle, updatedNote.getTitle());
+        Assert.assertNotEquals(originalBody, updatedNote.getBody());
     }
 
     @Test
     @Transactional
+    @Rollback
     @SuppressWarnings("Duplicates")
-    public void testDelete() {
+    public void deleteShouldDeleteExpectedNote() {
 
         // Get note to delete.
         Note note = noteDao.findById(1L);
 
-        assertEquals(24, noteDao.count());
-        assertNotNull(note);
+        Assert.assertEquals(24, noteDao.count());
+        Assert.assertNotNull(note);
 
         noteDao.delete(note);
 
-        assertEquals(23, noteDao.count());
-        assertNull(noteDao.findById(1L));
+        Assert.assertEquals(23, noteDao.count());
+        Assert.assertNull(noteDao.findById(1L));
     }
 
 }
