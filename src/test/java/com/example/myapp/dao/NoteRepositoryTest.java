@@ -26,7 +26,7 @@ public class NoteRepositoryTest {
     private NoteRepository noteRepository;
 
     @Autowired
-    private IUserDao userDao;
+    private UserRepository userDao;
 
     @Test
     @Transactional

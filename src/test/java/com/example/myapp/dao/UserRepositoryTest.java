@@ -14,15 +14,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
-public class UserDaoTest {
+public class UserRepositoryTest {
 
     @Autowired
-    private IUserDao userDao;
+    private UserRepository userRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -31,14 +33,14 @@ public class UserDaoTest {
     @Transactional
     @Rollback
     public void countShouldReturnExpectedResult() {
-        Assert.assertEquals(2, userDao.count());
+        Assert.assertEquals(2, userRepository.count());
     }
 
     @Test
     @Transactional
     @Rollback
     public void findAllShouldReturnExpectedResult() {
-        Assert.assertEquals(2, userDao.findAll().size());
+        Assert.assertEquals(2, ((List<User>) userRepository.findAll()).size());
     }
 
     @Test
@@ -46,7 +48,7 @@ public class UserDaoTest {
     @Rollback
     @SuppressWarnings("Duplicates")
     public void findByIdShouldReturnExpectedResult() {
-        User user = userDao.findById(1L);
+        Optional<User> user = userRepository.findById(1L);
 
         Role userRole = roleRepository.findByType(RoleType.ROLE_USER);
         Role adminRole = roleRepository.findByType(RoleType.ROLE_ADMIN);
@@ -54,12 +56,13 @@ public class UserDaoTest {
         roles.add(userRole);
         roles.add(adminRole);
 
-        Assert.assertEquals(1L, user.getId().longValue());
-        Assert.assertEquals("Michael", user.getFirstName());
-        Assert.assertEquals("Jones", user.getLastName());
-        Assert.assertEquals("mjones", user.getUsername());
-        Assert.assertEquals("$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS", user.getPassword());
-        Assert.assertEquals(roles, user.getRoles());
+        Assert.assertTrue(user.isPresent());
+        Assert.assertEquals(1L, user.get().getId().longValue());
+        Assert.assertEquals("Michael", user.get().getFirstName());
+        Assert.assertEquals("Jones", user.get().getLastName());
+        Assert.assertEquals("mjones", user.get().getUsername());
+        Assert.assertEquals("$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS", user.get().getPassword());
+        Assert.assertEquals(roles, user.get().getRoles());
     }
 
     @Test
@@ -67,7 +70,7 @@ public class UserDaoTest {
     @Rollback
     @SuppressWarnings("Duplicates")
     public void findByUsernameShouldReturnExpectedResult() {
-        User user = userDao.findByUsername("mjones");
+        User user = userRepository.findByUsername("mjones");
 
         Role userRole = roleRepository.findByType(RoleType.ROLE_USER);
         Role adminRole = roleRepository.findByType(RoleType.ROLE_ADMIN);
@@ -87,7 +90,7 @@ public class UserDaoTest {
     @Test
     @Rollback
     @Transactional
-    public void addShouldSetExpectedFields() {
+    public void saveShouldSetExpectedFieldsforAdd() {
 
         User user = new User();
 
@@ -101,11 +104,11 @@ public class UserDaoTest {
         user.setPassword("$2a$10$.E7RjddSYnrH4iL49IFiPectcHJCFpHAIRyRAbf3kX4q4lsl6EYDS");
         user.setRoles(roles);
 
-        Assert.assertEquals(2, userDao.count());
+        Assert.assertEquals(2, userRepository.count());
 
-        User savedUser = userDao.add(user);
+        User savedUser = userRepository.save(user);
 
-        Assert.assertEquals(3, userDao.count());
+        Assert.assertEquals(3, userRepository.count());
         Assert.assertEquals(3L, savedUser.getId().longValue());
         Assert.assertEquals("Joseph", savedUser.getFirstName());
         Assert.assertEquals("Manning", savedUser.getLastName());
@@ -118,38 +121,40 @@ public class UserDaoTest {
     @Test
     @Transactional
     @Rollback
-    public void updateShouldSetExpectedFields() {
+    public void saveShouldSetExpectedFieldsForUpdate() {
 
         // Get user and save original fields.
-        User user = userDao.findById(2L);
-        String firstName = user.getFirstName();
-        String lastName = user.getLastName();
-        String username = user.getUsername();
-        String password = user.getPassword();
-        Set<Role> roles = new HashSet<>(user.getRoles());
+        Optional<User> user = userRepository.findById(2L);
+        Assert.assertTrue(user.isPresent());
+        String firstName = user.get().getFirstName();
+        String lastName = user.get().getLastName();
+        String username = user.get().getUsername();
+        String password = user.get().getPassword();
+        Set<Role> roles = new HashSet<>(user.get().getRoles());
 
         // Declare updated roles.
-        Set<Role> updatedRoles = user.getRoles();
+        Set<Role> updatedRoles = user.get().getRoles();
         updatedRoles.add(roleRepository.findByType(RoleType.ROLE_ADMIN));
 
         // Set user roles.
-        user.setRoles(updatedRoles);
+        user.get().setRoles(updatedRoles);
 
-        Assert.assertEquals(2, userDao.count());
+        Assert.assertEquals(2, userRepository.count());
 
         // Update and retrieve user.
-        userDao.update(user);
-        User updatedUser = userDao.findById(2L);
+        userRepository.save(user.get());
+        Optional<User> updatedUser = userRepository.findById(2L);
 
-        Assert.assertEquals(2, userDao.count());
-        Assert.assertEquals(firstName, updatedUser.getFirstName());
-        Assert.assertEquals(lastName, updatedUser.getLastName());
-        Assert.assertEquals(username, updatedUser.getUsername());
-        Assert.assertEquals(password, updatedUser.getPassword());
+        Assert.assertTrue(updatedUser.isPresent());
+        Assert.assertEquals(2, userRepository.count());
+        Assert.assertEquals(firstName, updatedUser.get().getFirstName());
+        Assert.assertEquals(lastName, updatedUser.get().getLastName());
+        Assert.assertEquals(username, updatedUser.get().getUsername());
+        Assert.assertEquals(password, updatedUser.get().getPassword());
 
-        Assert.assertEquals(updatedRoles, updatedUser.getRoles());
+        Assert.assertEquals(updatedRoles, updatedUser.get().getRoles());
 
-        Assert.assertNotEquals(roles, updatedUser.getRoles());
+        Assert.assertNotEquals(roles, updatedUser.get().getRoles());
     }
 
     @Test
@@ -159,14 +164,14 @@ public class UserDaoTest {
     public void deleteShouldDeleteExpectedUser() {
 
         // Get user to delete.
-        User user = userDao.findByUsername("mjones");
+        User user = userRepository.findByUsername("mjones");
 
-        Assert.assertEquals(2, userDao.count());
+        Assert.assertEquals(2, userRepository.count());
         Assert.assertNotNull(user);
 
-        userDao.delete(user);
+        userRepository.delete(user);
 
-        Assert.assertEquals(1, userDao.count());
-        Assert.assertNull(userDao.findByUsername("mjones"));
+        Assert.assertEquals(1, userRepository.count());
+        Assert.assertNull(userRepository.findByUsername("mjones"));
     }
 }

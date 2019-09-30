@@ -1,7 +1,7 @@
 package com.example.myapp.service;
 
 import com.example.myapp.dao.RoleRepository;
-import com.example.myapp.dao.IUserDao;
+import com.example.myapp.dao.UserRepository;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
@@ -21,7 +21,7 @@ import java.util.Set;
 @Service
 public class UserServiceImpl implements IUserService {
 
-    private IUserDao userDao;
+    private UserRepository userDao;
 
     private RoleRepository roleRepository;
 
@@ -30,7 +30,7 @@ public class UserServiceImpl implements IUserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(IUserDao userDao, RoleRepository roleRepository, ISecurityService securityService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userDao, RoleRepository roleRepository, ISecurityService securityService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDao = userDao;
         this.roleRepository = roleRepository;
         this.securityService = securityService;
@@ -40,7 +40,8 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional(readOnly = true)
     public User findById(long id) {
-        return userDao.findById(id);
+        return userDao.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found for id: " + id));
     }
 
     @Override
@@ -67,7 +68,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<User> findAll() {
-        return userDao.findAll();
+        return (List<User>) userDao.findAll();
     }
 
     @Override
@@ -92,7 +93,7 @@ public class UserServiceImpl implements IUserService {
             user.getRoles().add(userRole);
         }
 
-        return userDao.add(user);
+        return userDao.save(user);
     }
 
     @Override
