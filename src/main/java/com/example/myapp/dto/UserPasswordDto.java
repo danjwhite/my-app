@@ -3,10 +3,12 @@ package com.example.myapp.dto;
 import com.example.myapp.constraint.BlankCheck;
 import com.example.myapp.constraint.FieldMatch;
 import com.example.myapp.constraint.MatchCheck;
+import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.GroupSequence;
 
+@Data
 @GroupSequence({UserPasswordDto.class, BlankCheck.class, MatchCheck.class})
 @FieldMatch(first = "newPassword", second = "confirmNewPassword",
         message = "The password fields must match",
@@ -22,36 +24,4 @@ public class UserPasswordDto {
 
     @NotBlank(message = "Cannot be blank", groups = BlankCheck.class)
     private String confirmNewPassword;
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
-
-    public String getConfirmNewPassword() {
-        return confirmNewPassword;
-    }
-
-    public void setConfirmNewPassword(String confirmNewPassword) {
-        this.confirmNewPassword = confirmNewPassword;
-    }
 }

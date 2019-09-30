@@ -1,54 +1,19 @@
 package com.example.myapp.domain;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
+@Data
 @Entity
 @Table(name = "role")
 public class Role implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(name = "type", unique = true, nullable = false)
     private RoleType type;
-
-    public Role() {
-    }
-
-    public Role(RoleType type) {
-        this.type = type;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public RoleType getType() {
-        return type;
-    }
-
-    public void setType(RoleType type) {
-        this.type = type;
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        return EqualsBuilder.reflectionEquals(this, that, "id");
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this, "id");
-    }
 }

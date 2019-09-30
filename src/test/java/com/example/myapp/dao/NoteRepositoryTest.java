@@ -88,7 +88,12 @@ public class NoteRepositoryTest {
         User user = userDao.findByUsername("mjones");
 
         // Create, add, and retrieve new note
-        Note newNote = new Note(new Date(), user, "Title", "Body");
+        Note newNote = new Note();
+        newNote.setCreatedAt(new Date());
+        newNote.setUser(user);
+        newNote.setTitle("Title");
+        newNote.setBody("Body");
+
         noteRepository.save(newNote);
 
         Optional<Note> savedNote = noteRepository.findById(25L);
