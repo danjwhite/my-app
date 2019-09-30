@@ -1,6 +1,6 @@
 package com.example.myapp.service;
 
-import com.example.myapp.dao.INoteDao;
+import com.example.myapp.dao.NoteRepository;
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDto;
@@ -10,19 +10,20 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class NoteServiceImpl implements INoteService {
 
-    private INoteDao noteDao;
+    private NoteRepository noteRepository;
 
     private IUserService userService;
 
     @Autowired
-    public NoteServiceImpl(INoteDao noteDao, IUserService userService) {
-        this.noteDao = noteDao;
+    public NoteServiceImpl(NoteRepository noteRepository, IUserService userService) {
+        this.noteRepository = noteRepository;
         this.userService = userService;
     }
 
@@ -31,7 +32,7 @@ public class NoteServiceImpl implements INoteService {
     public List<Note> findAll() {
         User user = userService.getLoggedInUser();
 
-        return noteDao.findAll(user.getId());
+        return noteRepository.findAllByUserId(user.getId());
     }
 
     @Transactional(readOnly = true)
@@ -39,14 +40,15 @@ public class NoteServiceImpl implements INoteService {
     public List<Note> findRecent() {
         User user = userService.getLoggedInUser();
 
-        return noteDao.findRecent(user.getId());
+        return noteRepository.findTop10ByUserIdOrderByCreatedAtDesc(user.getId());
     }
 
     @PostAuthorize("returnObject == null || returnObject.user.username == authentication.name")
     @Transactional(readOnly = true)
     @Override
     public Note findById(long id) {
-        return noteDao.findById(id);
+        return noteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Note not found for id: " + id));
     }
 
     @Transactional
@@ -59,7 +61,7 @@ public class NoteServiceImpl implements INoteService {
         note.setTitle(noteDto.getTitle());
         note.setBody(noteDto.getBody());
 
-        return noteDao.add(note);
+        return noteRepository.save(note);
     }
 
     @PreAuthorize("#noteDto.username == authentication.name")
@@ -71,14 +73,14 @@ public class NoteServiceImpl implements INoteService {
         note.setTitle(noteDto.getTitle());
         note.setBody(noteDto.getBody());
 
-        return noteDao.update(note);
+        return noteRepository.save(note);
     }
 
     @PreAuthorize("#note.user.username == authentication.name")
     @Transactional
     @Override
     public void delete(Note note) {
-        noteDao.delete(note);
+        noteRepository.delete(note);
     }
 
     @Transactional(readOnly = true)
@@ -86,6 +88,6 @@ public class NoteServiceImpl implements INoteService {
     public long count() {
         User user = userService.getLoggedInUser();
 
-        return noteDao.count(user.getId());
+        return noteRepository.countByUserId(user.getId());
     }
 }
