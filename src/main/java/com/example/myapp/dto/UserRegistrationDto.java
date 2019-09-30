@@ -3,8 +3,8 @@ package com.example.myapp.dto;
 import com.example.myapp.constraint.FieldMatch;
 import com.example.myapp.domain.Role;
 import lombok.Data;
-import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.LinkedHashSet;
 import java.util.Set;

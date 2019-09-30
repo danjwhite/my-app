@@ -1,9 +1,9 @@
 package com.example.myapp.domain;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Set;

@@ -4,9 +4,9 @@ import com.example.myapp.constraint.BlankCheck;
 import com.example.myapp.constraint.FieldMatch;
 import com.example.myapp.constraint.MatchCheck;
 import lombok.Data;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.GroupSequence;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @GroupSequence({UserPasswordDto.class, BlankCheck.class, MatchCheck.class})

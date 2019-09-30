@@ -5,9 +5,9 @@ import com.example.myapp.constraint.SizeCheck;
 import com.example.myapp.domain.Note;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.GroupSequence;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Data
