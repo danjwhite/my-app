@@ -4,10 +4,10 @@ import com.example.myapp.domain.User;
 import com.example.myapp.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping("/")
@@ -24,7 +24,7 @@ public class ErrorController {
         return userService.getLoggedInUser();
     }
 
-    @RequestMapping(value = "/error/{code}", method = RequestMethod.GET)
+    @GetMapping(value = "/error/{code}")
     public String getError(@PathVariable("code") String code, @ModelAttribute("user") User user, Model model) {
 
         switch (code) {

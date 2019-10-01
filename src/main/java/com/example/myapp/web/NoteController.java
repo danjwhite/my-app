@@ -39,7 +39,7 @@ public class NoteController {
         return userService.findByUsername(principal.getUsername());
     }
 
-    @RequestMapping(value = "/notes/view", method = RequestMethod.GET)
+    @GetMapping(value = "/notes/view")
     public String getNotes(@RequestParam(value = "display", required = false) String display,
                            @CookieValue(value = "displayCookie", required = false) String displayCookieValue,
                            @ModelAttribute("user") User user,
@@ -69,7 +69,7 @@ public class NoteController {
         return "notes";
     }
 
-    @RequestMapping(value = "/note/{noteId}/view", method = RequestMethod.GET)
+    @GetMapping(value = "/note/{noteId}/view")
     public String getNote(@PathVariable(value = "noteId") long noteId,
                           @ModelAttribute("user") User user, Model model) throws ResourceNotFoundException {
         Note note = noteService.findById(noteId);
@@ -81,7 +81,7 @@ public class NoteController {
         return "note";
     }
 
-    @RequestMapping(value = "/note/add", method = RequestMethod.GET)
+    @GetMapping(value = "/note/add")
     public String addNote(@ModelAttribute("user") User user, Model model) {
         model.addAttribute("noteDto", new NoteDto());
         model.addAttribute("formType", "add");
@@ -89,7 +89,7 @@ public class NoteController {
         return "noteForm";
     }
 
-    @RequestMapping(value = "/note/add", method = RequestMethod.POST)
+    @PostMapping(value = "/note/add")
     public String saveNote(@Valid NoteDto noteDto, BindingResult result, RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
             return "noteForm";
@@ -101,7 +101,7 @@ public class NoteController {
         return "redirect:/note/" + noteId + "/view";
     }
 
-    @RequestMapping(value = "/note/{noteId}/edit", method = RequestMethod.GET)
+    @GetMapping(value = "/note/{noteId}/edit")
     public String editNote(@PathVariable(value = "noteId") long noteId, @ModelAttribute("user") User user, Model model) {
         NoteDto noteDto = new NoteDto(noteService.findById(noteId));
         model.addAttribute("noteDto", noteDto);
@@ -110,7 +110,7 @@ public class NoteController {
         return "noteForm";
     }
 
-    @RequestMapping(value = "/note/{noteId}/edit", method = RequestMethod.POST)
+    @PostMapping(value = "/note/{noteId}/edit")
     public String updateNote(@Valid NoteDto noteDto, @PathVariable(value = "noteId") long noteId, RedirectAttributes redirectAttributes, Errors errors) {
         if (errors.hasErrors()) {
             return "noteForm";
@@ -122,7 +122,7 @@ public class NoteController {
         return "redirect:/note/" + noteId + "/view";
     }
 
-    @RequestMapping(value = "/note/{noteId}/delete", method = RequestMethod.GET)
+    @GetMapping(value = "/note/{noteId}/delete")
     public String deleteNote(@PathVariable(value = "noteId") long noteId) {
         Note note = noteService.findById(noteId);
         noteService.delete(note);

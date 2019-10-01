@@ -41,7 +41,7 @@ public class UserController {
         return roleService.findAll();
     }
 
-    @RequestMapping(value = "/user/{username}/view", method = RequestMethod.GET)
+    @GetMapping(value = "/user/{username}/view")
     public String getUserAccount(@PathVariable(value = "username") String username, Model model) {
         User user = userService.findByUsername(username);
         model.addAttribute("user", user);
@@ -49,7 +49,7 @@ public class UserController {
         return "user";
     }
 
-    @RequestMapping(value = "/user/{username}/edit/info", method = RequestMethod.GET)
+    @GetMapping(value = "/user/{username}/edit/info")
     public String editUserInfo(@PathVariable(value = "username") String username,
                                Model model) {
 
@@ -60,7 +60,7 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "/user/{username}/edit/info", method = RequestMethod.POST)
+    @PostMapping(value = "/user/{username}/edit/info")
     public String updateUserInfo(@PathVariable(value = "username") String username,
                                  @RequestParam(value = "mode", required = false) String mode,
                                  @ModelAttribute("user") @Valid UserDto user,
@@ -80,7 +80,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/user/{username}/edit/password", method = RequestMethod.GET)
+    @GetMapping(value = "/user/{username}/edit/password")
     public String editPassword(@PathVariable(value = "username") String username, Model model) {
         UserPasswordDto userPasswordDto = new UserPasswordDto();
         userPasswordDto.setUsername(username);
@@ -90,7 +90,7 @@ public class UserController {
         return "passwordForm";
     }
 
-    @RequestMapping(value = "/user/{username}/edit/password", method = RequestMethod.POST)
+    @PostMapping(value = "/user/{username}/edit/password")
     public String updatePassword(@PathVariable("username") String username,
                                  @ModelAttribute("userPasswordDto") @Valid UserPasswordDto userPasswordDto,
                                  BindingResult result, RedirectAttributes redirectAttributes) {
@@ -112,7 +112,7 @@ public class UserController {
         return "redirect:/user/" + username + "/view";
     }
 
-    @RequestMapping(value = "/user/{username}/delete", method = RequestMethod.GET)
+    @GetMapping(value = "/user/{username}/delete")
     public String deleteAccount(@PathVariable(value = "username") String username) {
 
         User user = userService.findByUsername(username);
@@ -121,12 +121,12 @@ public class UserController {
         return "redirect:/logout";
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @GetMapping(value = "/login")
     public String login() {
         return "loginForm";
     }
     
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    @GetMapping(value = "/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {
