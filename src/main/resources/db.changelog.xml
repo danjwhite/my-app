@@ -137,7 +137,8 @@
             <column name="first_name" value="Admin"/>
             <column name="last_name" value="User"/>
             <column name="username" value="admin"/>
-            <column name="password" value="$2a$10$2BrhdEcH9oHRm6ZJ.HvwPuDuC.NUy1WuS4HHTw175alSLYh5nx.zC"/>
+            <!-- password = admin -->
+            <column name="password" value="$2a$10$tcDIKadxgEXjVjRcCFjcp.fqwgbiB2T9GL9DkhJQRksMlEdyF6D/W"/>
         </insert>
         <insert tableName="user_role">
             <column name="user_id" value="1"/>
