@@ -11,29 +11,26 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class RoleServiceImpl implements IRoleService {
+public class RoleService {
 
     private RoleRepository roleRepository;
 
     @Autowired
-    public RoleServiceImpl(RoleRepository roleRepository) {
+    public RoleService(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
 
-    @Override
     @Transactional(readOnly = true)
     public Optional<Role> findById(long id) {
         return roleRepository.findById(id);
     }
 
     // TODO: Update to use enum parameter
-    @Override
     @Transactional(readOnly = true)
     public Role findByType(String type) {
         return roleRepository.findByType(Enum.valueOf(RoleType.class, type));
     }
 
-    @Override
     @Transactional(readOnly = true)
     public List<Role> findAll() {
         return (List<Role>) roleRepository.findAll();

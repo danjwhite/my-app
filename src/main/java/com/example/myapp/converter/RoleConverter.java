@@ -1,7 +1,7 @@
 package com.example.myapp.converter;
 
 import com.example.myapp.domain.Role;
-import com.example.myapp.service.IRoleService;
+import com.example.myapp.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import javax.persistence.EntityNotFoundException;
 public class RoleConverter implements Converter<Object, Role> {
 
     @Autowired
-    private IRoleService roleService;
+    private RoleService roleService;
 
     // TODO: Test
     @Override

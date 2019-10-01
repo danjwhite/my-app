@@ -15,20 +15,19 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class NoteServiceImpl implements INoteService {
+public class NoteService {
 
     private NoteRepository noteRepository;
 
-    private IUserService userService;
+    private UserService userService;
 
     @Autowired
-    public NoteServiceImpl(NoteRepository noteRepository, IUserService userService) {
+    public NoteService(NoteRepository noteRepository, UserService userService) {
         this.noteRepository = noteRepository;
         this.userService = userService;
     }
 
     @Transactional(readOnly = true)
-    @Override
     public List<Note> findAll() {
         User user = userService.getLoggedInUser();
 
@@ -36,7 +35,6 @@ public class NoteServiceImpl implements INoteService {
     }
 
     @Transactional(readOnly = true)
-    @Override
     public List<Note> findRecent() {
         User user = userService.getLoggedInUser();
 
@@ -45,14 +43,12 @@ public class NoteServiceImpl implements INoteService {
 
     @PostAuthorize("returnObject == null || returnObject.user.username == authentication.name")
     @Transactional(readOnly = true)
-    @Override
     public Note findById(long id) {
         return noteRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Note not found for id: " + id));
     }
 
     @Transactional
-    @Override
     public Note add(NoteDto noteDto) {
         
         Note note = new Note();
@@ -66,7 +62,6 @@ public class NoteServiceImpl implements INoteService {
 
     @PreAuthorize("#noteDto.username == authentication.name")
     @Transactional
-    @Override
     public Note update(NoteDto noteDto) {
 
         Note note = findById(noteDto.getNoteId());
@@ -78,13 +73,11 @@ public class NoteServiceImpl implements INoteService {
 
     @PreAuthorize("#note.user.username == authentication.name")
     @Transactional
-    @Override
     public void delete(Note note) {
         noteRepository.delete(note);
     }
 
     @Transactional(readOnly = true)
-    @Override
     public long count() {
         User user = userService.getLoggedInUser();
 

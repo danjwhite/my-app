@@ -37,14 +37,14 @@ import static org.mockito.Mockito.when;
 @PrepareForTest(SecurityContextHolder.class)
 public class SecurityServiceTest {
 
-    private SecurityServiceImpl securityService;
+    private SecurityService securityService;
 
     @Mock
     private UserRepository userRepositoryMock;
 
     @Before
     public void setUp() {
-        securityService = new SecurityServiceImpl();
+        securityService = new SecurityService();
 
         // Set the AuthenticationManager for SecurityServiceImpl.
         AuthenticationManager authenticationManager = mock(AuthenticationManager.class);

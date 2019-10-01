@@ -1,7 +1,7 @@
 package com.example.myapp.web;
 
 import com.example.myapp.domain.User;
-import com.example.myapp.service.IUserService;
+import com.example.myapp.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @Autowired
     private WebApplicationContext context;

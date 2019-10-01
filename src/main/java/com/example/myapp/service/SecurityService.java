@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SecurityServiceImpl implements ISecurityService {
+public class SecurityService {
 
     private AuthenticationManager authenticationManager;
 
@@ -34,7 +34,6 @@ public class SecurityServiceImpl implements ISecurityService {
         this.userDetailsService = userDetailsService;
     }
 
-    @Override
     public UserDetails getPrincipal() {
         UserDetails principal = null;
 
@@ -49,19 +48,16 @@ public class SecurityServiceImpl implements ISecurityService {
         return principal;
     }
 
-    @Override
     public boolean isCurrentAuthenticationAnonymous() {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authenticationTrustResolver.isAnonymous(authentication);
     }
 
-    @Override
     public boolean currentAuthenticationHasRole(String role) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(role));
     }
 
-    @Override
     public void autoLogin(String username, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(

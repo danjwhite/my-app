@@ -1,8 +1,8 @@
 package com.example.myapp.web;
 
 import com.example.myapp.domain.User;
-import com.example.myapp.service.ISecurityService;
-import com.example.myapp.service.IUserService;
+import com.example.myapp.service.SecurityService;
+import com.example.myapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -16,10 +16,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 public class HomeController {
 
     @Autowired
-    private ISecurityService securityService;
+    private SecurityService securityService;
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @ModelAttribute("user")
     public User user() {

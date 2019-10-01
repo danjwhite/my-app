@@ -2,13 +2,10 @@ package com.example.myapp.web;
 
 import com.example.myapp.domain.Role;
 import com.example.myapp.dto.UserRegistrationDto;
-import com.example.myapp.service.IRoleService;
-import com.example.myapp.service.ISecurityService;
-import com.example.myapp.service.IUserService;
+import com.example.myapp.service.RoleService;
+import com.example.myapp.service.SecurityService;
+import com.example.myapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,13 +22,13 @@ import java.util.List;
 public class UserRegistrationController {
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @Autowired
-    private IRoleService roleService;
+    private RoleService roleService;
 
     @Autowired
-    private ISecurityService securityService;
+    private SecurityService securityService;
 
     @ModelAttribute("user")
     public UserRegistrationDto userRegistrationDto() {

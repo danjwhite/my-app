@@ -19,65 +19,58 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserService {
 
     private UserRepository userDao;
 
     private RoleRepository roleRepository;
 
-    private ISecurityService securityService;
+    private SecurityService securityService;
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userDao, RoleRepository roleRepository, ISecurityService securityService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserService(UserRepository userDao, RoleRepository roleRepository, SecurityService securityService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDao = userDao;
         this.roleRepository = roleRepository;
         this.securityService = securityService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    @Override
     @Transactional(readOnly = true)
     public User findById(long id) {
         return userDao.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found for id: " + id));
     }
 
-    @Override
     @Transactional(readOnly = true)
     @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
     public User findByUsername(String username) {
         return userDao.findByUsername(username);
     }
 
-    @Override
     @Transactional
     public boolean userExists(String username) {
         return userDao.findByUsername(username) != null;
     }
 
-    @Override
     @Transactional
     public User getLoggedInUser() {
         UserDetails userDetails = securityService.getPrincipal();
         return userDao.findByUsername(userDetails.getUsername());
     }
 
-    @Override
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<User> findAll() {
         return (List<User>) userDao.findAll();
     }
 
-    @Override
     @Transactional(readOnly = true)
     public long count() {
         return userDao.count();
     }
 
-    @Override
     @Transactional
     public User add(UserRegistrationDto userRegistrationDto) {
 
@@ -96,7 +89,6 @@ public class UserServiceImpl implements IUserService {
         return userDao.save(user);
     }
 
-    @Override
     @Transactional
     @PreAuthorize("#userDto.username == authentication.name or hasRole('ROLE_ADMIN')")
     public User update(UserDto userDto) {
@@ -126,7 +118,6 @@ public class UserServiceImpl implements IUserService {
         return user;
     }
 
-    @Override
     @Transactional
     @PreAuthorize("#userPasswordDto.username == authentication.name")
     public User updatePassword(UserPasswordDto userPasswordDto) {
@@ -142,7 +133,6 @@ public class UserServiceImpl implements IUserService {
         return user;
     }
 
-    @Override
     @Transactional
     @PreAuthorize("#user.username == authentication.name or hasRole('ROLE_ADMIN')")
     public void delete(User user) {

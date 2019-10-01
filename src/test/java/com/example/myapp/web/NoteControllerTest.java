@@ -1,7 +1,7 @@
 package com.example.myapp.web;
 
 import com.example.myapp.domain.Note;
-import com.example.myapp.service.INoteService;
+import com.example.myapp.service.NoteService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class NoteControllerTest {
     private GlobalExceptionHandler globalExceptionHandler;
 
     @Autowired
-    private INoteService noteService;
+    private NoteService noteService;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();

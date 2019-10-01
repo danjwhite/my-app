@@ -27,10 +27,10 @@ import static org.junit.Assert.*;
 public class NoteServiceTest {
 
     @Autowired
-    private INoteService noteService;
+    private NoteService noteService;
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @Test
     @Transactional

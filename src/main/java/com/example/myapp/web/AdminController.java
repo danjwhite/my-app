@@ -1,7 +1,7 @@
 package com.example.myapp.web;
 
 import com.example.myapp.domain.User;
-import com.example.myapp.service.IUserService;
+import com.example.myapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,10 +15,10 @@ import java.util.List;
 @RequestMapping("/")
 public class AdminController {
 
-    private IUserService userService;
+    private UserService userService;
 
     @Autowired
-    public AdminController(IUserService userService) {
+    public AdminController(UserService userService) {
         this.userService = userService;
     }
 

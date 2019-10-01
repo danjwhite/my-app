@@ -1,7 +1,7 @@
 package com.example.myapp.web;
 
 import com.example.myapp.domain.User;
-import com.example.myapp.service.IUserService;
+import com.example.myapp.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +26,7 @@ public class ErrorControllerTest {
     private ErrorController errorController;
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     private MockMvc mockMvc;
 

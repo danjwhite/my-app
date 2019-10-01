@@ -3,9 +3,9 @@ package com.example.myapp.web;
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDto;
-import com.example.myapp.service.INoteService;
-import com.example.myapp.service.ISecurityService;
-import com.example.myapp.service.IUserService;
+import com.example.myapp.service.NoteService;
+import com.example.myapp.service.SecurityService;
+import com.example.myapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -24,14 +24,14 @@ import java.util.List;
 @RequestMapping("/")
 public class NoteController {
 
-    private ISecurityService securityService;
+    private SecurityService securityService;
 
-    private IUserService userService;
+    private UserService userService;
 
-    private INoteService noteService;
+    private NoteService noteService;
 
     @Autowired
-    public NoteController(ISecurityService securityService, IUserService userService, INoteService noteService) {
+    public NoteController(SecurityService securityService, UserService userService, NoteService noteService) {
         this.securityService = securityService;
         this.userService = userService;
         this.noteService = noteService;

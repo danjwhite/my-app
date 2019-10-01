@@ -27,10 +27,10 @@ import static org.junit.Assert.*;
 public class UserServiceTest {
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @Autowired
-    private IRoleService roleService;
+    private RoleService roleService;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;

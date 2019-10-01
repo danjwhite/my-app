@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 public class RoleServiceTest {
 
     @Autowired
-    private IRoleService roleService;
+    private RoleService roleService;
 
     @Test
     @Transactional

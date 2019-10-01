@@ -1,7 +1,7 @@
 package com.example.myapp.web;
 
 import com.example.myapp.domain.User;
-import com.example.myapp.service.IUserService;
+import com.example.myapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class ErrorController {
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @ModelAttribute("user")
     public User user() {

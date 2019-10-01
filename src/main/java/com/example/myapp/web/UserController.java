@@ -4,9 +4,9 @@ import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
-import com.example.myapp.service.IRoleService;
-import com.example.myapp.service.ISecurityService;
-import com.example.myapp.service.IUserService;
+import com.example.myapp.service.RoleService;
+import com.example.myapp.service.SecurityService;
+import com.example.myapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,13 +28,13 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @Autowired
-    private IRoleService roleService;
+    private RoleService roleService;
 
     @Autowired
-    private ISecurityService securityService;
+    private SecurityService securityService;
 
     @ModelAttribute("allRoles")
     public List<Role> roles() {
