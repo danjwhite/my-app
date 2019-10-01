@@ -6,7 +6,6 @@ import com.example.myapp.dto.NoteDto;
 import com.example.myapp.service.NoteService;
 import com.example.myapp.service.SecurityService;
 import com.example.myapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,20 +23,14 @@ import java.util.List;
 @RequestMapping("/")
 public class NoteController {
 
-    private SecurityService securityService;
+    private final SecurityService securityService;
+    private final UserService userService;
+    private final NoteService noteService;
 
-    private UserService userService;
-
-    private NoteService noteService;
-
-    @Autowired
     public NoteController(SecurityService securityService, UserService userService, NoteService noteService) {
         this.securityService = securityService;
         this.userService = userService;
         this.noteService = noteService;
-    }
-
-    public NoteController() {
     }
 
     @ModelAttribute

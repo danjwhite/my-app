@@ -7,7 +7,6 @@ import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.service.RoleService;
 import com.example.myapp.service.SecurityService;
 import com.example.myapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -27,14 +26,15 @@ import java.util.List;
 @RequestMapping("/")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final RoleService roleService;
+    private final SecurityService securityService;
 
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    private SecurityService securityService;
+    public UserController(UserService userService, RoleService roleService, SecurityService securityService) {
+        this.userService = userService;
+        this.roleService = roleService;
+        this.securityService = securityService;
+    }
 
     @ModelAttribute("allRoles")
     public List<Role> roles() {

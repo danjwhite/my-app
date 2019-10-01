@@ -7,7 +7,6 @@ import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.dto.UserRegistrationDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,15 +21,12 @@ import java.util.Set;
 public class UserService {
 
     private UserRepository userDao;
-
     private RoleRepository roleRepository;
-
     private SecurityService securityService;
-
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
-    public UserService(UserRepository userDao, RoleRepository roleRepository, SecurityService securityService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserService(UserRepository userDao, RoleRepository roleRepository, SecurityService securityService,
+                       BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDao = userDao;
         this.roleRepository = roleRepository;
         this.securityService = securityService;

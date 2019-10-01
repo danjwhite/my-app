@@ -1,6 +1,6 @@
 package com.example.myapp.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,24 +13,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class SecurityService {
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final AuthenticationTrustResolver authenticationTrustResolver;
+    private final UserDetailsService userDetailsService;
 
-    private AuthenticationTrustResolver authenticationTrustResolver;
-
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+    public SecurityService(AuthenticationManager authenticationManager,
+                           AuthenticationTrustResolver authenticationTrustResolver,
+                           @Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
         this.authenticationManager = authenticationManager;
-    }
-
-    @Autowired
-    public void setAuthenticationTrustResolver(AuthenticationTrustResolver authenticationTrustResolver) {
         this.authenticationTrustResolver = authenticationTrustResolver;
-    }
-
-    @Autowired
-    public void setUserDetailsService(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 

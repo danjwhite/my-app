@@ -4,7 +4,6 @@ import com.example.myapp.dao.NoteRepository;
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -17,11 +16,9 @@ import java.util.List;
 @Service
 public class NoteService {
 
-    private NoteRepository noteRepository;
+    private final NoteRepository noteRepository;
+    private final UserService userService;
 
-    private UserService userService;
-
-    @Autowired
     public NoteService(NoteRepository noteRepository, UserService userService) {
         this.noteRepository = noteRepository;
         this.userService = userService;

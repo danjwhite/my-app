@@ -3,7 +3,6 @@ package com.example.myapp.service;
 import com.example.myapp.dao.RoleRepository;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,9 +12,8 @@ import java.util.Optional;
 @Service
 public class RoleService {
 
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
 
-    @Autowired
     public RoleService(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }

@@ -5,7 +5,6 @@ import com.example.myapp.dto.UserRegistrationDto;
 import com.example.myapp.service.RoleService;
 import com.example.myapp.service.SecurityService;
 import com.example.myapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,14 +20,15 @@ import java.util.List;
 @RequestMapping("/register")
 public class UserRegistrationController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final RoleService roleService;
+    private final SecurityService securityService;
 
-    @Autowired
-    private RoleService roleService;
-
-    @Autowired
-    private SecurityService securityService;
+    public UserRegistrationController(UserService userService, RoleService roleService, SecurityService securityService) {
+        this.userService = userService;
+        this.roleService = roleService;
+        this.securityService = securityService;
+    }
 
     @ModelAttribute("user")
     public UserRegistrationDto userRegistrationDto() {

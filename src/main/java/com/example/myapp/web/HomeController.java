@@ -3,7 +3,6 @@ package com.example.myapp.web;
 import com.example.myapp.domain.User;
 import com.example.myapp.service.SecurityService;
 import com.example.myapp.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -15,11 +14,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RequestMapping("/")
 public class HomeController {
 
-    @Autowired
-    private SecurityService securityService;
+    private final SecurityService securityService;
+    private final UserService userService;
 
-    @Autowired
-    private UserService userService;
+    public HomeController(SecurityService securityService, UserService userService) {
+        this.securityService = securityService;
+        this.userService = userService;
+    }
 
     @ModelAttribute("user")
     public User user() {

@@ -44,20 +44,11 @@ public class SecurityServiceTest {
 
     @Before
     public void setUp() {
-        securityService = new SecurityService();
-
-        // Set the AuthenticationManager for SecurityServiceImpl.
         AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
-        securityService.setAuthenticationManager(authenticationManager);
-
-        // Set the AuthenticationTrustResolver for SecurityServiceImpl.
         AuthenticationTrustResolverImpl authenticationTrustResolver = new AuthenticationTrustResolverImpl();
-        securityService.setAuthenticationTrustResolver(authenticationTrustResolver);
+        UserDetailsServiceImpl userDetailsService = new UserDetailsServiceImpl(userRepositoryMock);
 
-        // Create UserDetailsServiceImpl for SecurityServiceImpl.
-        UserDetailsServiceImpl userDetailsService = new UserDetailsServiceImpl();
-        userDetailsService.setUserRepository(userRepositoryMock);
-        securityService.setUserDetailsService(userDetailsService);
+        securityService = new SecurityService(authenticationManager, authenticationTrustResolver, userDetailsService);
     }
 
     @Test
