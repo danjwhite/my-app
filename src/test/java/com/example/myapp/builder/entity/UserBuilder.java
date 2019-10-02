@@ -36,6 +36,16 @@ public class UserBuilder extends AbstractEntityBuilder<User> {
         return this;
     }
 
+    public UserBuilder withFirstName(String firstName) {
+        getObject().setFirstName(firstName);
+        return this;
+    }
+
+    public UserBuilder withLastName(String lastName) {
+        getObject().setLastName(lastName);
+        return this;
+    }
+
     public UserBuilder withRoles(Set<Role> roles) {
         getObject().setRoles(roles);
         return this;

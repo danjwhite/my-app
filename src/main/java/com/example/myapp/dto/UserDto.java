@@ -3,6 +3,7 @@ package com.example.myapp.dto;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -10,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Data
+@NoArgsConstructor
 public class UserDto {
 
     private String username;

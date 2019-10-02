@@ -2,6 +2,7 @@ package com.example.myapp.service;
 
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@Ignore
 public class OldRoleServiceTest {
 
     @Autowired

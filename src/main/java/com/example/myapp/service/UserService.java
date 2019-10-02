@@ -9,25 +9,27 @@ import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.dto.UserRegistrationDto;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
 public class UserService {
 
-    private UserRepository userDao;
+    private UserRepository userRepository;
     private RoleRepository roleRepository;
     private SecurityService securityService;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserService(UserRepository userDao, RoleRepository roleRepository, SecurityService securityService,
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, SecurityService securityService,
                        BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userDao = userDao;
+        this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.securityService = securityService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -35,36 +37,36 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public User findById(long id) {
-        return userDao.findById(id)
+        return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found for id: " + id));
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
     public User findByUsername(String username) {
-        return userDao.findByUsername(username);
+        return userRepository.findByUsername(username);
     }
 
     @Transactional
     public boolean userExists(String username) {
-        return userDao.findByUsername(username) != null;
+        return userRepository.findByUsername(username) != null;
     }
 
     @Transactional
     public User getLoggedInUser() {
-        UserDetails userDetails = securityService.getPrincipal();
-        return userDao.findByUsername(userDetails.getUsername());
+        UserDetails userDetails = Objects.requireNonNull(securityService.getPrincipal());
+        return userRepository.findByUsername(userDetails.getUsername());
     }
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<User> findAll() {
-        return (List<User>) userDao.findAll();
+        return (List<User>) userRepository.findAll();
     }
 
     @Transactional(readOnly = true)
     public long count() {
-        return userDao.count();
+        return userRepository.count();
     }
 
     @Transactional
@@ -82,7 +84,7 @@ public class UserService {
             user.getRoles().add(userRole);
         }
 
-        return userDao.save(user);
+        return userRepository.save(user);
     }
 
     @Transactional
@@ -92,7 +94,12 @@ public class UserService {
 
         // The persisted user will automatically be updated in the database at the end of the transaction
         // without the need to call the DAO to issue an update.
-        User user = findByUsername(userDto.getUsername());
+        User user = userRepository.findByUsername(userDto.getUsername());
+
+        if (user == null) {
+            throw new UsernameNotFoundException("Invalid username");
+        }
+
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
 
@@ -120,11 +127,13 @@ public class UserService {
 
         // The persisted user will automatically be updated in the database at the end of the transaction
         // without the need to call the DAO to issue an update.
-        User user = userDao.findByUsername(userPasswordDto.getUsername());
+        User user = userRepository.findByUsername(userPasswordDto.getUsername());
 
-        if (user != null) {
-            user.setPassword(bCryptPasswordEncoder.encode(userPasswordDto.getNewPassword()));
+        if (user == null) {
+            throw new UsernameNotFoundException("Invalid username");
         }
+
+        user.setPassword(bCryptPasswordEncoder.encode(userPasswordDto.getNewPassword()));
 
         return user;
     }
@@ -132,6 +141,6 @@ public class UserService {
     @Transactional
     @PreAuthorize("#user.username == authentication.name or hasRole('ROLE_ADMIN')")
     public void delete(User user) {
-        userDao.delete(user);
+        userRepository.delete(user);
     }
 }
