@@ -1,6 +1,7 @@
 package com.example.myapp.web;
 
 import com.example.myapp.domain.Role;
+import com.example.myapp.domain.RoleType;
 import com.example.myapp.dto.UserRegistrationDto;
 import com.example.myapp.service.RoleService;
 import com.example.myapp.service.SecurityService;
@@ -46,7 +47,7 @@ public class UserRegistrationController {
 
         // Have standard user role in the select box selected by default.
         UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
-        Role role = roleService.findByType("ROLE_USER");
+        Role role = roleService.findByType(RoleType.ROLE_USER);
 
         userRegistrationDto.getRoles().add(role);
         model.addAttribute("user", userRegistrationDto);

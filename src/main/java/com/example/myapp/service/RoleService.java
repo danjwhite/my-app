@@ -6,8 +6,8 @@ import com.example.myapp.domain.RoleType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RoleService {
@@ -19,14 +19,14 @@ public class RoleService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Role> findById(long id) {
-        return roleRepository.findById(id);
+    public Role findById(long id) {
+        return roleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Role not found for id: " + id));
     }
 
-    // TODO: Update to use enum parameter
     @Transactional(readOnly = true)
-    public Role findByType(String type) {
-        return roleRepository.findByType(Enum.valueOf(RoleType.class, type));
+    public Role findByType(RoleType type) {
+        return roleRepository.findByType(type);
     }
 
     @Transactional(readOnly = true)

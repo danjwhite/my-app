@@ -21,7 +21,6 @@ public class RoleConverter implements Converter<Object, Role> {
     public Role convert(Object arg) {
         Long id = Long.parseLong((String) arg);
 
-        return roleService.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Role not found for id: " + id));
+        return roleService.findById(id);
     }
 }

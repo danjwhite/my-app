@@ -1,6 +1,7 @@
 package com.example.myapp.service;
 
 import com.example.myapp.domain.Role;
+import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserRegistrationDto;
@@ -53,8 +54,8 @@ public class UserServiceTest {
     public void testFindById() {
         User user = userService.findById(1L);
 
-        Role userRole = roleService.findByType("ROLE_USER");
-        Role adminRole = roleService.findByType("ROLE_ADMIN");
+        Role userRole = roleService.findByType(RoleType.ROLE_USER);
+        Role adminRole = roleService.findByType(RoleType.ROLE_ADMIN);
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
         roles.add(adminRole);
@@ -74,8 +75,8 @@ public class UserServiceTest {
     public void testFindByUserName() {
         User user = userService.findByUsername("mjones");
 
-        Role userRole = roleService.findByType("ROLE_USER");
-        Role adminRole = roleService.findByType("ROLE_ADMIN");
+        Role userRole = roleService.findByType(RoleType.ROLE_USER);
+        Role adminRole = roleService.findByType(RoleType.ROLE_ADMIN);
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
         roles.add(adminRole);
@@ -98,7 +99,7 @@ public class UserServiceTest {
         String password = "password123";
 
         Set<Role> roles = new HashSet<>();
-        roles.add(roleService.findByType("ROLE_USER"));
+        roles.add(roleService.findByType(RoleType.ROLE_USER));
 
         UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
         userRegistrationDto.setFirstName(firstName);
