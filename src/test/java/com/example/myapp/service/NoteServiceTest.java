@@ -1,141 +1,276 @@
 package com.example.myapp.service;
 
+import com.example.myapp.builder.dto.NoteDtoBuilder;
+import com.example.myapp.builder.entity.NoteBuilder;
+import com.example.myapp.builder.entity.UserBuilder;
+import com.example.myapp.dao.NoteRepository;
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDto;
+import org.easymock.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import javax.persistence.EntityNotFoundException;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.Assert.*;
+@RunWith(EasyMockRunner.class)
+public class NoteServiceTest extends EasyMockSupport {
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@TestPropertySource("classpath:application-test.properties")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
-public class NoteServiceTest {
+    @Mock(type = MockType.STRICT)
+    private NoteRepository noteRepositoryMock;
 
-    @Autowired
+    @Mock(type = MockType.STRICT)
+    private UserService userServiceMock;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
     private NoteService noteService;
 
-    @Autowired
-    private UserService userService;
-
-    @Test
-    @Transactional
-    public void testCount() {
-        assertEquals(12, noteService.count());
+    @Before
+    public void setUp() {
+        noteService = new NoteService(noteRepositoryMock, userServiceMock);
     }
 
     @Test
-    @Transactional
-    public void testFindAll() {
-        assertEquals(12, noteService.findAll().size());
+    public void findAllShouldReturnExpectedResult() {
+        User user = UserBuilder.givenUser().withId(1L).build();
+        List<Note> notes = Collections.singletonList(NoteBuilder.givenNote().withId(2L).build());
+
+        expectGetLoggedInUser(user);
+        expectFindAllByUserId(user.getId(), notes);
+        replayAll();
+
+        List<Note> result = noteService.findAll();
+        verifyAll();
+
+        Assert.assertEquals(notes, result);
     }
 
     @Test
-    @Transactional
-    public void testFindRecent() {
-        assertEquals(10, noteService.findRecent().size());
+    public void findRecentShouldReturnExpectedResult() {
+        User user = UserBuilder.givenUser().withId(1L).build();
+        List<Note> notes = Collections.singletonList(NoteBuilder.givenNote().withId(2L).build());
+
+        expectGetLoggedInUser(user);
+        expectFindTop10ByUserIdOrderByCreatedAtDesc(user.getId(), notes);
+        replayAll();
+
+        List<Note> result = noteService.findRecent();
+        verifyAll();
+
+        Assert.assertEquals(notes, result);
     }
 
     @Test
-    @Transactional
-    @SuppressWarnings("Duplicates")
-    public void testFindOne() throws Exception {
+    public void findByIdShouldReturnExpectedResult() {
+        long noteId = 1L;
+        Note note = NoteBuilder.givenNote().withId(noteId).build();
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = dateFormat.parse("2018-02-02 00:00:00");
+        expectFindById(noteId, note);
+        replayAll();
 
-        Note note = noteService.findById(1L);
-        assertEquals(1L, note.getId().longValue());
-        assertEquals(date, note.getCreatedAt());
-        assertEquals("mjones", note.getUser().getUsername());
-        assertEquals("Title", note.getTitle());
-        assertEquals("Body", note.getBody());
+        Note result = noteService.findById(noteId);
+        verifyAll();
+
+        Assert.assertEquals(note, result);
     }
 
     @Test
-    @Transactional
-    @SuppressWarnings("Duplicates")
-    public void testAdd() {
+    public void findByIdShouldThrowEntityNotFoundExceptionWhenNoteNotFound() {
+        long noteId = 1L;
 
-        assertEquals(12, noteService.count());
+        expectedException.expect(EntityNotFoundException.class);
+        expectedException.expectMessage("Note not found for id: " + noteId);
 
-        // Get expected user.
-        User user = userService.getLoggedInUser();
+        expectFindById(noteId, null);
+        replayAll();
 
-        // Create new NoteDto.
-        NoteDto noteDto = new NoteDto();
-        noteDto.setTitle("Title");
-        noteDto.setBody("Body");
+        noteService.findById(noteId);
+        verifyAll();
+    }
+
+    @Test
+    public void addShouldSetExpectedFields() {
+        User user = UserBuilder.givenUser().withId(1L).build();
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withUsername("mjones").withTitle("Title").withBody("Body")
+                .build();
+
+        Capture<Note> noteCapture = EasyMock.newCapture();
+
+        expectGetLoggedInUser(user);
+        expectSave(noteCapture);
+        replayAll();
 
         noteService.add(noteDto);
+        verifyAll();
 
-        Note savedNote = noteService.findById(25L);
-
-        assertEquals(13, noteService.count());
-        assertEquals(25L, savedNote.getId().longValue());
-        assertNotNull(savedNote.getCreatedAt());
-        assertEquals(user, savedNote.getUser());
-        assertEquals("Title", savedNote.getTitle());
-        assertEquals("Body", savedNote.getBody());
+        Note note = noteCapture.getValue();
+        Assert.assertNull(note.getId());
+        Assert.assertNotNull(note.getCreatedAt());
+        Assert.assertEquals(user, note.getUser());
+        Assert.assertEquals(noteDto.getTitle(), note.getTitle());
+        Assert.assertEquals(noteDto.getBody(), note.getBody());
     }
 
     @Test
-    @Transactional
-    @SuppressWarnings("Duplicates")
-    public void testUpdate() {
-        assertEquals(12, noteService.count());
+    public void addShouldReturnExpectedResult() {
+        User user = UserBuilder.givenUser().withId(1L).build();
+        Note note = NoteBuilder.givenNote().withId(2L).build();
 
-        Note note = noteService.findById(1L);
-        Date createdAt = note.getCreatedAt();
-        User user = note.getUser();
-        String title = note.getTitle();
-        String body = note.getBody();
+        expectGetLoggedInUser(user);
+        expectSave(note);
+        replayAll();
 
-        NoteDto noteDto = new NoteDto(note);
-        noteDto.setTitle("New Title");
-        noteDto.setBody("New Body");
+        Note result = noteService.add(new NoteDto());
+        verifyAll();
+
+        Assert.assertEquals(note, result);
+    }
+
+    @Test
+    public void updateShouldSetExpectedFields() {
+        Date createdAt = new Date();
+        User user = UserBuilder.givenUser().withId(1L).build();
+
+        Note note = NoteBuilder.givenNote()
+                .withId(1L)
+                .withCreatedAt(createdAt)
+                .withUser(user)
+                .withTitle("Title")
+                .withBody("Body")
+                .build();
+
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withNoteId(1L)
+                .withUsername("mjones")
+                .withTitle("New Title")
+                .withBody("New body")
+                .build();
+
+        Capture<Note> noteCapture = EasyMock.newCapture();
+
+        Assert.assertNotEquals(noteDto.getTitle(), note.getTitle());
+        Assert.assertNotEquals(noteDto.getBody(), note.getBody());
+
+        expectFindById(noteDto.getNoteId(), note);
+        expectSave(noteCapture);
+        replayAll();
 
         noteService.update(noteDto);
+        verifyAll();
 
-        Note updatedNote = noteService.findById(1L);
-
-        assertEquals(12, noteService.count());
-        assertEquals(1L, updatedNote.getId().longValue());
-        assertEquals(createdAt, updatedNote.getCreatedAt());
-        assertEquals(user, updatedNote.getUser());
-
-        assertNotEquals(title, updatedNote.getTitle());
-        assertNotEquals(body, updatedNote.getBody());
+        Note updatedNote = noteCapture.getValue();
+        Assert.assertEquals(noteDto.getNoteId(), updatedNote.getId());
+        Assert.assertEquals(createdAt, updatedNote.getCreatedAt());
+        Assert.assertEquals(user, updatedNote.getUser());
+        Assert.assertEquals(noteDto.getTitle(), updatedNote.getTitle());
+        Assert.assertEquals(noteDto.getBody(), updatedNote.getBody());
     }
 
     @Test
-    @Transactional
-    @SuppressWarnings("Duplicates")
-    public void testDelete() {
+    public void updateShouldReturnExpectedResult() {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto().withNoteId(1L).build();
+        Note note = NoteBuilder.givenNote().withId(1L).build();
 
-        // Get note to delete.
-        Note note = noteService.findById(1L);
+        expectFindById(noteDto.getNoteId(), note);
+        expectSave(note);
+        replayAll();
 
-        assertEquals(12, noteService.count());
-        assertNotNull(note);
+        Note result = noteService.update(noteDto);
+        verifyAll();
+
+        Assert.assertEquals(note, result);
+    }
+
+    @Test
+    public void updateShouldThrowEntityNotFoundExceptionWhenNoteNotFound() {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto().withNoteId(1L).build();
+
+        expectedException.expect(EntityNotFoundException.class);
+        expectedException.expectMessage("Note not found for id: " + noteDto.getNoteId());
+
+        expectFindById(noteDto.getNoteId(), null);
+        replayAll();
+
+        noteService.update(noteDto);
+        verifyAll();
+    }
+
+    @Test
+    public void deleteShouldDeleteExpectedNote() {
+        Note note = NoteBuilder.givenNote().withId(1L).build();
+
+        expectDelete(note);
+        replayAll();
 
         noteService.delete(note);
+        verifyAll();
+    }
 
-        assertEquals(11, noteService.count());
-        assertNull(noteService.findById(1L));
+    @Test
+    public void countShouldReturnExpectedResult() {
+        long count = 12L;
+        User user = UserBuilder.givenUser().withId(1L).build();
+
+        expectGetLoggedInUser(user);
+        expectCountByUserId(user.getId(), count);
+        replayAll();
+
+        long result = noteService.count();
+        verifyAll();
+
+        Assert.assertEquals(count, result);
+    }
+
+    private void expectGetLoggedInUser(User user) {
+        EasyMock.expect(userServiceMock.getLoggedInUser())
+                .andReturn(user);
+    }
+
+    private void expectFindAllByUserId(long userId, List<Note> notes) {
+        EasyMock.expect(noteRepositoryMock.findAllByUserId(userId))
+                .andReturn(notes);
+    }
+
+    private void expectFindTop10ByUserIdOrderByCreatedAtDesc(long userId, List<Note> notes) {
+        EasyMock.expect(noteRepositoryMock.findTop10ByUserIdOrderByCreatedAtDesc(userId))
+                .andReturn(notes);
+    }
+
+    private void expectFindById(long id, Note note) {
+        EasyMock.expect(noteRepositoryMock.findById(id))
+                .andReturn(Optional.ofNullable(note));
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void expectSave(Capture<Note> noteCapture) {
+        EasyMock.expect(noteRepositoryMock.save(EasyMock.capture(noteCapture)))
+                .andReturn(new Note());
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void expectSave(Note note) {
+        EasyMock.expect(noteRepositoryMock.save(EasyMock.anyObject(Note.class)))
+                .andReturn(note);
+    }
+
+    private void expectDelete(Note note) {
+        noteRepositoryMock.delete(note);
+        EasyMock.expectLastCall();
+    }
+
+    private void expectCountByUserId(long userId, long count) {
+        EasyMock.expect(noteRepositoryMock.countByUserId(userId))
+                .andReturn(count);
     }
 }
