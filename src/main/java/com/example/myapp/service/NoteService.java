@@ -38,7 +38,7 @@ public class NoteService {
         return noteRepository.findTop10ByUserIdOrderByCreatedAtDesc(user.getId());
     }
 
-    @PostAuthorize("returnObject == null || returnObject.user.username == authentication.name")
+    @PostAuthorize("returnObject.user.username == authentication.name")
     @Transactional(readOnly = true)
     public Note findById(long id) {
         return noteRepository.findById(id)
