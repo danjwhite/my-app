@@ -82,6 +82,19 @@ public class UserServiceTest extends EasyMockSupport {
     }
 
     @Test
+    public void findByUsernameShouldThrowUsernameNotFoundExceptionWhenUserNotFound() {
+        expectedException.expect(UsernameNotFoundException.class);
+        expectedException.expectMessage("Invalid username.");
+
+        String username = "mjones";
+        expectFindUserByUsername(username, null);
+        replayAll();
+
+        userService.findByUsername(username);
+        verifyAll();
+    }
+
+    @Test
     public void findByUsernameShouldReturnExpectedResult() {
         User user = UserBuilder.givenUser().withUsername("mjones").build();
 
@@ -118,6 +131,22 @@ public class UserServiceTest extends EasyMockSupport {
         verifyAll();
 
         Assert.assertTrue(result);
+    }
+
+    @Test
+    public void getLoggedInUserShouldThrowUsernameNotFoundExceptionWhenUserNotFound() {
+        expectedException.expect(UsernameNotFoundException.class);
+        expectedException.expectMessage("Invalid username.");
+
+        String username = "mjones";
+
+        expectGetPrincipal();
+        expectGetUsernameFromUserDetails(username);
+        expectFindUserByUsername(username, null);
+        replayAll();
+
+        userService.getLoggedInUser();
+        verifyAll();
     }
 
     @Test

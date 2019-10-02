@@ -4,7 +4,9 @@ import com.example.myapp.domain.RoleType;
 import org.easymock.*;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -51,6 +53,9 @@ public class SecurityServiceTest {
     @Mock(type = MockType.STRICT)
     private UsernamePasswordAuthenticationToken usernamePasswordAuthenticationTokenMock;
 
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
     private SecurityService securityService;
 
     @Before
@@ -61,26 +66,28 @@ public class SecurityServiceTest {
     }
 
     @Test
-    public void getPrincipalShouldReturnExpectedResultWhenAuthenticationIsNull() {
+    public void getPrincipalShouldThrowSecurityExceptionWhenAuthenticationIsNull() {
+        expectedException.expect(SecurityException.class);
+        expectedException.expectMessage("No authentication found in security context.");
+
         expectGetAuthenticationFromSecurityContext(null);
         replayAll();
 
-        UserDetails result = securityService.getPrincipal();
+        securityService.getPrincipal();
         verifyAll();
-
-        Assert.assertNull(result);
     }
 
     @Test
-    public void getPrincipalShouldReturnExpectedResultWhenPrincipalIsNotInstanceOfUserDetails() {
+    public void getPrincipalShouldThrowSecurityExceptionWhenPrincipalIsNotInstanceOfUserDetails() {
+        expectedException.expect(SecurityException.class);
+        expectedException.expectMessage("Authentication principal is not an instance of UserDetails.");
+
         expectGetAuthenticationFromSecurityContext(authenticationMock);
         expectGetPrincipalFromAuthentication(new Object());
         replayAll();
 
-        UserDetails result = securityService.getPrincipal();
+        securityService.getPrincipal();
         verifyAll();
-
-        Assert.assertNull(result);
     }
 
     @Test
@@ -105,6 +112,18 @@ public class SecurityServiceTest {
         verifyAll();
 
         Assert.assertFalse(result);
+    }
+
+    @Test
+    public void currentAuthenticationHasRoleShouldThrowSecurityExceptionWhenAuthenticationIsNull() {
+        expectedException.expect(SecurityException.class);
+        expectedException.expectMessage("No authentication found in security context.");
+
+        expectGetAuthenticationFromSecurityContext(null);
+        replayAll();
+
+        securityService.currentAuthenticationHasRole(RoleType.ROLE_ADMIN);
+        verifyAll();
     }
 
     @Test

@@ -62,6 +62,20 @@ public class RoleServiceTest extends EasyMockSupport {
     }
 
     @Test
+    public void findByTypeShouldThrowEntityNotFoundExceptionWhenRoleNotFound() {
+        RoleType type = RoleType.ROLE_USER;
+
+        expectedException.expect(EntityNotFoundException.class);
+        expectedException.expectMessage("Role not found for type: " + type);
+
+        expectFindByType(type, null);
+        replayAll();
+
+        roleService.findByType(type);
+        verifyAll();
+    }
+
+    @Test
     public void findByTypeShouldReturnExpectedResult() {
         RoleType type = RoleType.ROLE_USER;
         Role role = RoleBuilder.givenRole().withId(1L).build();

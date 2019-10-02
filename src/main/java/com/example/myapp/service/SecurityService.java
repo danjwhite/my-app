@@ -27,17 +27,17 @@ public class SecurityService {
     }
 
     public UserDetails getPrincipal() {
-        UserDetails principal = null;
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             Object currentPrincipal = authentication.getPrincipal();
             if (currentPrincipal instanceof UserDetails) {
-                principal = (UserDetails) currentPrincipal;
+                return (UserDetails) currentPrincipal;
             }
+
+            throw new SecurityException("Authentication principal is not an instance of UserDetails.");
         }
 
-        return principal;
+        throw new SecurityException("No authentication found in security context.");
     }
 
     public boolean isCurrentAuthenticationAnonymous() {
@@ -47,7 +47,11 @@ public class SecurityService {
 
     public boolean currentAuthenticationHasRole(RoleType roleType) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(roleType.name()));
+        if (authentication != null) {
+            return authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(roleType.name()));
+        }
+
+        throw new SecurityException("No authentication found in security context.");
     }
 
     public void autoLogin(String username, String password) {

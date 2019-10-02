@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RoleService {
@@ -26,7 +27,8 @@ public class RoleService {
 
     @Transactional(readOnly = true)
     public Role findByType(RoleType type) {
-        return roleRepository.findByType(type);
+        return Optional.ofNullable(roleRepository.findByType(type))
+                .orElseThrow(() -> new EntityNotFoundException("Role not found for type: " + type.name()));
     }
 
     @Transactional(readOnly = true)
