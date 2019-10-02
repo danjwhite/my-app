@@ -1,5 +1,6 @@
 package com.example.myapp.service;
 
+import com.example.myapp.domain.RoleType;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
@@ -44,9 +45,9 @@ public class SecurityService {
         return authenticationTrustResolver.isAnonymous(authentication);
     }
 
-    public boolean currentAuthenticationHasRole(String role) {
+    public boolean currentAuthenticationHasRole(RoleType roleType) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(role));
+        return authentication.getAuthorities().stream().anyMatch(r -> r.getAuthority().equals(roleType.name()));
     }
 
     public void autoLogin(String username, String password) {
@@ -57,7 +58,8 @@ public class SecurityService {
 
         authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
-        if (usernamePasswordAuthenticationToken.isAuthenticated())
+        if (usernamePasswordAuthenticationToken.isAuthenticated()) {
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        }
     }
 }

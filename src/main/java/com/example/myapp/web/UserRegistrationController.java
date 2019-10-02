@@ -74,7 +74,7 @@ public class UserRegistrationController {
         redirectAttributes.addAttribute("confirmation", "created");
 
 
-        if (securityService.currentAuthenticationHasRole("ROLE_ADMIN")) {
+        if (securityService.currentAuthenticationHasRole(RoleType.ROLE_ADMIN)) {
             return "redirect:/admin";
         } else {
             securityService.autoLogin(username, userRegistrationDto.getPassword());

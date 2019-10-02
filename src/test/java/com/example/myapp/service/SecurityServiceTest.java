@@ -1,127 +1,230 @@
 package com.example.myapp.service;
 
-import com.example.myapp.dao.UserRepository;
-import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
-import com.example.myapp.domain.User;
+import org.easymock.*;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.powermock.modules.junit4.PowerMockRunnerDelegate;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
+import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.util.*;
 
 @RunWith(PowerMockRunner.class)
-@TestPropertySource("classpath:application-test.properties")
-@PrepareForTest(SecurityContextHolder.class)
+@PowerMockRunnerDelegate(EasyMockRunner.class)
+@PowerMockIgnore(value = "javax.security.auth.*")
+@PrepareForTest(value = {SecurityService.class, SecurityContextHolder.class})
 public class SecurityServiceTest {
+
+    @Mock(type = MockType.STRICT)
+    private AuthenticationManager authenticationManagerMock;
+
+    @Mock(type = MockType.STRICT)
+    private AuthenticationTrustResolver authenticationTrustResolverMock;
+
+    @Mock(type = MockType.STRICT)
+    private UserDetailsService userDetailsServiceMock;
+
+    @Mock(type = MockType.STRICT)
+    private SecurityContext securityContextMock;
+
+    @Mock(type = MockType.STRICT)
+    private Authentication authenticationMock;
+
+    @Mock(type = MockType.STRICT)
+    private UserDetails userDetailsMock;
+
+    @Mock(type = MockType.STRICT)
+    private UsernamePasswordAuthenticationToken usernamePasswordAuthenticationTokenMock;
 
     private SecurityService securityService;
 
-    @Mock
-    private UserRepository userRepositoryMock;
-
     @Before
     public void setUp() {
-        AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
-        AuthenticationTrustResolverImpl authenticationTrustResolver = new AuthenticationTrustResolverImpl();
-        UserDetailsServiceImpl userDetailsService = new UserDetailsServiceImpl(userRepositoryMock);
+        PowerMock.mockStatic(SecurityContextHolder.class);
 
-        securityService = new SecurityService(authenticationManager, authenticationTrustResolver, userDetailsService);
+        securityService = new SecurityService(authenticationManagerMock, authenticationTrustResolverMock, userDetailsServiceMock);
     }
 
     @Test
-    public void testFindPrincipal() {
-        SecurityContext securityContextMock = mock(SecurityContext.class);
-        Authentication authenticationMock = mock(Authentication.class);
+    public void getPrincipalShouldReturnExpectedResultWhenAuthenticationIsNull() {
+        expectGetAuthenticationFromSecurityContext(null);
+        replayAll();
 
-        PowerMockito.mockStatic(SecurityContextHolder.class);
-        when(SecurityContextHolder.getContext()).thenReturn(securityContextMock);
-        when(securityContextMock.getAuthentication()).thenReturn(authenticationMock);
+        UserDetails result = securityService.getPrincipal();
+        verifyAll();
 
-        UserDetails expectedPrincipal = org.springframework.security.core.userdetails.User.withUsername("user")
-                .password("password")
-                .authorities("ROLE_USER").build();
-
-        when(authenticationMock.getPrincipal()).thenReturn(expectedPrincipal);
-
-        UserDetails actualPrincipal = securityService.getPrincipal();
-
-        assertEquals(expectedPrincipal, actualPrincipal);
+        Assert.assertNull(result);
     }
 
     @Test
-    public void testIsCurrentAuthenticationAnonymousWhenTrue() {
-        SecurityContext securityContextMock = mock(SecurityContext.class);
+    public void getPrincipalShouldReturnExpectedResultWhenPrincipalIsNotInstanceOfUserDetails() {
+        expectGetAuthenticationFromSecurityContext(authenticationMock);
+        expectGetPrincipalFromAuthentication(new Object());
+        replayAll();
 
-        List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS");
-        Authentication authentication = new AnonymousAuthenticationToken("anonymous", "anonymous", authorities);
+        UserDetails result = securityService.getPrincipal();
+        verifyAll();
 
-        PowerMockito.mockStatic(SecurityContextHolder.class);
-        when(SecurityContextHolder.getContext()).thenReturn(securityContextMock);
-        when(securityContextMock.getAuthentication()).thenReturn(authentication);
-
-        assertTrue(securityService.isCurrentAuthenticationAnonymous());
+        Assert.assertNull(result);
     }
 
     @Test
-    public void testIsCurrentAuthenticationAnonymousWhenFalse() {
-        SecurityContext securityContextMock = mock(SecurityContext.class);
+    public void getPrincipalShouldReturnExpectedResultWhenPrincipalIsInstanceOfUserDetails() {
+        expectGetAuthenticationFromSecurityContext(authenticationMock);
+        expectGetPrincipalFromAuthentication(userDetailsMock);
+        replayAll();
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken("user", "password");
+        UserDetails result = securityService.getPrincipal();
+        verifyAll();
 
-        PowerMockito.mockStatic(SecurityContextHolder.class);
-        when(SecurityContextHolder.getContext()).thenReturn(securityContextMock);
-        when(securityContextMock.getAuthentication()).thenReturn(authentication);
-
-        assertFalse(securityService.isCurrentAuthenticationAnonymous());
+        Assert.assertEquals(userDetailsMock, result);
     }
 
     @Test
-    public void testAutoLogin() {
+    public void isCurrentAuthenticationAnonymousShouldReturnExpectedResult() {
+        expectGetAuthenticationFromSecurityContext(authenticationMock);
+        expectIsAnonymousCheck(false);
+        replayAll();
 
-        User user = new User();
-        user.setUsername("user");
-        user.setPassword("password");
+        boolean result = securityService.isCurrentAuthenticationAnonymous();
+        verifyAll();
 
-        Set<Role> roles = new HashSet<>();
-        Role role = new Role();
-        role.setType(RoleType.ROLE_USER);
-        roles.add(role);
-        user.setRoles(roles);
+        Assert.assertFalse(result);
+    }
 
-        when(userRepositoryMock.findByUsername(Mockito.anyString())).thenReturn(user);
+    @Test
+    public void currentAuthenticationHasRoleShouldReturnExpectedResultWhenFalse() {
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
-        securityService.autoLogin("user", "password");
+        expectGetAuthenticationFromSecurityContext(authenticationMock);
+        expectGetAuthoritiesFromAuthentication(authorities);
+        replayAll();
 
-        // Expected principal
-        UserDetails expectedPrincipal = org.springframework.security.core.userdetails.User.withUsername("user")
-                .password("password")
-                .authorities("ROLE_USER").build();
+        boolean result = securityService.currentAuthenticationHasRole(RoleType.ROLE_ADMIN);
+        verifyAll();
 
-        UserDetails actualPrincipal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Assert.assertFalse(result);
+    }
 
-        assertEquals(expectedPrincipal, actualPrincipal);
+    @Test
+    public void currentAuthenticationHasRoleShouldReturnExpectedResultWhenTrue() {
+        List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"),
+                new SimpleGrantedAuthority("ROLE_ADMIN"));
+
+        expectGetAuthenticationFromSecurityContext(authenticationMock);
+        expectGetAuthoritiesFromAuthentication(authorities);
+        replayAll();
+
+        boolean result = securityService.currentAuthenticationHasRole(RoleType.ROLE_ADMIN);
+        verifyAll();
+
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void autoLoginShouldNotSetAuthenticationWhenUsernamePasswordAuthenticationTokenNotAuthenticated() throws Exception {
+        String username = "mjones";
+        String password = "test123";
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+
+        expectLoadUserByUsername(username);
+        expectGetAuthoritiesFromUserDetails(authorities);
+        expectNewUsernamePasswordAuthenticationToken(password, authorities);
+        expectAuthenticateWithAuthenticationManager();
+        expectIsAuthenticatedCheckOnUsernamePasswordAuthenticationToken(false);
+        replayAll();
+
+        securityService.autoLogin(username, password);
+        verifyAll();
+    }
+
+    @Test
+    public void autoLoginShouldSetAuthenticationWhenUsernamePasswordAuthenticationTokenIsAuthenticated() throws Exception {
+        String username = "mjones";
+        String password = "test123";
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+
+        expectLoadUserByUsername(username);
+        expectGetAuthoritiesFromUserDetails(authorities);
+        expectNewUsernamePasswordAuthenticationToken(password, authorities);
+        expectAuthenticateWithAuthenticationManager();
+        expectIsAuthenticatedCheckOnUsernamePasswordAuthenticationToken(true);
+        expectSetAuthentication();
+        replayAll();
+
+        securityService.autoLogin(username, password);
+        verifyAll();
+    }
+
+    private void replayAll() {
+        PowerMock.replay(SecurityService.class, SecurityContextHolder.class, UsernamePasswordAuthenticationToken.class, authenticationManagerMock,
+                authenticationTrustResolverMock, userDetailsServiceMock, securityContextMock, authenticationMock, userDetailsMock, usernamePasswordAuthenticationTokenMock);
+    }
+
+    private void verifyAll() {
+        PowerMock.verify(SecurityService.class, SecurityContextHolder.class, UsernamePasswordAuthenticationToken.class, authenticationManagerMock,
+                authenticationTrustResolverMock, userDetailsServiceMock, securityContextMock, authenticationMock, userDetailsMock, usernamePasswordAuthenticationTokenMock);
+    }
+
+    private void expectGetAuthenticationFromSecurityContext(Authentication authentication) {
+        EasyMock.expect(SecurityContextHolder.getContext()).andReturn(securityContextMock);
+        EasyMock.expect(securityContextMock.getAuthentication()).andReturn(authentication);
+    }
+
+    private void expectGetPrincipalFromAuthentication(Object object) {
+        EasyMock.expect(authenticationMock.getPrincipal()).andReturn(object);
+    }
+
+    private void expectIsAnonymousCheck(boolean value) {
+        EasyMock.expect(authenticationTrustResolverMock.isAnonymous(authenticationMock))
+                .andReturn(value);
+    }
+
+    private void expectGetAuthoritiesFromAuthentication(List authorities) {
+        EasyMock.expect(authenticationMock.getAuthorities()).andReturn(authorities);
+    }
+
+    private void expectLoadUserByUsername(String username) {
+        EasyMock.expect(userDetailsServiceMock.loadUserByUsername(username))
+                .andReturn(userDetailsMock);
+    }
+
+    private void expectGetAuthoritiesFromUserDetails(List authorities) {
+        EasyMock.expect(userDetailsMock.getAuthorities()).andReturn(authorities);
+    }
+
+    private void expectNewUsernamePasswordAuthenticationToken(String password, List<GrantedAuthority> authorities) throws Exception {
+        PowerMock.expectNew(UsernamePasswordAuthenticationToken.class, userDetailsMock, password, authorities)
+                .andReturn(usernamePasswordAuthenticationTokenMock);
+    }
+
+    private void expectAuthenticateWithAuthenticationManager() {
+        EasyMock.expect(authenticationManagerMock.authenticate(usernamePasswordAuthenticationTokenMock))
+                .andReturn(usernamePasswordAuthenticationTokenMock);
+    }
+
+    private void expectIsAuthenticatedCheckOnUsernamePasswordAuthenticationToken(boolean isAuthenticated) {
+        EasyMock.expect(usernamePasswordAuthenticationTokenMock.isAuthenticated()).andReturn(isAuthenticated);
+    }
+
+    private void expectSetAuthentication() {
+        EasyMock.expect(SecurityContextHolder.getContext()).andReturn(securityContextMock);
+        securityContextMock.setAuthentication(usernamePasswordAuthenticationTokenMock);
+        EasyMock.expectLastCall();
     }
 }

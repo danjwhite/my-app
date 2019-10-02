@@ -1,6 +1,7 @@
 package com.example.myapp.web;
 
 import com.example.myapp.domain.Role;
+import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
@@ -71,7 +72,7 @@ public class UserController {
 
         userService.update(user);
 
-        if (mode != null && mode.equals("admin") && securityService.currentAuthenticationHasRole("ROLE_ADMIN")) {
+        if (mode != null && mode.equals("admin") && securityService.currentAuthenticationHasRole(RoleType.ROLE_ADMIN)) {
             redirectAttributes.addAttribute("confirmation", "edited");
             return "redirect:/admin";
         } else {
