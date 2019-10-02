@@ -3,7 +3,7 @@ package com.example.myapp.service;
 import com.example.myapp.builder.dto.UserDtoBuilder;
 import com.example.myapp.builder.dto.UserPasswordDtoBuilder;
 import com.example.myapp.builder.entity.UserBuilder;
-import com.example.myapp.dao.RoleRepository;
+import com.example.myapp.repository.RoleRepository;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;

@@ -1,6 +1,6 @@
 package com.example.myapp.service;
 
-import com.example.myapp.dao.NoteRepository;
+import com.example.myapp.repository.NoteRepository;
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDto;

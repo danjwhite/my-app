@@ -2,7 +2,7 @@ package com.example.myapp.service;
 
 import com.example.myapp.builder.entity.RoleBuilder;
 import com.example.myapp.builder.entity.UserBuilder;
-import com.example.myapp.dao.UserRepository;
+import com.example.myapp.repository.UserRepository;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;

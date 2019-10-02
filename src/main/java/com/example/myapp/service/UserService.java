@@ -1,7 +1,7 @@
 package com.example.myapp.service;
 
-import com.example.myapp.dao.RoleRepository;
-import com.example.myapp.dao.UserRepository;
+import com.example.myapp.repository.RoleRepository;
+import com.example.myapp.repository.UserRepository;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 

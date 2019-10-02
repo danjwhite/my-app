@@ -1,4 +1,4 @@
-package com.example.myapp.dao;
+package com.example.myapp.repository;
 
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;

@@ -1,6 +1,6 @@
 package com.example.myapp.service;
 
-import com.example.myapp.dao.RoleRepository;
+import com.example.myapp.repository.RoleRepository;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import org.springframework.stereotype.Service;
