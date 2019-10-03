@@ -28,7 +28,6 @@ public class RoleRepositoryTest {
     @Rollback
     public void findAllShouldReturnExpectedResult() {
         List<Role> roles = (List<Role>) roleRepository.findAll();
-
         Assert.assertEquals(RoleType.values().length, roles.size());
 
         Set<RoleType> roleTypes = roles.stream().map(Role::getType).collect(Collectors.toSet());
@@ -39,24 +38,18 @@ public class RoleRepositoryTest {
     @Transactional
     @Rollback
     public void findByIdShouldReturnExpectedResult() {
-        Role expectedRole = new Role();
-        expectedRole.setId(1L);
-        expectedRole.setType(RoleType.ROLE_USER);
-
         Optional<Role> result = roleRepository.findById(1L);
 
         Assert.assertTrue(result.isPresent());
-        Assert.assertEquals(expectedRole, result.get());
+        Assert.assertEquals(1L, result.get().getId().longValue());
     }
 
     @Test
     @Transactional
     @Rollback
     public void findByTypeShouldReturnExpectedResult() {
-        Role expectedRole = new Role();
-        expectedRole.setId(1L);
-        expectedRole.setType(RoleType.ROLE_USER);
-
-        Assert.assertEquals(expectedRole, roleRepository.findByType(RoleType.ROLE_USER));
+        Role result = roleRepository.findByType(RoleType.ROLE_USER);
+        Assert.assertNotNull(result);
+        Assert.assertEquals(RoleType.ROLE_USER, result.getType());
     }
 }
