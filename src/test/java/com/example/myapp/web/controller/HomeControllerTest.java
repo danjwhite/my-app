@@ -1,6 +1,7 @@
 package com.example.myapp.web.controller;
 
 import com.example.myapp.web.controller.HomeController;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standal
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
 @WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
+@Ignore
 public class HomeControllerTest {
 
     @Autowired
