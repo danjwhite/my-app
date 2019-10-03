@@ -1,6 +1,9 @@
 package com.example.myapp.repository;
 
+import com.example.myapp.builder.entity.NoteBuilder;
+import com.example.myapp.builder.entity.UserBuilder;
 import com.example.myapp.domain.Note;
+import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,10 +15,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Optional;
+import javax.persistence.EntityManager;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -23,139 +26,134 @@ import java.util.Optional;
 public class NoteRepositoryTest {
 
     @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
     private NoteRepository noteRepository;
 
     @Autowired
-    private UserRepository userDao;
+    private RoleRepository roleRepository;
 
     @Test
     @Transactional
     @Rollback
     public void countShouldReturnExpectedResult() {
+        User user1 = newUser("user1");
+        User user2 = newUser("user2");
 
-        // Count all notes and assert expectations.
-        Assert.assertEquals(24, noteRepository.count());
+        IntStream.range(0, 2).forEach(i -> newNote(user1));
+        IntStream.range(0, 2).forEach(i -> newNote(user2));
+
+        Assert.assertEquals(4, noteRepository.count());
     }
 
     @Test
     @Transactional
     @Rollback
     public void findAllByUserIdShouldReturnExpectedResult() {
+        User user1 = newUser("user1");
+        User user2 = newUser("user2");
 
-        // Find all notes for specified user and assert expectations.
-        Assert.assertEquals(12, noteRepository.findAllByUserId(1).size());
+        IntStream.range(0, 2).forEach(i -> newNote(user1));
+        IntStream.range(0, 4).forEach(i -> newNote(user2));
+
+        Assert.assertEquals(2, noteRepository.countByUserId(user1.getId()));
     }
 
-    // TODO: Update test to assert ordering.
     @Test
     @Transactional
     @Rollback
     public void findTop10ByUserIdOrderByCreatedAtDescShouldReturnTenMostRecentNotes() {
+        User user1 = newUser("user1");
+        User user2 = newUser("user2");
 
-        // Find recent notes for specified user and assert expectations.
-        Assert.assertEquals(10, noteRepository.findTop10ByUserIdOrderByCreatedAtDesc(1).size());
+        IntStream.range(0, 11).forEach(i -> newNote(user1));
+        IntStream.range(0, 4).forEach(i -> newNote(user2));
+
+        List<Note> notes = noteRepository.findTop10ByUserIdOrderByCreatedAtDesc(user1.getId());
+        Assert.assertEquals(10, notes.size());
+
+        Date lastDate = null;
+        for (Note note : notes) {
+            Assert.assertEquals(user1, note.getUser());
+            if (lastDate != null) {
+                Assert.assertTrue(note.getCreatedAt().before(lastDate));
+            }
+
+            lastDate = note.getCreatedAt();
+        }
     }
 
     @Test
     @Transactional
     @Rollback
-    @SuppressWarnings("Duplicates")
-    public void findByIdShouldReturnExpectedResult() throws Exception {
+    public void findByIdShouldReturnExpectedResult() {
+        Note note = newNote(newUser("mjones"));
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = dateFormat.parse("2018-02-02 00:00:00");
-
-        // Find specific note by id and assert expectations.
-        Optional<Note> note = noteRepository.findById(1L);
-        Assert.assertTrue(note.isPresent());
-        Assert.assertEquals(1L, note.get().getId().longValue());
-        Assert.assertEquals(date, note.get().getCreatedAt());
-        Assert.assertEquals("mjones", note.get().getUser().getUsername());
-        Assert.assertEquals("Title", note.get().getTitle());
-        Assert.assertEquals("Body", note.get().getBody());
+        Optional<Note> result = noteRepository.findById(note.getId());
+        Assert.assertTrue(result.isPresent());
+        Assert.assertEquals(note, result.get());
     }
 
-    // TODO: Break down into smaller tests.
     @Test
     @Transactional
     @Rollback
-    @SuppressWarnings("Duplicates")
     public void saveShouldSetExpectedValuesForAdd() {
+        final User user = newUser("mjones");
+        final String title = "Title";
+        final String body = "Body";
+        final Date createdAt = new Date();
 
-        Assert.assertEquals(24, noteRepository.count());
+        Note note = NoteBuilder.givenNote().withUser(user)
+                .withTitle(title)
+                .withBody(body)
+                .withCreatedAt(createdAt)
+                .build();
 
-        // Get user for new note.
-        User user = userDao.findByUsername("mjones");
+        noteRepository.save(note);
+        Assert.assertNotNull(note.getId());
 
-        // Create, add, and retrieve new note
-        Note newNote = new Note();
-        newNote.setCreatedAt(new Date());
-        newNote.setUser(user);
-        newNote.setTitle("Title");
-        newNote.setBody("Body");
-
-        noteRepository.save(newNote);
-
-        Optional<Note> savedNote = noteRepository.findById(25L);
-
-        // Assert expectations
+        Optional<Note> savedNote = noteRepository.findById(note.getId());
         Assert.assertTrue(savedNote.isPresent());
-        Assert.assertEquals(25, noteRepository.count());
-        Assert.assertEquals(25L, savedNote.get().getId().longValue());
-        Assert.assertNotNull(savedNote.get().getCreatedAt());
-        Assert.assertEquals("mjones", savedNote.get().getUser().getUsername());
-        Assert.assertEquals("Title", savedNote.get().getTitle());
-        Assert.assertEquals("Body", savedNote.get().getBody());
-    }
+        Assert.assertEquals(note, savedNote.get());
 
-    // TODO: Break down into smaller tests.
-    @Test
-    @Transactional
-    @Rollback
-    @SuppressWarnings("Duplicates")
-    public void saveShouldSetExpectedValuesForUpdate() {
-        Assert.assertEquals(24, noteRepository.count());
-
-        Optional<Note> originalNote = noteRepository.findById(1L);
-        Assert.assertTrue(originalNote.isPresent());
-
-        Date originalCreatedAt = originalNote.get().getCreatedAt();
-        String originalUsername = originalNote.get().getUser().getUsername();
-        String originalTitle = originalNote.get().getTitle();
-        String originalBody = originalNote.get().getBody();
-
-        originalNote.get().setTitle("New Title");
-        originalNote.get().setBody("New Body");
-        noteRepository.save(originalNote.get());
-
-        Optional<Note> updatedNote = noteRepository.findById(1L);
-
-        Assert.assertTrue(updatedNote.isPresent());
-        Assert.assertEquals(24, noteRepository.count());
-        Assert.assertEquals(1L, updatedNote.get().getId().longValue());
-        Assert.assertEquals(originalCreatedAt, updatedNote.get().getCreatedAt());
-        Assert.assertEquals(originalUsername, updatedNote.get().getUser().getUsername());
-        Assert.assertNotEquals(originalTitle, updatedNote.get().getTitle());
-        Assert.assertNotEquals(originalBody, updatedNote.get().getBody());
+        Assert.assertEquals(user, savedNote.get().getUser());
+        Assert.assertEquals(title, savedNote.get().getTitle());
+        Assert.assertEquals(body, savedNote.get().getBody());
+        Assert.assertEquals(createdAt, savedNote.get().getCreatedAt());
     }
 
     @Test
     @Transactional
     @Rollback
-    @SuppressWarnings("Duplicates")
     public void deleteShouldDeleteExpectedNote() {
+        Note note = newNote(newUser("mjones"));
+        Assert.assertTrue(noteRepository.findById(note.getId()).isPresent());
 
-        // Get note to delete.
-        Optional<Note> note = noteRepository.findById(1L);
-        Assert.assertTrue(note.isPresent());
-
-        Assert.assertEquals(24, noteRepository.count());
-        Assert.assertNotNull(note);
-
-        noteRepository.delete(note.get());
-
-        Assert.assertEquals(23, noteRepository.count());
-        Assert.assertFalse(noteRepository.findById(1L).isPresent());
+        noteRepository.delete(note);
+        Assert.assertFalse(noteRepository.findById(note.getId()).isPresent());
     }
 
+    private Note newNote(User user) {
+        return NoteBuilder.givenNote(entityManager).withUser(user)
+                .withTitle("Title")
+                .withBody("Body")
+                .withCreatedAt(randomDate())
+                .build();
+    }
+
+    private User newUser(String username) {
+        return UserBuilder.givenUser(entityManager).withFirstName("Test").withLastName("User")
+                .withUsername(username)
+                .withPassword("test123")
+                .withRoles(Collections.singleton(roleRepository.findByType(RoleType.ROLE_USER)))
+                .build();
+    }
+
+    private Date randomDate() {
+        Date start = new GregorianCalendar(2018, Calendar.JANUARY, 1).getTime();
+        Date end = new GregorianCalendar(2018, Calendar.DECEMBER, 31).getTime();
+
+        return new Date(ThreadLocalRandom.current().nextLong(start.getTime(), end.getTime()));
+    }
 }
