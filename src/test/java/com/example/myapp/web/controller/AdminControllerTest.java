@@ -71,9 +71,8 @@ public class AdminControllerTest extends WebMvcBaseTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/admin"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("admin"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("user", "users"))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("users"))
                 .andExpect(MockMvcResultMatchers.model().attribute("users", users));
 
         verifyAll();

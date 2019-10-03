@@ -1,74 +1,105 @@
 package com.example.myapp.web.controller;
 
+import com.example.myapp.builder.entity.UserBuilder;
 import com.example.myapp.domain.User;
 import com.example.myapp.service.UserService;
-import com.example.myapp.web.controller.ErrorController;
+import com.example.myapp.test.WebMvcBaseTest;
+import org.easymock.EasyMock;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@TestPropertySource("classpath:application-test.properties")
-@WithMockUser(username = "mjones", password = "password123", roles = {"USER", "ADMIN"})
-public class ErrorControllerTest {
+@WebMvcTest(ErrorController.class)
+@ContextConfiguration(classes = {ErrorControllerTest.ErrorControllerTestConfig.class})
+public class ErrorControllerTest extends WebMvcBaseTest {
+
+    private static UserService userServiceMock;
 
     @Autowired
-    private ErrorController errorController;
-
-    @Autowired
-    private UserService userService;
-
     private MockMvc mockMvc;
 
+    @BeforeClass
+    public static void init() {
+        userServiceMock = EasyMock.strictMock(UserService.class);
+        initMocks(userServiceMock);
+    }
+
     @Before
-    public void setup() {
-        // Setup MockMvc to use ErrorController.
-        this.mockMvc = MockMvcBuilders.standaloneSetup(errorController).build();
+    public void setUp() {
+        resetAll();
     }
 
     @Test
-    public void testGetError403() throws Exception {
+    @WithMockUser(username = "mjones")
+    public void getErrorShouldDisplayExpectedAttributesWhenErrorIs403Forbidden() throws Exception {
+        User loggedInUser = newUser(1L);
 
-        // Get expected user.
-        User expectedUser = userService.getLoggedInUser();
+        expectGetLoggedInUser(loggedInUser);
+        replayAll();
 
-        // Perform GET request on MockMvc and assert expectations.
-        mockMvc.perform(get("/error/403"))
-                .andExpect(view().name("error"))
-                .andExpect(model().attributeExists("user"))
-                .andExpect(model().attribute("user", expectedUser))
-                .andExpect(model().attributeExists("errorTitle"))
-                .andExpect(model().attribute("errorTitle", "403: Forbidden"))
-                .andExpect(model().attributeExists("errorDescription"))
-                .andExpect(model().attribute("errorDescription", "The request could not be completed."))
-                .andExpect(status().isOk());
+        mockMvc.perform(MockMvcRequestBuilders.get("/error/403"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("error"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("user", "errorTitle", "errorDescription"))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", loggedInUser))
+                .andExpect(MockMvcResultMatchers.model().attribute("errorTitle", "403: Forbidden"))
+                .andExpect(MockMvcResultMatchers.model().attribute("errorDescription", "The request could not be completed."));
+
+        verifyAll();
     }
 
     @Test
-    public void testGetError404() throws Exception {
-        // Get expected user.
-        User expectedUser = userService.getLoggedInUser();
+    @WithMockUser(username = "mjones")
+    public void getErrorShouldDisplayExpectedAttributesWhenErrorIs404NotFound() throws Exception {
+        User loggedInUser = newUser(1L);
 
-        // Perform GET request on MockMvc and assert expectations.
-        mockMvc.perform(get("/error/404"))
-                .andExpect(view().name("error"))
-                .andExpect(model().attributeExists("user"))
-                .andExpect(model().attribute("user", expectedUser))
-                .andExpect(model().attributeExists("errorTitle"))
-                .andExpect(model().attribute("errorTitle", "404: Resource Not Found"))
-                .andExpect(model().attributeExists("errorDescription"))
-                .andExpect(model().attribute("errorDescription", "The request could not be completed."))
-                .andExpect(status().isOk());
+        expectGetLoggedInUser(loggedInUser);
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/error/404"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("error"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("user", "errorTitle", "errorDescription"))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", loggedInUser))
+                .andExpect(MockMvcResultMatchers.model().attribute("errorTitle", "404: Resource Not Found"))
+                .andExpect(MockMvcResultMatchers.model().attribute("errorDescription", "The request could not be completed."));
+
+        verifyAll();
+    }
+
+    @Test
+    public void getErrorShouldDisplayExpectedAttributesWhenErrorIsResourceNotFound() {
+
+    }
+
+    private void expectGetLoggedInUser(User user) {
+        EasyMock.expect(userServiceMock.getLoggedInUser()).andReturn(user);
+    }
+
+    private User newUser(long id) {
+        return UserBuilder.givenUser().withId(id).build();
+    }
+
+    @Configuration
+    @Import(WebMvcBaseTest.TestConfig.class)
+    static class ErrorControllerTestConfig extends WebMvcBaseTest {
+
+        @Bean
+        public ErrorController errorController() {
+            return new ErrorController(userServiceMock);
+        }
     }
 }
