@@ -92,7 +92,7 @@ public class AdminControllerTest extends WebMvcBaseTest {
 
     @Configuration
     @Import(WebMvcBaseTest.TestConfig.class)
-    static class AdminControllerTestConfig extends WebMvcBaseTest {
+    static class AdminControllerTestConfig {
 
         @Bean
         public AdminController adminController() {

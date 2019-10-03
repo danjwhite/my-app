@@ -95,7 +95,7 @@ public class ErrorControllerTest extends WebMvcBaseTest {
 
     @Configuration
     @Import(WebMvcBaseTest.TestConfig.class)
-    static class ErrorControllerTestConfig extends WebMvcBaseTest {
+    static class ErrorControllerTestConfig {
 
         @Bean
         public ErrorController errorController() {
