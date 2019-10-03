@@ -1,7 +1,9 @@
-package com.example.myapp.web;
+package com.example.myapp.web.controller;
 
 import com.example.myapp.domain.Note;
 import com.example.myapp.service.NoteService;
+import com.example.myapp.web.GlobalExceptionHandler;
+import com.example.myapp.web.controller.NoteController;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

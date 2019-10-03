@@ -1,4 +1,4 @@
-package com.example.myapp.web;
+package com.example.myapp.web.controller;
 
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
@@ -6,6 +6,7 @@ import com.example.myapp.dto.NoteDto;
 import com.example.myapp.service.NoteService;
 import com.example.myapp.service.SecurityService;
 import com.example.myapp.service.UserService;
+import com.example.myapp.web.ResourceNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

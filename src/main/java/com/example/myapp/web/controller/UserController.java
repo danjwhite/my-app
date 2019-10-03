@@ -1,4 +1,4 @@
-package com.example.myapp.web;
+package com.example.myapp.web.controller;
 
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;

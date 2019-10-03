@@ -1,5 +1,6 @@
-package com.example.myapp.web;
+package com.example.myapp.web.controller;
 
+import com.example.myapp.web.controller.UserRegistrationController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

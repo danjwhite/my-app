@@ -1,7 +1,8 @@
-package com.example.myapp.web;
+package com.example.myapp.web.controller;
 
 import com.example.myapp.domain.User;
 import com.example.myapp.service.UserService;
+import com.example.myapp.web.controller.ErrorController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
