@@ -65,7 +65,7 @@ public class NoteService {
         note.setTitle(noteDto.getTitle());
         note.setBody(noteDto.getBody());
 
-        return noteRepository.save(note);
+        return note;
     }
 
     @PreAuthorize("#note.user.username == authentication.name")

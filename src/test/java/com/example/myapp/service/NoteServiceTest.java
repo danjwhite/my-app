@@ -157,19 +157,15 @@ public class NoteServiceTest extends EasyMockSupport {
                 .withBody("New body")
                 .build();
 
-        Capture<Note> noteCapture = EasyMock.newCapture();
-
         Assert.assertNotEquals(noteDto.getTitle(), note.getTitle());
         Assert.assertNotEquals(noteDto.getBody(), note.getBody());
 
         expectFindById(noteDto.getNoteId(), note);
-        expectSave(noteCapture);
         replayAll();
 
-        noteService.update(noteDto);
+        Note updatedNote = noteService.update(noteDto);
         verifyAll();
 
-        Note updatedNote = noteCapture.getValue();
         Assert.assertEquals(noteDto.getNoteId(), updatedNote.getId());
         Assert.assertEquals(createdAt, updatedNote.getCreatedAt());
         Assert.assertEquals(user, updatedNote.getUser());
@@ -183,7 +179,6 @@ public class NoteServiceTest extends EasyMockSupport {
         Note note = NoteBuilder.givenNote().withId(1L).build();
 
         expectFindById(noteDto.getNoteId(), note);
-        expectSave(note);
         replayAll();
 
         Note result = noteService.update(noteDto);
