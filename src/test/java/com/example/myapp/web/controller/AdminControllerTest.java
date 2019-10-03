@@ -48,10 +48,11 @@ public class AdminControllerTest extends WebMvcBaseTest {
 
     @Test
     @WithMockUser(username = "mjones")
-    public void getAdminPageShouldNotShowAdminPageWhenUserIsNotAdmin() throws Exception {
+    public void getAdminPageShouldRedirectToErrorPageWhenUserIsNotAdmin() throws Exception {
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/admin"))
+                .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
 
         verifyAll();
