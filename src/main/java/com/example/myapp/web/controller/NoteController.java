@@ -6,12 +6,10 @@ import com.example.myapp.dto.NoteDto;
 import com.example.myapp.service.NoteService;
 import com.example.myapp.service.SecurityService;
 import com.example.myapp.service.UserService;
-import com.example.myapp.web.ResourceNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -72,11 +70,7 @@ public class NoteController {
 
     @GetMapping(value = "/note/{noteId}/view")
     public String getNote(@PathVariable(value = "noteId") long noteId,
-                          @ModelAttribute("user") User user, Model model) throws ResourceNotFoundException {
-        Note note = noteService.findById(noteId);
-        if (note == null) {
-            throw new ResourceNotFoundException("No note found with id = " + noteId);
-        }
+                          @ModelAttribute("user") User user, Model model) {
         model.addAttribute("note", noteService.findById(noteId));
 
         return "note";
@@ -112,8 +106,8 @@ public class NoteController {
     }
 
     @PostMapping(value = "/note/{noteId}/edit")
-    public String updateNote(@Valid NoteDto noteDto, @PathVariable(value = "noteId") long noteId, RedirectAttributes redirectAttributes, Errors errors) {
-        if (errors.hasErrors()) {
+    public String updateNote(@Valid NoteDto noteDto, BindingResult result, @PathVariable(value = "noteId") long noteId, RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
             return "noteForm";
         }
 

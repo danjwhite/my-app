@@ -5,6 +5,7 @@ import com.example.myapp.config.WebConfig;
 import com.example.myapp.converter.RoleConverter;
 import com.example.myapp.service.UserService;
 import com.example.myapp.web.AccessDeniedHandlerImpl;
+import com.example.myapp.web.GlobalExceptionHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -52,6 +53,11 @@ public class WebMvcBaseTest {
         @Bean
         public AccessDeniedHandler accessDeniedHandler() {
             return new AccessDeniedHandlerImpl();
+        }
+
+        @Bean
+        public GlobalExceptionHandler globalExceptionHandler() {
+            return new GlobalExceptionHandler();
         }
 
         @Bean("userDetailsServiceImpl")

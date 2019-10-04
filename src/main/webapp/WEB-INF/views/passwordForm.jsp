@@ -39,7 +39,7 @@
     <div id="body">
         <h3>Change Password</h3>
         <div class="form-container">
-            <sf:form method="post" name="password-form" commandName="userPasswordDto">
+            <sf:form method="post" name="password-form" modelAttribute="userPasswordDto">
                 <sf:hidden path="username"/>
                 <table class="form-table">
                     <tr>
