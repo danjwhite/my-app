@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
-@RunWith(SpringRunner.class)
 @WebMvcTest(AdminController.class)
 @ContextConfiguration(classes = {AdminControllerTest.AdminControllerTestConfig.class})
 public class AdminControllerTest extends WebMvcBaseTest {

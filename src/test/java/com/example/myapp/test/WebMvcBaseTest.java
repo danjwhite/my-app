@@ -9,15 +9,18 @@ import com.example.myapp.web.GlobalExceptionHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Objects;
 
-public class WebMvcBaseTest {
+@RunWith(SpringRunner.class)
+public abstract class WebMvcBaseTest {
 
     protected static UserDetailsService userDetailsServiceMock = EasyMock.strictMock(UserDetailsService.class);
     protected static RoleConverter roleConverterMock = EasyMock.strictMock(RoleConverter.class);

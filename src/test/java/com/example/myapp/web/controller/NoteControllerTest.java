@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
-@RunWith(SpringRunner.class)
 @WebMvcTest(NoteController.class)
 @ContextConfiguration(classes = {NoteControllerTest.NoteControllerTestConfig.class})
 public class NoteControllerTest extends WebMvcBaseTest {

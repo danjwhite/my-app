@@ -36,7 +36,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@RunWith(SpringRunner.class)
 @WebMvcTest(UserRegistrationController.class)
 @ContextConfiguration(classes = {UserRegistrationControllerTest.UserRegistrationControllerTestConfig.class})
 public class UserRegistrationControllerTest extends WebMvcBaseTest {

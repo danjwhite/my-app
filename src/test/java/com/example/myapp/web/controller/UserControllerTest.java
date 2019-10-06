@@ -42,7 +42,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import javax.persistence.EntityNotFoundException;
 import java.util.*;
 
-@RunWith(SpringRunner.class)
 @WebMvcTest(UserController.class)
 @ContextConfiguration(classes = {UserControllerTest.UserControllerTestConfig.class})
 public class UserControllerTest extends WebMvcBaseTest {
