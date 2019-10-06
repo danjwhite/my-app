@@ -13,6 +13,7 @@ import com.example.myapp.service.RoleService;
 import com.example.myapp.service.SecurityService;
 import com.example.myapp.service.UserService;
 import com.example.myapp.test.WebMvcBaseTest;
+import org.apache.commons.lang3.StringUtils;
 import org.easymock.EasyMock;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -201,7 +202,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void updateUserInfoShouldNotProceedWhenFirstNameIsBlank() throws Exception {
         final UserDto userDto = UserDtoBuilder.givenUserDto()
                 .withUsername("mjones")
-                .withFirstName("")
+                .withFirstName(StringUtils.EMPTY)
                 .withLastName("Jones")
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
@@ -249,7 +250,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         final UserDto userDto = UserDtoBuilder.givenUserDto()
                 .withUsername("mjones")
                 .withFirstName("Mike")
-                .withLastName("")
+                .withLastName(StringUtils.EMPTY)
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
@@ -502,7 +503,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void editPasswordShouldNotProceedWhenPasswordIsBlank() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("", "test", "test");
+        final UserPasswordDto userPasswordDto = newUserPasswordDto(StringUtils.EMPTY, "test", "test");
 
         expectFindAllRoles(getRoles());
         replayAll();
@@ -540,7 +541,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void editPasswordShouldNotProceedWhenNewPasswordIsBlank() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "", "test");
+        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", StringUtils.EMPTY, "test");
 
         expectFindAllRoles(getRoles());
         replayAll();
@@ -578,7 +579,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void editPasswordShouldNotProceedWhenConfirmNewPasswordIsBlank() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "");
+        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", StringUtils.EMPTY);
 
         expectFindAllRoles(getRoles());
         replayAll();
