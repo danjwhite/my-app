@@ -52,11 +52,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         initMocks(userServiceMock, roleServiceMock, securityServiceMock);
     }
 
-    @Before
-    public void setUp() {
-        resetAll();
-    }
-
     // TODO: Rename
     @Test
     public void showRegistrationFormShouldReturn404NotFoundStatusWhenEntityNotFoundExceptionIsThrown() throws Exception {

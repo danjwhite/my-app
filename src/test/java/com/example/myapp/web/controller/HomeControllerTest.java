@@ -39,11 +39,6 @@ public class HomeControllerTest extends WebMvcBaseTest {
         initMocks(securityServiceMock, userServiceMock, userDetailsMock);
     }
 
-    @Before
-    public void setUp() {
-        resetAll();
-    }
-
     @Test
     @WithMockUser(username = "mjones")
     public void homeShouldReturnExpectedViewWithExpectedAttributes() throws Exception {

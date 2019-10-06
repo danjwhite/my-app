@@ -58,11 +58,6 @@ public class UserControllerTest extends WebMvcBaseTest {
         initMocks(userServiceMock, roleServiceMock, securityServiceMock);
     }
 
-    @Before
-    public void setUp() {
-        resetAll();
-    }
-
     // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")

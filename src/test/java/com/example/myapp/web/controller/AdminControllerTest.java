@@ -39,11 +39,6 @@ public class AdminControllerTest extends WebMvcBaseTest {
         initMocks(userServiceMock);
     }
 
-    @Before
-    public void setUp() {
-        resetAll();
-    }
-
     @Test
     @WithMockUser(username = "mjones")
     public void getAdminPageShouldRedirectToErrorPageWhenUserIsNotAdmin() throws Exception {

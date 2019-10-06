@@ -8,6 +8,7 @@ import com.example.myapp.web.AccessDeniedHandlerImpl;
 import com.example.myapp.web.GlobalExceptionHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
@@ -37,16 +38,25 @@ public abstract class WebMvcBaseTest {
         }
     }
 
+    @After
+    public void tearDown() {
+        EasyMock.reset(getMocks());
+    }
+
     protected void replayAll() {
-        EasyMock.replay(Objects.requireNonNull(mocks, "Mocks have not been initialized."));
+        EasyMock.replay(getMocks());
     }
 
     protected void verifyAll() {
-        EasyMock.verify(Objects.requireNonNull(mocks, "Mocks have not been initialized."));
+        EasyMock.verify(getMocks());
     }
 
     protected void resetAll() {
-        EasyMock.reset(Objects.requireNonNull(mocks, "Mocks have not been initialized."));
+        EasyMock.reset(getMocks());
+    }
+
+    private Object[] getMocks() {
+        return Objects.requireNonNull(mocks, "Mocks have not been initialized.");
     }
 
     @Configuration

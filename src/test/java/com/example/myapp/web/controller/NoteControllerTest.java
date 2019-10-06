@@ -56,11 +56,6 @@ public class NoteControllerTest extends WebMvcBaseTest {
         initMocks(securityServiceMock, userServiceMock, noteServiceMock, userDetailsMock);
     }
 
-    @Before
-    public void setUp() {
-        resetAll();
-    }
-
     @Test
     @WithMockUser(username = "mjones")
     public void getNotesShouldShowRecentNotesWhenDisplayParamIsNullAndDisplayCookieValueIsNull() throws Exception {

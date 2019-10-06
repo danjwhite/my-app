@@ -35,11 +35,6 @@ public class ErrorControllerTest extends WebMvcBaseTest {
         initMocks(userServiceMock);
     }
 
-    @Before
-    public void setUp() {
-        resetAll();
-    }
-
     @Test
     @WithMockUser(username = "mjones")
     public void getErrorShouldDisplayExpectedAttributesWhenErrorIs403Forbidden() throws Exception {
