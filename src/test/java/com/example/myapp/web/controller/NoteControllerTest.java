@@ -182,10 +182,9 @@ public class NoteControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void getNoteShouldReturn404NotFoundStatusWhenNoteNotFound() throws Exception {
+    public void getNoteShouldRedirectTo404NotFoundErrorPageWhenFindNoteByIdThrowsEntityNotFoundException() throws Exception {
         final String username = "mjones";
         final User user = newUser();
         final long noteId = 2L;
@@ -200,10 +199,9 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void getNoteShouldReturn403ForbiddenStatusWhenAccessDeniedExceptionIsThrown() throws Exception {
+    public void getNoteShouldRedirectTo404ForbiddenErrorPageWhenFindNoteByIdThrowsAccessDeniedException() throws Exception {
         final String username = "mjones";
         final User user = newUser();
         final long noteId = 2L;
@@ -423,10 +421,9 @@ public class NoteControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void editNoteShouldReturn404NotFoundStatusWhenNoteNotFound() throws Exception {
+    public void editNoteShouldRedirectTo404NotFoundErrorPageWhenFindNoteByIdThrowsEntityNotFoundException() throws Exception {
         final String username = "mjones";
         final User user = newUser();
         final long noteId = 2L;
@@ -443,10 +440,9 @@ public class NoteControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void editNoteShouldReturn403ForbiddenStatusWhenAccessDeniedExceptionIsThrown() throws Exception {
+    public void editNoteShouldRedirectTo403ForbiddenErrorPageWhenFindNoteByIdThrowsAccessDeniedException() throws Exception {
         final String username = "mjones";
         final User user = newUser();
         final long noteId = 2L;

@@ -59,10 +59,9 @@ public class UserControllerTest extends WebMvcBaseTest {
         initMocks(userServiceMock, roleServiceMock, securityServiceMock);
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void getUserAccountShouldReturn403ForbiddenStatusWhenAccessDeniedExceptionIsThrown() throws Exception {
+    public void getUserAccountShouldRedirectTo403ForbiddenErrorPageWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
         final String username = "mjones";
 
         expectFindAllRoles(getRoles());
@@ -77,10 +76,9 @@ public class UserControllerTest extends WebMvcBaseTest {
 
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void getUserAccountShouldReturn404NotFoundStatusWhenUserNotFound() throws Exception {
+    public void getUserAccountShouldRedirectTo404NotFoundErrorPageWhenFindByUsernameThrowsUsernameNotFoundException() throws Exception {
         final String username = "mjones";
 
         expectFindAllRoles(getRoles());
@@ -114,10 +112,9 @@ public class UserControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void editUserInfoShouldReturn403ForbiddenStatusWhenAccessDeniedExceptionIsThrown() throws Exception {
+    public void editUserInfoShouldRedirectTo403ForbiddenErrorPageWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
         final String username = "mjones";
 
         expectFindAllRoles(getRoles());
@@ -131,10 +128,9 @@ public class UserControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void editUserInfoShouldReturn404NotFoundStatusWhenUserNotFound() throws Exception {
+    public void editUserInfoShouldRedirectTo404NotFoundErrorPageWhenFindByUsernameThrowsUsernameNotFoundException() throws Exception {
         final String username = "mjones";
 
         expectFindAllRoles(getRoles());
@@ -291,10 +287,9 @@ public class UserControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldReturn403ForbiddenStatusWhenAccessDeniedExceptionIsThrown() throws Exception {
+    public void updateUserInfoShouldRedirectTo403ForbiddenErrorPageWhenUpdateUserThrowsAccessDeniedException() throws Exception {
         final UserDto userDto = UserDtoBuilder.givenUserDto()
                 .withUsername("mjones")
                 .withFirstName("Mike")
@@ -315,10 +310,9 @@ public class UserControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldReturn404NotFoundStatusWhenUsernameNotFoundExceptionIsThrown() throws Exception {
+    public void updateUserInfoShouldRedirectTo404NotFoundErrorPageWhenUpdateUserThrowsUsernameNotFoundException() throws Exception {
         final UserDto userDto = UserDtoBuilder.givenUserDto()
                 .withUsername("mjones")
                 .withFirstName("Mike")
@@ -339,10 +333,9 @@ public class UserControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldReturn404NotFoundStatusWhenEntityNotFoundExceptionIsThrown() throws Exception {
+    public void updateUserInfoShouldRedirectTo404NotFoundErrorPageWhenUpdateUserThrowsEntityNotFoundException() throws Exception {
         final UserDto userDto = UserDtoBuilder.givenUserDto()
                 .withUsername("mjones")
                 .withFirstName("Mike")
@@ -614,10 +607,9 @@ public class UserControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void editPasswordShouldReturn403ForbiddenStatusWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
+    public void editPasswordShouldRedirectTo403ForbiddenErrorPageWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
 
         expectFindAllRoles(getRoles());
@@ -633,10 +625,9 @@ public class UserControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void editPasswordShouldRetrun404NotFoundStatusWhenUsernameNotFoundExceptionIsThrown() throws Exception {
+    public void editPasswordShouldRedirectTo404NotFoundErrorPageWhenfindByUsernameThrowsUsernameNotFoundException() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
 
         expectFindAllRoles(getRoles());
@@ -676,10 +667,9 @@ public class UserControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void editPasswordShouldReturn403ForbiddenStatusWhenUpdatePasswordThrowsAccessDeniedException() throws Exception {
+    public void editPasswordShouldRedirectTo403ForbiddenErrorPageWhenUpdatePasswordThrowsAccessDeniedException() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
         final User user = newUser();
 
@@ -717,10 +707,9 @@ public class UserControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void deleteAccountShouldReturn403ForbiddenStatusWhenAccessDeniedExceptionIsThrown()  throws Exception {
+    public void deleteAccountShouldRedirectTo403ForbiddenErrorPageWhenDeleteThrowsAccessDeniedException()  throws Exception {
         final String username = "mjones";
 
         expectFindAllRoles(getRoles());
@@ -734,14 +723,13 @@ public class UserControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
     @WithMockUser(username = "mjones")
-    public void deleteAccountShouldReturn404NotFoundStatusUsernameNotFoundExceptionIsThrown() throws Exception {
+    public void deleteAccountShouldRedirectTo404NotFoundErrorPageWhenDeleteThrowsUsernameNotFoundException() throws Exception {
         final String username = "mjones";
 
-        expectDeleteThrowsException(username, new UsernameNotFoundException("Invalid username"));
         expectFindAllRoles(getRoles());
+        expectDeleteThrowsException(username, new UsernameNotFoundException("Invalid username"));
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete"))

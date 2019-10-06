@@ -52,9 +52,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         initMocks(userServiceMock, roleServiceMock, securityServiceMock);
     }
 
-    // TODO: Rename
     @Test
-    public void showRegistrationFormShouldReturn404NotFoundStatusWhenEntityNotFoundExceptionIsThrown() throws Exception {
+    public void showRegistrationFormShouldRedirectTo404NotFoundErrorPageWhenFindRoleByTypeThrowsEntityNotFoundException() throws Exception {
         expectFindAllRoles(getRoles());
         expectFindRoleByTypeThrowsEntityNotFoundException(RoleType.ROLE_USER);
         replayAll();
@@ -528,9 +527,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Rename
     @Test
-    public void registerUserShouldReturn404NotFoundStatusWhenAddingUserThrowsEntityNotFoundException() throws Exception {
+    public void registerUserShouldRedirectTo404NotFoundErrorPageWhenAddUserThrowsEntityNotFoundException() throws Exception {
         final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
