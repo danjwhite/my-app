@@ -25,14 +25,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @ContextConfiguration(classes = {ErrorControllerTest.ErrorControllerTestConfig.class})
 public class ErrorControllerTest extends WebMvcBaseTest {
 
-    private static UserService userServiceMock;
+    private static final UserService userServiceMock = EasyMock.strictMock(UserService.class);
 
     @Autowired
     private MockMvc mockMvc;
 
     @BeforeClass
     public static void init() {
-        userServiceMock = EasyMock.strictMock(UserService.class);
         initMocks(userServiceMock);
     }
 

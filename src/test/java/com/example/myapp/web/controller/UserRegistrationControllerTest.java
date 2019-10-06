@@ -40,18 +40,15 @@ import java.util.List;
 @ContextConfiguration(classes = {UserRegistrationControllerTest.UserRegistrationControllerTestConfig.class})
 public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
+    private static final UserService userServiceMock = EasyMock.strictMock(UserService.class);
+    private static final RoleService roleServiceMock = EasyMock.strictMock(RoleService.class);
+    private static final SecurityService securityServiceMock = EasyMock.strictMock(SecurityService.class);
+
     @Autowired
     private MockMvc mockMvc;
 
-    private static UserService userServiceMock;
-    private static RoleService roleServiceMock;
-    private static SecurityService securityServiceMock;
-
     @BeforeClass
     public static void init() {
-        userServiceMock = EasyMock.strictMock(UserService.class);
-        roleServiceMock = EasyMock.strictMock(RoleService.class);
-        securityServiceMock = EasyMock.strictMock(SecurityService.class);
         initMocks(userServiceMock, roleServiceMock, securityServiceMock);
     }
 

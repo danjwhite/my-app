@@ -27,18 +27,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @ContextConfiguration(classes = {HomeControllerTest.HomeControllerTestConfig.class})
 public class HomeControllerTest extends WebMvcBaseTest {
 
+    private static final SecurityService securityServiceMock = EasyMock.strictMock(SecurityService.class);
+    private static final UserService userServiceMock = EasyMock.strictMock(UserService.class);
+    private static final UserDetails userDetailsMock = EasyMock.strictMock(UserDetails.class);
+
     @Autowired
     private MockMvc mockMvc;
 
-    private static SecurityService securityServiceMock;
-    private static UserService userServiceMock;
-    private static UserDetails userDetailsMock;
-
     @BeforeClass
     public static void init() {
-        securityServiceMock = EasyMock.strictMock(SecurityService.class);
-        userServiceMock = EasyMock.strictMock(UserService.class);
-        userDetailsMock = EasyMock.strictMock(UserDetails.class);
         initMocks(securityServiceMock, userServiceMock, userDetailsMock);
     }
 

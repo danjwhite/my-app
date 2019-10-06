@@ -22,8 +22,8 @@ import java.util.Objects;
 @RunWith(SpringRunner.class)
 public abstract class WebMvcBaseTest {
 
-    protected static UserDetailsService userDetailsServiceMock = EasyMock.strictMock(UserDetailsService.class);
-    protected static RoleConverter roleConverterMock = EasyMock.strictMock(RoleConverter.class);
+    private static final UserDetailsService userDetailsServiceMock = EasyMock.strictMock(UserDetailsService.class);
+    private static final RoleConverter roleConverterMock = EasyMock.strictMock(RoleConverter.class);
 
     private static Object[] mocks;
 

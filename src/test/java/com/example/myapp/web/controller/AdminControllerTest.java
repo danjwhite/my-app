@@ -29,14 +29,13 @@ import java.util.stream.LongStream;
 @ContextConfiguration(classes = {AdminControllerTest.AdminControllerTestConfig.class})
 public class AdminControllerTest extends WebMvcBaseTest {
 
+    private static final UserService userServiceMock = EasyMock.strictMock(UserService.class);
+
     @Autowired
     private MockMvc mockMvc;
 
-    private static UserService userServiceMock;
-
     @BeforeClass
     public static void init() {
-        userServiceMock = EasyMock.strictMock(UserService.class);
         initMocks(userServiceMock);
     }
 

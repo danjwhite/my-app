@@ -43,20 +43,16 @@ import java.util.stream.LongStream;
 @ContextConfiguration(classes = {NoteControllerTest.NoteControllerTestConfig.class})
 public class NoteControllerTest extends WebMvcBaseTest {
 
+    private static final SecurityService securityServiceMock = EasyMock.strictMock(SecurityService.class);
+    private static final UserService userServiceMock = EasyMock.strictMock(UserService.class);
+    private static final NoteService noteServiceMock = EasyMock.strictMock(NoteService.class);
+    private static final UserDetails userDetailsMock = EasyMock.strictMock(UserDetails.class);
+
     @Autowired
     private MockMvc mockMvc;
 
-    private static SecurityService securityServiceMock;
-    private static UserService userServiceMock;
-    private static NoteService noteServiceMock;
-    private static UserDetails userDetailsMock;
-
     @BeforeClass
     public static void init() {
-        securityServiceMock = EasyMock.strictMock(SecurityService.class);
-        userServiceMock = EasyMock.strictMock(UserService.class);
-        noteServiceMock = EasyMock.strictMock(NoteService.class);
-        userDetailsMock = EasyMock.strictMock(UserDetails.class);
         initMocks(securityServiceMock, userServiceMock, noteServiceMock, userDetailsMock);
     }
 
