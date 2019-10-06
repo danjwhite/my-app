@@ -26,6 +26,7 @@ public class SecurityService {
         this.userDetailsService = userDetailsService;
     }
 
+    // TODO: Add SecurityException to GlobalExceptionHandler and update controller tests?
     public UserDetails getPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
@@ -45,6 +46,7 @@ public class SecurityService {
         return authenticationTrustResolver.isAnonymous(authentication);
     }
 
+    // TODO: Add SecurityException to GlobalExceptionHandler and update controller tests?
     public boolean currentAuthenticationHasRole(RoleType roleType) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {

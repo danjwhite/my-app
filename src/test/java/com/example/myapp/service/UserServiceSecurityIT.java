@@ -131,7 +131,7 @@ public class UserServiceSecurityIT {
     @WithMockUser(username = "mjones")
     public void deleteShouldThrowExceptionWhenUsernameDoesNotMatchAuthenticatedUsernameAndUserIsNotAdmin() {
         expectAccessDeniedException();
-        userService.delete(newUser("test"));
+        userService.delete(newUser("test").getUsername());
     }
 
     @Test
@@ -139,7 +139,7 @@ public class UserServiceSecurityIT {
     @Rollback
     @WithMockUser(username = "mjones")
     public void deleteShouldNotThrowExceptionWhenUsernameMatchesAuthenticatedUsernameAndUserIsNotAdmin() {
-        userService.delete(newUser("mjones"));
+        userService.delete(newUser("mjones").getUsername());
     }
 
     @Test
@@ -147,7 +147,7 @@ public class UserServiceSecurityIT {
     @Rollback
     @WithMockUser(username = "mjones", roles = {"USER", "ADMIN"})
     public void deleteShouldNotThrowExceptionWhenUsernameDoesNotMatchAuthenticatedUsernameAndUserIsAdmin() {
-        userService.delete(newUser("test"));
+        userService.delete(newUser("test").getUsername());
     }
 
     private void expectAccessDeniedException() {

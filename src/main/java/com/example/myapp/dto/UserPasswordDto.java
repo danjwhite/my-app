@@ -17,6 +17,7 @@ public class UserPasswordDto {
 
     private String username;
 
+    @NotBlank(message = "Cannot be blank", groups = BlankCheck.class)
     private String password;
 
     @NotBlank(message = "Cannot be blank", groups = BlankCheck.class)

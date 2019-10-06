@@ -59,14 +59,13 @@ public class UserRegistrationController {
     public String registerUser(@ModelAttribute("user") @Valid UserRegistrationDto userRegistrationDto,
                                BindingResult result,
                                RedirectAttributes redirectAttributes) {
-        String username = userRegistrationDto.getUsername();
-
-
-        if (userService.userExists(username)) {
-            result.rejectValue("username", null, "There is already an account registered with this username");
+        if (result.hasErrors()) {
+            return "registrationForm";
         }
 
-        if (result.hasErrors()) {
+        String username = userRegistrationDto.getUsername();
+        if (userService.userExists(username)) {
+            result.rejectValue("username", "UsernameAlreadyTaken", "There is already an account registered with this username");
             return "registrationForm";
         }
 

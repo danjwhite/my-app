@@ -416,12 +416,13 @@ public class UserServiceTest extends EasyMockSupport {
 
     @Test
     public void deleteShouldDeleteExpectedUser() {
-        User user = UserBuilder.givenUser().withId(1L).build();
+        User user = UserBuilder.givenUser().withId(1L).withUsername("mjones").build();
 
+        expectFindUserByUsername(user.getUsername(), user);
         expectDeleteUser(user);
         replayAll();
 
-        userService.delete(user);
+        userService.delete(user.getUsername());
         verifyAll();
     }
 

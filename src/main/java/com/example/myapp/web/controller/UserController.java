@@ -86,7 +86,7 @@ public class UserController {
         UserPasswordDto userPasswordDto = new UserPasswordDto();
         userPasswordDto.setUsername(username);
 
-        model.addAttribute(userPasswordDto);
+        model.addAttribute("userPasswordDto", userPasswordDto);
 
         return "passwordForm";
     }
@@ -95,14 +95,14 @@ public class UserController {
     public String updatePassword(@PathVariable("username") String username,
                                  @ModelAttribute("userPasswordDto") @Valid UserPasswordDto userPasswordDto,
                                  BindingResult result, RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "passwordForm";
+        }
 
         String currentPassword = userService.findByUsername(username).getPassword();
 
         if (!BCrypt.checkpw(userPasswordDto.getPassword(), currentPassword)) {
-            result.rejectValue("password", null, "Current password is invalid");
-        }
-
-        if (result.hasErrors()) {
+            result.rejectValue("password", "InvalidPassword", "Current password is invalid");
             return "passwordForm";
         }
 
@@ -115,9 +115,7 @@ public class UserController {
 
     @GetMapping(value = "/user/{username}/delete")
     public String deleteAccount(@PathVariable(value = "username") String username) {
-
-        User user = userService.findByUsername(username);
-        userService.delete(user);
+        userService.delete(username);
 
         return "redirect:/logout";
     }

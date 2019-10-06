@@ -1,12 +1,12 @@
 package com.example.myapp.service;
 
-import com.example.myapp.repository.RoleRepository;
-import com.example.myapp.repository.UserRepository;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.dto.UserRegistrationDto;
+import com.example.myapp.repository.RoleRepository;
+import com.example.myapp.repository.UserRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -129,8 +129,8 @@ public class UserService {
 
     @Transactional
     @PreAuthorize("#user.username == authentication.name or hasRole('ROLE_ADMIN')")
-    public void delete(User user) {
-        userRepository.delete(user);
+    public void delete(String username) {
+        userRepository.delete(fetchByUsername(username));
     }
 
     private User fetchByUsername(String username) {
