@@ -791,11 +791,6 @@ public class NoteControllerTest extends WebMvcBaseTest {
         EasyMock.expect(noteServiceMock.update(noteDto)).andReturn(new Note());
     }
 
-    private void expectDeleteNoteThrowsAccessDeniedException(Note note) {
-        noteServiceMock.delete(note);
-        EasyMock.expectLastCall().andThrow(new AccessDeniedException("Access is denied"));
-    }
-
     private void expectDeleteNote(Note note) {
         noteServiceMock.delete(note);
         EasyMock.expectLastCall();

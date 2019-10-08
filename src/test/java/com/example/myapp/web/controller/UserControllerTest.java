@@ -50,6 +50,13 @@ public class UserControllerTest extends WebMvcBaseTest {
     private static final UserService userServiceMock = EasyMock.strictMock(UserService.class);
     private static final RoleService roleServiceMock = EasyMock.strictMock(RoleService.class);
     private static final SecurityService securityServiceMock = EasyMock.strictMock(SecurityService.class);
+    
+    private static final List<Role> roles = new ArrayList<>();
+    
+    static {
+        roles.add(RoleBuilder.givenRole().withId(1L).withType(RoleType.ROLE_USER).build());
+        roles.add(RoleBuilder.givenRole().withId(2L).withType(RoleType.ROLE_ADMIN).build());
+    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -64,7 +71,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void getUserAccountShouldRedirectTo403ForbiddenErrorPageWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
         final String username = "mjones";
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectFindByUsernameThrowsException(username, new AccessDeniedException("Access id denied"));
         replayAll();
 
@@ -81,7 +88,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void getUserAccountShouldRedirectTo404NotFoundErrorPageWhenFindByUsernameThrowsUsernameNotFoundException() throws Exception {
         final String username = "mjones";
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectFindByUsernameThrowsException(username, new UsernameNotFoundException("Invalid username"));
         replayAll();
 
@@ -96,9 +103,8 @@ public class UserControllerTest extends WebMvcBaseTest {
     @WithMockUser(username = "mjones")
     public void getUserAccountShouldReturnExpectedViewWithExpectedAttributes() throws Exception {
         final User user = newUser();
-        final List<Role> roles = getRoles();
 
-        expectFindAllRoles(roles);
+        expectFindAllRoles();
         expectFindByUserName(user.getUsername(), user);
         replayAll();
 
@@ -117,7 +123,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editUserInfoShouldRedirectTo403ForbiddenErrorPageWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
         final String username = "mjones";
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectFindByUsernameThrowsException(username, new AccessDeniedException("Access is denied"));
         replayAll();
 
@@ -133,7 +139,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editUserInfoShouldRedirectTo404NotFoundErrorPageWhenFindByUsernameThrowsUsernameNotFoundException() throws Exception {
         final String username = "mjones";
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectFindByUsernameThrowsException(username, new UsernameNotFoundException("Invalid username"));
         replayAll();
 
@@ -147,7 +153,6 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void editUserInfoShouldReturnExpectedViewWithExpectedAttributes() throws Exception {
-        final List<Role> roles = getRoles();
         final User user = newUser();
         final UserDto userDto = UserDtoBuilder.givenUserDto().withUsername(user.getUsername())
                 .withFirstName(user.getFirstName())
@@ -155,7 +160,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(user.getRoles())
                 .build();
 
-        expectFindAllRoles(roles);
+        expectFindAllRoles();
         expectFindByUserName(user.getUsername(), user);
         replayAll();
 
@@ -179,7 +184,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + username + "/edit/info")
@@ -187,6 +192,9 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"));
 
@@ -203,7 +211,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
@@ -211,6 +219,8 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"));
 
@@ -226,7 +236,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
@@ -234,6 +244,8 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"));
 
@@ -250,7 +262,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
@@ -258,6 +270,8 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"));
 
@@ -273,7 +287,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withLastName("Jones")
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
@@ -281,6 +295,8 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "roles", "Size"));
 
@@ -297,7 +313,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectUpdateUserThrowsException(userDto, new AccessDeniedException("Access is denied"));
         replayAll();
 
@@ -320,7 +336,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectUpdateUserThrowsException(userDto, new UsernameNotFoundException("Invalid username"));
         replayAll();
 
@@ -343,7 +359,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectUpdateUserThrowsException(userDto, new EntityNotFoundException());
         replayAll();
 
@@ -366,7 +382,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectUpdateUser(userDto);
         expectAdminRoleCheck(true);
         replayAll();
@@ -391,7 +407,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectUpdateUser(userDto);
         expectAdminRoleCheck(false);
         replayAll();
@@ -416,7 +432,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectUpdateUser(userDto);
         replayAll();
 
@@ -440,7 +456,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectUpdateUser(userDto);
         replayAll();
 
@@ -456,19 +472,18 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void editPasswordShouldReturnExpectedViewWithExpectedAttributes() throws Exception {
-        final String username = "mjones";
+        final UserPasswordDto userPasswordDto = UserPasswordDtoBuilder.givenUserPasswordDto()
+                .withUsername("mjones").build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/edit/password"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + userPasswordDto.getUsername() + "/edit/password"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", Matchers.hasProperty("username", Matchers.is(username))))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", Matchers.hasProperty("password", Matchers.nullValue())))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", Matchers.hasProperty("newPassword", Matchers.nullValue())))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", Matchers.hasProperty("confirmNewPassword", Matchers.nullValue())));
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto));
 
         verifyAll();
 
@@ -479,7 +494,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedWhenPasswordIsNull() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto(null, "test", "test");
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
@@ -487,6 +502,9 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "password", "NotBlank"));
 
@@ -498,7 +516,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedWhenPasswordIsBlank() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto(StringUtils.EMPTY, "test", "test");
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
@@ -506,6 +524,9 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "password", "NotBlank"));
 
@@ -517,7 +538,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedWhenNewPasswordIsNull() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", null, "test");
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
@@ -525,6 +546,9 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "newPassword", "NotBlank"));
 
@@ -536,7 +560,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedWhenNewPasswordIsBlank() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", StringUtils.EMPTY, "test");
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
@@ -544,6 +568,9 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "newPassword", "NotBlank"));
 
@@ -555,7 +582,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedwhenConfirmNewPasswordIsNull() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", null);
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
@@ -563,6 +590,9 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmNewPassword", "NotBlank"));
 
@@ -574,7 +604,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedWhenConfirmNewPasswordIsBlank() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", StringUtils.EMPTY);
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
@@ -582,6 +612,9 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmNewPassword", "NotBlank"));
 
@@ -593,7 +626,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedWhenPasswordsDoNotMatch() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "doesnotmatch");
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
@@ -601,6 +634,9 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmNewPassword", "FieldMatch"));
 
@@ -612,7 +648,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldRedirectTo403ForbiddenErrorPageWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectFindByUsernameThrowsException(userPasswordDto.getUsername(), new AccessDeniedException("Access is denied"));
         replayAll();
 
@@ -630,7 +666,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldRedirectTo404NotFoundErrorPageWhenfindByUsernameThrowsUsernameNotFoundException() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectFindByUsernameThrowsException(userPasswordDto.getUsername(), new UsernameNotFoundException("Invalid username"));
         replayAll();
 
@@ -651,7 +687,7 @@ public class UserControllerTest extends WebMvcBaseTest {
 
         Assert.assertFalse(BCrypt.checkpw(userPasswordDto.getPassword(), user.getPassword()));
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectFindByUserName(userPasswordDto.getUsername(), user);
         replayAll();
 
@@ -660,6 +696,9 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasErrors("userPasswordDto"))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "password", "InvalidPassword"));
@@ -673,7 +712,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
         final User user = newUser();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectFindByUserName(userPasswordDto.getUsername(), user);
         expectUpdatePasswordThrowsException(userPasswordDto, new AccessDeniedException("Access is denied"));
         replayAll();
@@ -689,11 +728,11 @@ public class UserControllerTest extends WebMvcBaseTest {
 
     @Test
     @WithMockUser(username = "mjones")
-    public void editPasswordShouldRedirectToExpectedViewWithExpectedAttributes() throws Exception {
+    public void editPasswordShouldRedirectToExpectedView() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
         final User user = newUser();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectFindByUserName(userPasswordDto.getUsername(), user);
         expectUpdatePassword(userPasswordDto);
         replayAll();
@@ -712,7 +751,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void deleteAccountShouldRedirectTo403ForbiddenErrorPageWhenDeleteThrowsAccessDeniedException()  throws Exception {
         final String username = "mjones";
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectDeleteThrowsException(username, new AccessDeniedException("Access is denied"));
         replayAll();
 
@@ -728,7 +767,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void deleteAccountShouldRedirectTo404NotFoundErrorPageWhenDeleteThrowsUsernameNotFoundException() throws Exception {
         final String username = "mjones";
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectDeleteThrowsException(username, new UsernameNotFoundException("Invalid username"));
         replayAll();
 
@@ -745,7 +784,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         final String username = "mjones";
 
         expectDeleteUser(username);
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete"))
@@ -757,12 +796,14 @@ public class UserControllerTest extends WebMvcBaseTest {
 
     @Test
     public void loginShouldReturnExpectedView() throws Exception {
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/login"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("loginForm"));
+                .andExpect(MockMvcResultMatchers.view().name("loginForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles));
 
         verifyAll();
     }
@@ -774,7 +815,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         Assert.assertNotNull(auth);
         Assert.assertEquals("mjones", auth.getName());
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/logout"))
@@ -786,7 +827,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         Assert.assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 
-    private void expectFindAllRoles(List<Role> roles) {
+    private void expectFindAllRoles() {
         EasyMock.expect(roleServiceMock.findAll()).andReturn(roles);
     }
 
