@@ -12,12 +12,9 @@ import com.example.myapp.service.UserService;
 import com.example.myapp.test.WebMvcBaseTest;
 import org.apache.commons.lang3.StringUtils;
 import org.easymock.EasyMock;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
@@ -26,13 +23,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,6 +40,14 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
     private static final RoleService roleServiceMock = EasyMock.strictMock(RoleService.class);
     private static final SecurityService securityServiceMock = EasyMock.strictMock(SecurityService.class);
 
+    private static final Role userRole = newRole(1L, RoleType.ROLE_USER);
+    private static final List<Role> roles = new ArrayList<>();
+
+    static {
+        roles.add(userRole);
+        roles.add(newRole(2L, RoleType.ROLE_ADMIN));
+    }
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -54,8 +58,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void showRegistrationFormShouldRedirectTo404NotFoundErrorPageWhenFindRoleByTypeThrowsEntityNotFoundException() throws Exception {
-        expectFindAllRoles(getRoles());
-        expectFindRoleByTypeThrowsEntityNotFoundException(RoleType.ROLE_USER);
+        expectFindAllRoles();
+        expectFindRoleByTypeThrowsEntityNotFoundException();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/register"))
@@ -67,30 +71,26 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void showRegistrationFormShouldReturnExpectedViewWithExpectedAttributes() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
+        final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
+                .withRoles(Collections.singleton(userRole))
+                .build();
 
-        expectFindAllRoles(getRoles());
-        expectFindRoleByType(userRole.getType(), userRole);
+        expectFindAllRoles();
+        expectFindRoleByType();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/register"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.nullValue())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.nullValue())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.nullValue())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.nullValue())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.nullValue())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))));
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto));
 
         verifyAll();
     }
 
     @Test
     public void registerUserShouldNotProceedWhenFirstNameIsNull() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withLastName("Jones")
                 .withUsername("mjones")
@@ -99,7 +99,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -107,14 +107,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.nullValue())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.is(registrationDto.getLastName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.is(registrationDto.getUsername()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.is(registrationDto.getPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.is(registrationDto.getConfirmPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"));
 
@@ -123,7 +118,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldNotProceedWhenFirstNameIsBlank() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName(StringUtils.EMPTY)
                 .withLastName("Jones")
@@ -133,7 +127,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -141,14 +135,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.isEmptyString())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.is(registrationDto.getLastName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.is(registrationDto.getUsername()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.is(registrationDto.getPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.is(registrationDto.getConfirmPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"));
 
@@ -157,7 +146,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldNotProceedWhenLastNameIsNull() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withUsername("mjones")
@@ -166,7 +154,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -174,14 +162,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.is(registrationDto.getFirstName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.nullValue())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.is(registrationDto.getUsername()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.is(registrationDto.getPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.is(registrationDto.getConfirmPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"));
 
@@ -190,7 +173,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldNotProceedWhenLastNameIsBlank() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName(StringUtils.EMPTY)
@@ -200,7 +182,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -208,14 +190,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.is(registrationDto.getFirstName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.isEmptyString())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.is(registrationDto.getUsername()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.is(registrationDto.getPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.is(registrationDto.getConfirmPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"));
 
@@ -224,7 +201,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldNotProceedWhenUsernameIsNull() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
@@ -233,7 +209,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -241,14 +217,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.is(registrationDto.getFirstName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.is(registrationDto.getLastName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.nullValue())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.is(registrationDto.getPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.is(registrationDto.getConfirmPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "username", "NotBlank"));
 
@@ -257,7 +228,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldNotProceedWhenUsernameIsBlank() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
@@ -267,7 +237,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -275,14 +245,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.is(registrationDto.getFirstName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.is(registrationDto.getLastName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.isEmptyString())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.is(registrationDto.getPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.is(registrationDto.getConfirmPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "username", "NotBlank"));
 
@@ -291,7 +256,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldNotProceedWhenPasswordIsNull() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
@@ -300,7 +264,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -308,14 +272,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.is(registrationDto.getFirstName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.is(registrationDto.getLastName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.is(registrationDto.getUsername()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.nullValue())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.is(registrationDto.getConfirmPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "password", "NotBlank"));
 
@@ -324,7 +283,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldNotProceedWhenPasswordIsBlank() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
@@ -334,7 +292,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -342,14 +300,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.is(registrationDto.getFirstName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.is(registrationDto.getLastName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.is(registrationDto.getUsername()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.isEmptyString())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.is(registrationDto.getConfirmPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "password", "NotBlank"));
 
@@ -358,8 +311,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldNotProceedWhenConfirmPasswordIsNull() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
-        final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
+         UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
                 .withUsername("mjones")
@@ -367,7 +319,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -375,14 +327,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.is(registrationDto.getFirstName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.is(registrationDto.getLastName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.is(registrationDto.getUsername()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.is(registrationDto.getPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.nullValue())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "confirmPassword", "NotBlank"));
 
@@ -391,7 +338,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldNotProceedWhenConfirmPasswordIsBlank() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
@@ -401,7 +347,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -409,14 +355,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.is(registrationDto.getFirstName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.is(registrationDto.getLastName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.is(registrationDto.getUsername()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.is(registrationDto.getPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.isEmptyString())))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "confirmPassword", "NotBlank"));
 
@@ -425,7 +366,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldNotProceedWhenPasswordsDoNotMatch() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
@@ -437,7 +377,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
         Assert.assertNotEquals(registrationDto.getPassword(), registrationDto.getConfirmPassword());
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -445,14 +385,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.is(registrationDto.getFirstName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.is(registrationDto.getLastName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.is(registrationDto.getUsername()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.is(registrationDto.getPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.is(registrationDto.getConfirmPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "confirmPassword", "FieldMatch"));
 
@@ -470,7 +405,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withConfirmPassword("test123")
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/register")
@@ -478,13 +413,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.is(registrationDto.getFirstName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.is(registrationDto.getLastName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.is(registrationDto.getUsername()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.is(registrationDto.getPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.is(registrationDto.getConfirmPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.empty())))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "roles", "Size"));
 
@@ -493,7 +424,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldNotProceedWhenUsernameAlreadyExists() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
@@ -503,7 +433,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectUserExistsCheck(registrationDto.getUsername(), true);
         replayAll();
 
@@ -512,14 +442,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("firstName", Matchers.is(registrationDto.getFirstName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("lastName", Matchers.is(registrationDto.getLastName()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("username", Matchers.is(registrationDto.getUsername()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("password", Matchers.is(registrationDto.getPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("confirmPassword", Matchers.is(registrationDto.getConfirmPassword()))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.hasSize(1))))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", Matchers.hasProperty("roles", Matchers.contains(userRole))))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "username", "UsernameAlreadyTaken"));
 
@@ -529,7 +454,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldRedirectTo404NotFoundErrorPageWhenAddUserThrowsEntityNotFoundException() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
@@ -539,7 +463,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectUserExistsCheck(registrationDto.getUsername(), false);
         expectAddUserThrowsEntityNotFoundException(registrationDto);
         replayAll();
@@ -557,7 +481,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones", roles = {"USER", "ADMIN"})
     public void registerUserShouldRedirectToAdminViewWhenCurrentUserIsAdmin() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
@@ -567,7 +490,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectUserExistsCheck(registrationDto.getUsername(), false);
         expectAddUser(registrationDto);
         expectAdminRoleCheck(true);
@@ -585,7 +508,6 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     public void registerUserShouldAutoLoginUserAndRedirectToUserViewWhenCurrentUserIsNotAdmin() throws Exception {
-        final Role userRole = newRole(1L, RoleType.ROLE_USER);
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
@@ -595,7 +517,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
-        expectFindAllRoles(getRoles());
+        expectFindAllRoles();
         expectUserExistsCheck(registrationDto.getUsername(), false);
         expectAddUser(registrationDto);
         expectAdminRoleCheck(false);
@@ -612,17 +534,17 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    private void expectFindAllRoles(List<Role> roles) {
+    private void expectFindAllRoles() {
         EasyMock.expect(roleServiceMock.findAll()).andReturn(roles);
     }
 
-    private void expectFindRoleByTypeThrowsEntityNotFoundException(RoleType roleType) {
-        EasyMock.expect(roleServiceMock.findByType(roleType))
+    private void expectFindRoleByTypeThrowsEntityNotFoundException() {
+        EasyMock.expect(roleServiceMock.findByType(RoleType.ROLE_USER))
                 .andThrow(new EntityNotFoundException());
     }
 
-    private void expectFindRoleByType(RoleType roleType, Role role) {
-        EasyMock.expect(roleServiceMock.findByType(roleType)).andReturn(role);
+    private void expectFindRoleByType() {
+        EasyMock.expect(roleServiceMock.findByType(RoleType.ROLE_USER)).andReturn(userRole);
     }
 
     private void expectUserExistsCheck(String username, boolean userExists) {
@@ -647,12 +569,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         EasyMock.expectLastCall();
     }
 
-    private Role newRole(long id, RoleType roleType) {
+    private static Role newRole(long id, RoleType roleType) {
         return RoleBuilder.givenRole().withId(id).withType(roleType).build();
-    }
-
-    private List<Role> getRoles() {
-        return Arrays.asList(newRole(1L, RoleType.ROLE_USER), newRole(2L, RoleType.ROLE_ADMIN));
     }
 
     @Configuration
