@@ -128,7 +128,7 @@ public class UserService {
     }
 
     @Transactional
-    @PreAuthorize("#user.username == authentication.name or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
     public void delete(String username) {
         userRepository.delete(fetchByUsername(username));
     }
