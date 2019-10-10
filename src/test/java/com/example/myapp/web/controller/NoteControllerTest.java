@@ -158,32 +158,6 @@ public class NoteControllerTest extends WebMvcBaseTest {
 
     @Test
     @WithMockUser(username = "mjones")
-    public void getNotesShouldShowAllNotesWhenDisplayParamIsNotSetToRecent() throws Exception {
-        final String username = "mjones";
-        final User user = newUser();
-        final List<Note> notes = LongStream.range(2, 6).mapToObj(id -> newNote(id, user)).collect(Collectors.toList());
-
-        expectGetAuthenticationPrincipal(username);
-        expectFindUserByUsername(username, user);
-        expectFindAllNotes(notes);
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/notes/view")
-                .param("display", "all"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("notes"))
-                .andExpect(MockMvcResultMatchers.cookie().exists("displayCookie"))
-                .andExpect(MockMvcResultMatchers.cookie().value("displayCookie", "all"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user", "notes", "display"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", user))
-                .andExpect(MockMvcResultMatchers.model().attribute("notes", notes))
-                .andExpect(MockMvcResultMatchers.model().attribute("display", "all"));
-
-        verifyAll();
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
     public void getNoteShouldRedirectTo404NotFoundErrorPageWhenFindNoteByIdThrowsEntityNotFoundException() throws Exception {
         final String username = "mjones";
         final User user = newUser();

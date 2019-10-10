@@ -875,10 +875,6 @@ public class UserControllerTest extends WebMvcBaseTest {
         return RoleBuilder.givenRole().withId(id).withType(roleType).build();
     }
 
-    private List<Role> getRoles() {
-        return Arrays.asList(newRole(1L, RoleType.ROLE_USER), newRole(2L, RoleType.ROLE_ADMIN));
-    }
-
     private User newUser() {
         Set<Role> roles = Collections.singleton(newRole(1L, RoleType.ROLE_USER));
 

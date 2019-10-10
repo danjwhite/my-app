@@ -5,10 +5,8 @@ import com.example.myapp.domain.User;
 import com.example.myapp.service.UserService;
 import com.example.myapp.test.WebMvcBaseTest;
 import org.easymock.EasyMock;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -38,7 +35,7 @@ public class ErrorControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void getErrorShouldDisplayExpectedAttributesWhenErrorIs403Forbidden() throws Exception {
-        User loggedInUser = newUser(1L);
+        User loggedInUser = newUser();
 
         expectGetLoggedInUser(loggedInUser);
         replayAll();
@@ -57,7 +54,7 @@ public class ErrorControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void getErrorShouldDisplayExpectedAttributesWhenErrorIs404NotFound() throws Exception {
-        User loggedInUser = newUser(1L);
+        User loggedInUser = newUser();
 
         expectGetLoggedInUser(loggedInUser);
         replayAll();
@@ -73,17 +70,12 @@ public class ErrorControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    @Test
-    public void getErrorShouldDisplayExpectedAttributesWhenErrorIsResourceNotFound() {
-
-    }
-
     private void expectGetLoggedInUser(User user) {
         EasyMock.expect(userServiceMock.getLoggedInUser()).andReturn(user);
     }
 
-    private User newUser(long id) {
-        return UserBuilder.givenUser().withId(id).build();
+    private User newUser() {
+        return UserBuilder.givenUser().withId(1L).build();
     }
 
     @Configuration
