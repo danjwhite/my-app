@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+
+    <title>Account Login</title>
+
+    <!--/*/ <th:block th:include="fragments/general.html :: head">
+        </th:block> /*/-->
+
+</head>
+<body>
+
+<div class="container h-100">
+    <div class="row h-100 justify-content-center align-items-center">
+        <form class="col-md-4 offset-md-4">
+            <div class="row margin-bottom-50">
+                <img class="col-md-12" src="../static/images/spring-by-pivotal.png" width="800"
+                     th:src="@{/images/spring-by-pivotal.png}"/>
+            </div>
+            <div class="row form-group">
+                <label class="col-md-4" for="usernameInput">Username</label>
+                <input type="text" class="col-md-8 form-control" id="usernameInput" placeholder="Username">
+            </div>
+            <div class="row form-group">
+                <label class="col-md-4" for="passwordInput">Password</label>
+                <input type="password" class="col-md-8 form-control" id="passwordInput" placeholder="Password">
+            </div>
+            <div class="row form-group">
+                <div class="col-md-8 offset-md-4">
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </div>
+            </div>
+        </form>
+        <div class="col-md-4"></div>
+    </div>
+    <div th:replace="fragments/general::footer"></div>
+</div>
+
+</body>
+</html>

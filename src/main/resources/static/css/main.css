@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+html, body {
+    height: 100%;
+}
+
+#banner {
+    background-color: beige;
+}
+
+.margin-bottom-50 {
+    margin-bottom: 50px;
+}
