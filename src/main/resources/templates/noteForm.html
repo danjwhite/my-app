@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+
+    <title>New Note</title>
+
+    <!--/*/ <th:block th:include="fragments/general.html :: head">
+        </th:block> /*/-->
+
+</head>
+<body>
+<div class="container col-md-12 h-100">
+    <div th:replace="fragments/general::navbar"></div>
+
+    <form class="col-md-4">
+        <div class="row">
+            <h3 class="col-md-12 form-title">New Note</h3>
+        </div>
+        <div class="row form-group">
+            <label class="col-md-4" for="titleInput">Title</label>
+            <input type="text" class="col-md-8 form-control" id="titleInput"
+                   placeholder="Title">
+        </div>
+        <div class="row form-group">
+            <label class="col-md-4" for="bodyInput">Body</label>
+            <textarea class="col-md-8 form-control" rows="5" id="bodyInput" placeholder="Body"></textarea>
+        </div>
+        <div class="row">
+            <div class="col-md-8 offset-md-4">
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-danger btn-block">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div th:replace="fragments/general::footer"></div>
+</div>
+</body>
+</html>
