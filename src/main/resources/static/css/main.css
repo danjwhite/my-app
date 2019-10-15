@@ -11,3 +11,8 @@ html, body {
 .margin-bottom-50 {
     margin-bottom: 50px;
 }
+
+.form-title {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
