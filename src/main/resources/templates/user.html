@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+
+    <title>Account Settings</title>
+
+    <!--/*/ <th:block th:include="fragments/general.html :: head">
+        </th:block> /*/-->
+
+</head>
+<body>
+<div class="container-fluid h-100">
+    <div th:replace="fragments/general::navbar"></div>
+
+    <div class="row ml-5">
+        <div class="col-md-4">
+            <!-------------------------- PAGE TITLE CONTENT -------------------------->
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="page-title">Account Settings</h3>
+                </div>
+            </div>
+
+            <!-------------------------- ACCOUNT INFO CONTENT -------------------------->
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card bg-light shadow">
+                        <div class="card-header">
+                            <h5>Account Info</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-borderless mb-0">
+                                <tr>
+                                    <th width="200px">Username:</th>
+                                    <td>dwhite</td>
+                                </tr>
+                                <tr>
+                                    <th width="200px">First Name:</th>
+                                    <td>Daniel</td>
+                                </tr>
+                                <tr>
+                                    <th width="200px">Last Name:</th>
+                                    <td>White</td>
+                                </tr>
+                                <tr>
+                                    <th width="200px">Roles:</th>
+                                    <td>
+                                        <ul class="list-group">
+                                            <li class="list-group-item">ROLE_USER</li>
+                                            <li class="list-group-item">ROLE_ADMIN</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                        <div class="card-footer text-right">
+                            <a href="#" class="text-right">Edit</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-md-12">
+                    <div class="card bg-light shadow">
+                        <div class="card-header">
+                            <h5>Settings</h5>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-borderless mb-0">
+                                <tr>
+                                    <td><a href="#">Change password</a></td>
+                                </tr>
+                                <tr>
+                                    <td><a href="#">Delete account</a></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/general::footer"></div>
+</div>
+</body>
+</html>
