@@ -16,3 +16,7 @@ html, body {
     margin-top: 20px;
     margin-bottom: 20px;
 }
+
+.grid-btn {
+    width: 80px;
+}

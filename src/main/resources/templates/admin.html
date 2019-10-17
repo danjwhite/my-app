@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+
+    <title>Administration</title>
+
+    <!--/*/ <th:block th:include="fragments/general.html :: head">
+        </th:block> /*/-->
+
+</head>
+<body>
+<div class="container-fluid h-100">
+    <div th:replace="fragments/general::navbar"></div>
+
+    <div class="row ml-5">
+        <div class="col-md-8">
+            <!-------------------------- PAGE TITLE -------------------------->
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="page-title">Administration</h3>
+                </div>
+            </div>
+
+            <!-------------------------- USER ACCOUNT TABLE HEADING -------------------------->
+            <div class="row mb-3">
+                <div class="col-md">
+                    <h5>User Accounts</h5>
+                </div>
+                <div class="col-md text-right">
+                    <button type="button" class="btn btn-sm btn-success">Add User</button>
+                </div>
+            </div>
+
+            <!-------------------------- USER ACCOUNT TABLE -------------------------->
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-striped">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>Username</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>dwhite</td>
+                            <td>Daniel</td>
+                            <td>White</td>
+                            <td>
+                                <div class="btn-toolbar">
+                                    <button type="button" class="btn btn-sm btn-primary grid-btn">Edit</button>
+                                    <button type="button" class="btn btn-sm btn-danger grid-btn ml-3">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>dwhite</td>
+                            <td>Daniel</td>
+                            <td>White</td>
+                            <td>
+                                <div class="btn-toolbar">
+                                    <button type="button" class="btn btn-sm btn-primary grid-btn">Edit</button>
+                                    <button type="button" class="btn btn-sm btn-danger grid-btn ml-3">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>dwhite</td>
+                            <td>Daniel</td>
+                            <td>White</td>
+                            <td>
+                                <div class="btn-toolbar">
+                                    <button type="button" class="btn btn-sm btn-primary grid-btn">Edit</button>
+                                    <button type="button" class="btn btn-sm btn-danger grid-btn ml-3">Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/general::footer"></div>
+</div>
+</body>
+</html>
