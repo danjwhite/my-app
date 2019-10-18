@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+
+    <title>Error</title>
+
+    <!--/*/ <th:block th:include="fragments/general.html :: head">
+        </th:block> /*/-->
+
+</head>
+<body>
+<div class="container-fluid h-100">
+    <div th:replace="fragments/general::navbar"></div>
+
+    <div class="row ml-5">
+        <div class="col-md-6">
+            <!-------------------------- PAGE TITLE -------------------------->
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="page-title">404: Resource Not Found</h3>
+                </div>
+            </div>
+
+            <!-------------------------- ERROR DESCRIPTION -------------------------->
+            <div class="row">
+                <div class="col-md">
+                    <p>The request could not be completed.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/general::footer"></div>
+</div>
+</body>
+</html>
