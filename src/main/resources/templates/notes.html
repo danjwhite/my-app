@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+
+    <title>Notes</title>
+
+    <!--/*/ <th:block th:include="fragments/general.html :: head">
+        </th:block> /*/-->
+
+</head>
+<body>
+<div class="container-fluid h-100">
+    <div th:replace="fragments/general::navbar"></div>
+
+    <div class="row ml-5">
+        <div class="col-md-6">
+            <!-------------------------- PAGE TITLE -------------------------->
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="page-title">Notes</h3>
+                </div>
+            </div>
+
+            <!-------------------------- NOTE VIEW HEADING -------------------------->
+            <div class="row mb-5">
+                <div class="col-md">
+                    <h5>Showing All Notes</h5>
+                </div>
+                <div class="col-md">
+                    <div class="text-right">
+                        <button type="button" class="btn btn-sm btn-primary">Show Recent</button>
+                        <button type="button" class="btn btn-sm btn-success ml-3">Add Note</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-------------------------- NOTES -------------------------->
+            <div class="row">
+                <div class="col-md-12">
+
+                    <!-------------------------- NEW NOTE -------------------------->
+                    <div class="row mb-5">
+                        <div class="col-md">
+                            <div class="card bg-light shadow">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Note title...</h5>
+                                </div>
+                                <div class="card-body">Content</div>
+                                <div class="card-footer padding-bottom-0">
+                                    <div class="row mb-0">
+                                        <div class="col-md timestamp">
+                                            Added: 2019-10-17
+                                        </div>
+                                        <div class="col-md text-right">
+                                            <button type="button" class="btn btn-sm btn-dark"><i
+                                                    class="fa fa-edit"></i></button>
+                                            <button type="button" class="btn btn-sm btn-dark ml-3"><i
+                                                    class="fa fa-trash-alt"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-------------------------- NEW NOTE -------------------------->
+
+                    <div class="row mb-5">
+                        <div class="col-md">
+                            <div class="card bg-light shadow">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Note title...</h5>
+                                </div>
+                                <div class="card-body">Content</div>
+                                <div class="card-footer padding-bottom-0">
+                                    <div class="row mb-0">
+                                        <div class="col-md timestamp">
+                                            Added: 2019-10-17
+                                        </div>
+                                        <div class="col-md text-right">
+                                            <button type="button" class="btn btn-sm btn-dark"><i
+                                                    class="fa fa-edit"></i></button>
+                                            <button type="button" class="btn btn-sm btn-dark ml-3"><i
+                                                    class="fa fa-trash-alt"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/general::footer"></div>
+</div>
+</body>
+</html>
