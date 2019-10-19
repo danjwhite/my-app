@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <!------------------------------ HEAD ------------------------------>
 <head th:fragment="head">
@@ -22,7 +22,7 @@
 <body>
 
     <!------------------------------ NAV BAR ------------------------------>
-    <nav class="row navbar navbar-expand-sm bg-dark navbar-dark" th:fragment="navbar">
+    <nav class="row navbar navbar-expand-sm bg-dark navbar-dark" th:fragment="navbar (user)">
         <!-- Brand -->
         <img class="navbar-brand" src="../../static/images/spring-by-pivotal.png" width="150"
              th:src="@{/images/spring-by-pivotal.png}"/>
@@ -30,21 +30,21 @@
         <!-- Links -->
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="#">Dashboard</a>
+                <a class="nav-link" th:href="@{/}">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Notes</a>
+                <a class="nav-link" th:href="@{/notes/view}">Notes</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Admin</a>
+            <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
+                <a class="nav-link" th:href="@{/admin}">Admin</a>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="accountDropdown" data-toggle="dropdown">Daniel White</a>
+                <a class="nav-link dropdown-toggle" id="accountDropdown" data-toggle="dropdown" th:text="${user.firstName} + ' ' + ${user.lastName}"></a>
                 <div class="dropdown-menu bg-dark navbar-dark">
-                    <a class="nav-link dropdown-item bg-dark navbar-dark" href="#">Logout</a>
-                    <a class="nav-link dropdown-item bg-dark navbar-dark" href="#">Account</a>
+                    <a class="nav-link dropdown-item bg-dark navbar-dark" th:href="@{/logout}">Logout</a>
+                    <a class="nav-link dropdown-item bg-dark navbar-dark" th:href="@{'/user/' + ${user.username} + '/view'}">Account</a>
                 </div>
             </li>
         </ul>

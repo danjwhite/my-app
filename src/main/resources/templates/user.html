@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="container-fluid h-100">
-    <div th:replace="fragments/general::navbar"></div>
+    <div th:replace="fragments/general::navbar (${user})"></div>
 
     <div class="row ml-5">
         <div class="col-md-4">
