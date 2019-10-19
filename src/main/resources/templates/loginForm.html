@@ -12,22 +12,22 @@
 
 <div class="container h-100">
     <div class="row h-100 justify-content-center align-items-center">
-        <form class="col-md-4 offset-md-4">
+        <form class="col-md-4 offset-md-4" th:action="@{/login}" method="post">
             <div class="row margin-bottom-50">
                 <img class="col-md-12" src="../static/images/spring-by-pivotal.png" width="800"
                      th:src="@{/images/spring-by-pivotal.png}"/>
             </div>
             <div class="row form-group">
                 <label class="col-md-4" for="usernameInput">Username</label>
-                <input type="text" class="col-md-8 form-control" id="usernameInput" placeholder="Username">
+                <input type="text" class="col-md-8 form-control" id="usernameInput" name="username" placeholder="Username">
             </div>
             <div class="row form-group">
                 <label class="col-md-4" for="passwordInput">Password</label>
-                <input type="password" class="col-md-8 form-control" id="passwordInput" placeholder="Password">
+                <input type="password" class="col-md-8 form-control" id="passwordInput" name="password" placeholder="Password">
             </div>
             <div class="row form-group">
                 <div class="col-md-8 offset-md-4">
-                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    <input type="submit" class="btn btn-primary btn-block" value="Login"/>
                 </div>
             </div>
             <div class="row">
