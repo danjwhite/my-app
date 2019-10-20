@@ -19,11 +19,16 @@
             </div>
             <div class="row form-group">
                 <label class="col-md-4" for="usernameInput">Username</label>
-                <input type="text" class="col-md-8 form-control" id="usernameInput" name="username" placeholder="Username">
+                <input type="text" class="col-md-8 form-control" th:classappend="${param.error} ? is-invalid"
+                       id="usernameInput" name="username" placeholder="Username" required>
             </div>
             <div class="row form-group">
                 <label class="col-md-4" for="passwordInput">Password</label>
-                <input type="password" class="col-md-8 form-control" id="passwordInput" name="password" placeholder="Password">
+                <input type="password" class="col-md-8 form-control" th:classappend="${param.error} ? is-invalid"
+                       id="passwordInput" name="password" placeholder="Password" required>
+                <div th:if="${param.error}" class="col-md-8 offset-md-4 invalid-feedback text-center">
+                    Invalid username or password
+                </div>
             </div>
             <div class="row form-group">
                 <div class="col-md-8 offset-md-4">
@@ -32,7 +37,7 @@
             </div>
             <div class="row">
                 <div class="col-md-8 offset-md-4 text-center">
-                    <a href="#">Register</a>
+                    <a th:href="@{/register}">Register</a>
                 </div>
             </div>
             <div class="row">
