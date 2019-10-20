@@ -6,7 +6,6 @@ import com.example.myapp.dto.NoteDto;
 import com.example.myapp.service.NoteService;
 import com.example.myapp.service.SecurityService;
 import com.example.myapp.service.UserService;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,23 +18,21 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
+@SessionAttributes("userInContext")
 @RequestMapping("/")
 public class NoteController {
 
-    private final SecurityService securityService;
     private final UserService userService;
     private final NoteService noteService;
 
-    public NoteController(SecurityService securityService, UserService userService, NoteService noteService) {
-        this.securityService = securityService;
+    public NoteController(UserService userService, NoteService noteService) {
         this.userService = userService;
         this.noteService = noteService;
     }
 
-    @ModelAttribute
+    @ModelAttribute("userInContext")
     public User user() {
-        UserDetails principal = securityService.getPrincipal();
-        return userService.findByUsername(principal.getUsername());
+        return userService.getLoggedInUser();
     }
 
     @GetMapping(value = "/notes/view")

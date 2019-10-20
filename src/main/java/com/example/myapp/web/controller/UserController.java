@@ -1,6 +1,5 @@
 package com.example.myapp.web.controller;
 
-import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
@@ -8,22 +7,18 @@ import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.service.RoleService;
 import com.example.myapp.service.SecurityService;
 import com.example.myapp.service.UserService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.List;
 
 @Controller
+@SessionAttributes("userInContext")
 @RequestMapping("/")
 public class UserController {
 
@@ -37,9 +32,9 @@ public class UserController {
         this.securityService = securityService;
     }
 
-    @ModelAttribute("allRoles")
-    public List<Role> roles() {
-        return roleService.findAll();
+    @ModelAttribute("userInContext")
+    public User userInContext() {
+        return userService.getLoggedInUser();
     }
 
     @GetMapping(value = "/user/{username}/view")
@@ -54,8 +49,8 @@ public class UserController {
     public String editUserInfo(@PathVariable(value = "username") String username,
                                Model model) {
 
-        UserDto user = new UserDto(userService.findByUsername(username));
-        model.addAttribute("user", user);
+        model.addAttribute("user", new UserDto(userService.findByUsername(username)));
+        model.addAttribute("allRoles", roleService.findAll());
 
         return "accountForm";
 

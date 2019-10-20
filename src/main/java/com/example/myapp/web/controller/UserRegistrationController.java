@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class UserRegistrationController {
     }
 
     @GetMapping
-    public String showRegistrationForm(Model model) {
+    public String showRegistrationForm(Model model, HttpSession session) {
 
         // Have standard user role in the select box selected by default.
         UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
@@ -51,6 +52,10 @@ public class UserRegistrationController {
 
         userRegistrationDto.getRoles().add(role);
         model.addAttribute("user", userRegistrationDto);
+
+        if (!securityService.isCurrentAuthenticationAnonymous()) {
+            session.setAttribute("userInContext", userService.getLoggedInUser());
+        }
 
         return "registrationForm";
     }

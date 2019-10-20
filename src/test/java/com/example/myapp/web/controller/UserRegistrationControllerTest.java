@@ -2,6 +2,7 @@ package com.example.myapp.web.controller;
 
 import com.example.myapp.builder.dto.UserRegistrationDtoBuilder;
 import com.example.myapp.builder.entity.RoleBuilder;
+import com.example.myapp.builder.entity.UserBuilder;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
@@ -13,6 +14,7 @@ import com.example.myapp.test.WebMvcBaseTest;
 import org.apache.commons.lang3.StringUtils;
 import org.easymock.EasyMock;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ContextConfiguration;
@@ -51,9 +55,26 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private MockHttpSession mockHttpSession;
+    private User loggedInUser;
+
     @BeforeClass
     public static void init() {
         initMocks(userServiceMock, roleServiceMock, securityServiceMock);
+    }
+
+    @Before
+    public void setUp() {
+        mockHttpSession = new MockHttpSession();
+
+        loggedInUser = UserBuilder.givenUser()
+                .withId(1L)
+                .withFirstName("Mike")
+                .withLastName("Jones")
+                .withUsername("mjones")
+                .withPassword(new BCryptPasswordEncoder().encode("test123"))
+                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
+                .build();
     }
 
     @Test
@@ -62,31 +83,62 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindRoleByTypeThrowsEntityNotFoundException();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/register"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/register").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
-    public void showRegistrationFormShouldReturnExpectedViewWithExpectedAttributes() throws Exception {
+    public void showRegistrationFormShouldReturnExpectedViewWithExpectedAttributesWhenAuthIsAnonymous() throws Exception {
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withRoles(Collections.singleton(userRole))
                 .build();
 
         expectFindAllRoles();
         expectFindRoleByType();
+        expectAnonymousAuthCheck(true);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/register"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/register").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("userInContext"))
                 .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+    }
+
+    @Test
+    public void showRegistrationFormShouldReturnExpectedViewWithExpectedAttributesWhenAuthIsNotAnonymous() throws Exception {
+        final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
+                .withRoles(Collections.singleton(userRole))
+                .build();
+
+        expectFindAllRoles();
+        expectFindRoleByType();
+        expectAnonymousAuthCheck(false);
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/register").session(mockHttpSession))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("registrationForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
+                .andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("userInContext"))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", registrationDto));
+
+        verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -102,7 +154,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -114,6 +166,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -130,7 +184,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -142,6 +196,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -157,7 +213,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -169,6 +225,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -185,7 +243,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -197,6 +255,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -212,7 +272,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -224,6 +284,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "username", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -240,7 +302,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -252,6 +314,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "username", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -267,7 +331,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -279,6 +343,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "password", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -295,7 +361,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -307,6 +373,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "password", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -322,7 +390,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -334,6 +402,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "confirmPassword", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -350,7 +420,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -362,6 +432,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "confirmPassword", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -380,7 +452,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -392,6 +464,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "confirmPassword", "FieldMatch"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
 
@@ -408,7 +482,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -420,6 +494,8 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "roles", "Size"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -437,7 +513,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectUserExistsCheck(registrationDto.getUsername(), true);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -448,8 +524,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "username", "UsernameAlreadyTaken"));
 
-
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -468,14 +545,15 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectAddUserThrowsEntityNotFoundException(registrationDto);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
 
-
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -496,14 +574,15 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectAdminRoleCheck(true);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/admin?confirmation=created"));
 
-
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -524,14 +603,15 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         expectAutoLogin(registrationDto.getUsername(), registrationDto.getPassword());
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/register").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/user/" + registrationDto.getUsername() + "/view?confirmation=created"));
 
-
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     private void expectFindAllRoles() {
@@ -557,6 +637,14 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     private void expectAddUser(UserRegistrationDto userRegistrationDto) {
         EasyMock.expect(userServiceMock.add(userRegistrationDto)).andReturn(new User());
+    }
+
+    private void expectAnonymousAuthCheck(boolean anonymous) {
+        EasyMock.expect(securityServiceMock.isCurrentAuthenticationAnonymous()).andReturn(anonymous);
+    }
+
+    private void expectGetLoggedInUser() {
+        EasyMock.expect(userServiceMock.getLoggedInUser()).andReturn(loggedInUser);
     }
 
     private void expectAdminRoleCheck(boolean userIsAdmin) {

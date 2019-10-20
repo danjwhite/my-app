@@ -26,6 +26,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,9 +62,26 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private MockHttpSession mockHttpSession;
+    private User loggedInUser;
+
     @BeforeClass
     public static void init() {
         initMocks(userServiceMock, roleServiceMock, securityServiceMock);
+    }
+
+    @Before
+    public void setUp() {
+        mockHttpSession = new MockHttpSession();
+
+        loggedInUser = UserBuilder.givenUser()
+                .withId(1L)
+                .withFirstName("Mike")
+                .withLastName("Jones")
+                .withUsername("mjones")
+                .withPassword(new BCryptPasswordEncoder().encode("test123"))
+                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
+                .build();
     }
 
     @Test
@@ -71,16 +89,17 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void getUserAccountShouldRedirectTo403ForbiddenErrorPageWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
         final String username = "mjones";
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectFindByUsernameThrowsException(username, new AccessDeniedException("Access id denied"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/view"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/view").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
 
         verifyAll();
 
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -88,15 +107,17 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void getUserAccountShouldRedirectTo404NotFoundErrorPageWhenFindByUsernameThrowsUsernameNotFoundException() throws Exception {
         final String username = "mjones";
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectFindByUsernameThrowsException(username, new UsernameNotFoundException("Invalid username"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/view"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/view").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -104,18 +125,20 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void getUserAccountShouldReturnExpectedViewWithExpectedAttributes() throws Exception {
         final User user = newUser();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectFindByUserName(user.getUsername(), user);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + user.getUsername() + "/view"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + user.getUsername() + "/view").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", user));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -123,15 +146,17 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editUserInfoShouldRedirectTo403ForbiddenErrorPageWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
         final String username = "mjones";
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectFindByUsernameThrowsException(username, new AccessDeniedException("Access is denied"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/edit/info"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/edit/info").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -139,15 +164,17 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editUserInfoShouldRedirectTo404NotFoundErrorPageWhenFindByUsernameThrowsUsernameNotFoundException() throws Exception {
         final String username = "mjones";
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectFindByUsernameThrowsException(username, new UsernameNotFoundException("Invalid username"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/edit/info"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/edit/info").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -160,18 +187,22 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(user.getRoles())
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectFindByUserName(user.getUsername(), user);
+        expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + user.getUsername() + "/edit/info"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + user.getUsername() + "/edit/info").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto));
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user", "allRoles"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
+                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -184,21 +215,23 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + username + "/edit/info")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + username + "/edit/info").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -211,20 +244,23 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -236,20 +272,23 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -262,20 +301,23 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -287,20 +329,23 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withLastName("Jones")
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "roles", "Size"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -313,17 +358,19 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectUpdateUserThrowsException(userDto, new AccessDeniedException("Access is denied"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -336,17 +383,19 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectUpdateUserThrowsException(userDto, new UsernameNotFoundException("Invalid username"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -359,17 +408,19 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectUpdateUserThrowsException(userDto, new EntityNotFoundException());
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -382,12 +433,12 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectUpdateUser(userDto);
         expectAdminRoleCheck(true);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .param("mode", "admin")
                 .flashAttr("user", userDto))
@@ -395,6 +446,8 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/admin?confirmation=edited"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -407,12 +460,12 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectUpdateUser(userDto);
         expectAdminRoleCheck(false);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .param("mode", "admin")
                 .flashAttr("user", userDto))
@@ -420,6 +473,8 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/user/" + userDto.getUsername() + "/view?confirmation=infoUpdated"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -432,11 +487,11 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectUpdateUser(userDto);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .param("mode", "test")
                 .flashAttr("user", userDto))
@@ -444,6 +499,8 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/user/" + userDto.getUsername() + "/view?confirmation=infoUpdated"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -456,17 +513,19 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
                 .build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectUpdateUser(userDto);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/user/" + userDto.getUsername() + "/view?confirmation=infoUpdated"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -475,18 +534,19 @@ public class UserControllerTest extends WebMvcBaseTest {
         final UserPasswordDto userPasswordDto = UserPasswordDtoBuilder.givenUserPasswordDto()
                 .withUsername("mjones").build();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + userPasswordDto.getUsername() + "/edit/password"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto));
 
         verifyAll();
 
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -494,21 +554,23 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedWhenPasswordIsNull() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto(null, "test", "test");
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "password", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -516,21 +578,23 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedWhenPasswordIsBlank() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto(StringUtils.EMPTY, "test", "test");
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "password", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -538,21 +602,23 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedWhenNewPasswordIsNull() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", null, "test");
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "newPassword", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -560,21 +626,23 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedWhenNewPasswordIsBlank() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", StringUtils.EMPTY, "test");
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "newPassword", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -582,21 +650,23 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedwhenConfirmNewPasswordIsNull() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", null);
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmNewPassword", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -604,21 +674,23 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedWhenConfirmNewPasswordIsBlank() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", StringUtils.EMPTY);
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmNewPassword", "NotBlank"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -626,21 +698,23 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldNotProceedWhenPasswordsDoNotMatch() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "doesnotmatch");
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmNewPassword", "FieldMatch"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -648,17 +722,19 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldRedirectTo403ForbiddenErrorPageWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectFindByUsernameThrowsException(userPasswordDto.getUsername(), new AccessDeniedException("Access is denied"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -666,17 +742,19 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void editPasswordShouldRedirectTo404NotFoundErrorPageWhenfindByUsernameThrowsUsernameNotFoundException() throws Exception {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectFindByUsernameThrowsException(userPasswordDto.getUsername(), new UsernameNotFoundException("Invalid username"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -687,23 +765,25 @@ public class UserControllerTest extends WebMvcBaseTest {
 
         Assert.assertFalse(BCrypt.checkpw(userPasswordDto.getPassword(), user.getPassword()));
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectFindByUserName(userPasswordDto.getUsername(), user);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasErrors("userPasswordDto"))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "password", "InvalidPassword"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -712,18 +792,20 @@ public class UserControllerTest extends WebMvcBaseTest {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
         final User user = newUser();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectFindByUserName(userPasswordDto.getUsername(), user);
         expectUpdatePasswordThrowsException(userPasswordDto, new AccessDeniedException("Access is denied"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -732,18 +814,20 @@ public class UserControllerTest extends WebMvcBaseTest {
         final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
         final User user = newUser();
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectFindByUserName(userPasswordDto.getUsername(), user);
         expectUpdatePassword(userPasswordDto);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password")
+        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/user/" + userPasswordDto.getUsername() + "/view?confirmation=passwordUpdated"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -751,15 +835,17 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void deleteAccountShouldRedirectTo403ForbiddenErrorPageWhenDeleteThrowsAccessDeniedException()  throws Exception {
         final String username = "mjones";
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectDeleteThrowsException(username, new AccessDeniedException("Access is denied"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -767,15 +853,17 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void deleteAccountShouldRedirectTo404NotFoundErrorPageWhenDeleteThrowsUsernameNotFoundException() throws Exception {
         final String username = "mjones";
 
-        expectFindAllRoles();
+        expectGetLoggedInUser();
         expectDeleteThrowsException(username, new UsernameNotFoundException("Invalid username"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
 
         verifyAll();
+
+        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -783,15 +871,22 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void deleteAccountShouldRedirectToExpectedView() throws Exception {
         final String username = "mjones";
 
+        expectGetLoggedInUser();
         expectDeleteUser(username);
-        expectFindAllRoles();
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/logout"));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
+    }
+
+    private void expectGetLoggedInUser() {
+        EasyMock.expect(userServiceMock.getLoggedInUser())
+                .andReturn(loggedInUser);
     }
 
     private void expectFindAllRoles() {

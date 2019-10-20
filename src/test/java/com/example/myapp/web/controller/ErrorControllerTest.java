@@ -5,6 +5,8 @@ import com.example.myapp.domain.User;
 import com.example.myapp.service.UserService;
 import com.example.myapp.test.WebMvcBaseTest;
 import org.easymock.EasyMock;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,9 +30,16 @@ public class ErrorControllerTest extends WebMvcBaseTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private MockHttpSession mockHttpSession;
+
     @BeforeClass
     public static void init() {
         initMocks(userServiceMock);
+    }
+
+    @Before
+    public void setUp() {
+        mockHttpSession = new MockHttpSession();
     }
 
     @Test
@@ -40,15 +50,17 @@ public class ErrorControllerTest extends WebMvcBaseTest {
         expectGetLoggedInUser(loggedInUser);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/error/403"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/error/403").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("error"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user", "errorTitle", "errorDescription"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", loggedInUser))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "errorTitle", "errorDescription"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("errorTitle", "403: Forbidden"))
                 .andExpect(MockMvcResultMatchers.model().attribute("errorDescription", "The request could not be completed."));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -59,15 +71,17 @@ public class ErrorControllerTest extends WebMvcBaseTest {
         expectGetLoggedInUser(loggedInUser);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/error/404"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/error/404").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("error"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("user", "errorTitle", "errorDescription"))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", loggedInUser))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "errorTitle", "errorDescription"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("errorTitle", "404: Resource Not Found"))
                 .andExpect(MockMvcResultMatchers.model().attribute("errorDescription", "The request could not be completed."));
 
         verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     private void expectGetLoggedInUser(User user) {
