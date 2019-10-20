@@ -17,14 +17,14 @@
             <!-------------------------- PAGE TITLE -------------------------->
             <div class="row">
                 <div class="col-md-12">
-                    <h3 class="page-title">404: Resource Not Found</h3>
+                    <h3 class="page-title" th:text="${errorTitle}"></h3>
                 </div>
             </div>
 
             <!-------------------------- ERROR DESCRIPTION -------------------------->
             <div class="row">
                 <div class="col-md">
-                    <p>The request could not be completed.</p>
+                    <p th:text="${errorDescription}"></p>
                 </div>
             </div>
         </div>
