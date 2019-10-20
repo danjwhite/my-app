@@ -794,39 +794,6 @@ public class UserControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    @Test
-    public void loginShouldReturnExpectedView() throws Exception {
-        expectFindAllRoles();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/login"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("loginForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("allRoles"))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles));
-
-        verifyAll();
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void logoutShouldLogUserOutOfSecurityContextWhenAuthIsPresent() throws Exception {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Assert.assertNotNull(auth);
-        Assert.assertEquals("mjones", auth.getName());
-
-        expectFindAllRoles();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/logout"))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/login?logout"));
-
-        verifyAll();
-
-        Assert.assertNull(SecurityContextHolder.getContext().getAuthentication());
-    }
-
     private void expectFindAllRoles() {
         EasyMock.expect(roleServiceMock.findAll()).andReturn(roles);
     }
