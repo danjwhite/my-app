@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head lang="en">
 
     <title>Error</title>
@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="container-fluid h-100">
-    <div th:replace="fragments/general::navbar (${session.userInContext})"></div>
+    <div sec:authorize="isAuthenticated()" th:replace="fragments/general::navbar (${session.userInContext})"></div>
 
     <div class="row ml-5">
         <div class="col-md-6">
