@@ -9,10 +9,7 @@ import com.example.myapp.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
@@ -21,6 +18,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/register")
+@SessionAttributes("allRoles")
 public class UserRegistrationController {
 
     private final UserService userService;
@@ -35,7 +33,10 @@ public class UserRegistrationController {
 
     @ModelAttribute("user")
     public UserRegistrationDto userRegistrationDto() {
-        return new UserRegistrationDto();
+        UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
+        userRegistrationDto.getRoles().add(roleService.findByType(RoleType.ROLE_USER));
+
+        return userRegistrationDto;
     }
 
     @ModelAttribute("allRoles")
@@ -45,13 +46,6 @@ public class UserRegistrationController {
 
     @GetMapping
     public String showRegistrationForm(Model model, HttpSession session) {
-
-        // Have standard user role in the select box selected by default.
-        UserRegistrationDto userRegistrationDto = new UserRegistrationDto();
-        Role role = roleService.findByType(RoleType.ROLE_USER);
-
-        userRegistrationDto.getRoles().add(role);
-        model.addAttribute("user", userRegistrationDto);
 
         if (!securityService.isCurrentAuthenticationAnonymous()) {
             session.setAttribute("userInContext", userService.getLoggedInUser());
@@ -65,6 +59,7 @@ public class UserRegistrationController {
                                BindingResult result,
                                RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
+            result.getFieldErrors().forEach(fieldError -> System.out.println("***** ERROR: " + fieldError.getField()));
             return "registrationForm";
         }
 
