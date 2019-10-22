@@ -12,7 +12,7 @@
 <div class="container-fluid h-100">
     <div th:replace="fragments/general::navbar (${session.userInContext})"></div>
 
-    <div class="row ml-5">
+    <div class="row ml-5" th:object="${user}">
         <div class="col-md-4">
             <!-------------------------- PAGE TITLE CONTENT -------------------------->
             <div class="row">
@@ -33,22 +33,21 @@
                             <table class="table table-borderless mb-0">
                                 <tr>
                                     <th width="200px">Username:</th>
-                                    <td>dwhite</td>
+                                    <td th:text="*{username}"></td>
                                 </tr>
                                 <tr>
                                     <th width="200px">First Name:</th>
-                                    <td>Daniel</td>
+                                    <td th:text="*{firstName}"></td>
                                 </tr>
                                 <tr>
                                     <th width="200px">Last Name:</th>
-                                    <td>White</td>
+                                    <td th:text="*{lastName}">White</td>
                                 </tr>
                                 <tr>
                                     <th width="200px">Roles:</th>
                                     <td>
                                         <ul class="list-group">
-                                            <li class="list-group-item">ROLE_USER</li>
-                                            <li class="list-group-item">ROLE_ADMIN</li>
+                                            <li class="list-group-item" th:each="role : *{roles}" th:text="${role.type}"></li>
                                         </ul>
                                     </td>
                                 </tr>
@@ -56,7 +55,7 @@
 
                         </div>
                         <div class="card-footer text-right">
-                            <a href="#" class="text-right">Edit</a>
+                            <a class="text-right" th:href="@{'/user/' + *{username} + '/edit/info'}">Edit</a>
                         </div>
                     </div>
                 </div>
@@ -71,10 +70,10 @@
                         <div class="card-body">
                             <table class="table table-borderless mb-0">
                                 <tr>
-                                    <td><a href="#">Change password</a></td>
+                                    <td><a th:href="@{'/user/' + *{username} + '/edit/password'}">Change password</a></td>
                                 </tr>
                                 <tr>
-                                    <td><a href="#">Delete account</a></td>
+                                    <td><a th:href="@{'/user/' + *{username} + '/delete'}">Delete account</a></td>
                                 </tr>
                             </table>
                         </div>
