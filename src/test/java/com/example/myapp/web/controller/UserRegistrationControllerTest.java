@@ -90,6 +90,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertNull(mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -113,7 +114,9 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
         verifyAll();
 
+
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -139,6 +142,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -168,6 +172,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -198,6 +203,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -227,6 +233,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -257,6 +264,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -286,6 +294,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -316,6 +325,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -345,6 +355,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -375,6 +386,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -404,6 +416,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -434,6 +447,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -466,6 +480,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
 
@@ -496,6 +511,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -527,6 +543,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -554,6 +571,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertNull(mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -583,6 +601,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     @Test
@@ -612,6 +631,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(roles, mockHttpSession.getAttribute("allRoles"));
     }
 
     private void expectFindAllRoles() {
