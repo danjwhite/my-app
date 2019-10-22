@@ -59,7 +59,6 @@ public class UserRegistrationController {
                                BindingResult result,
                                RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
-            result.getFieldErrors().forEach(fieldError -> System.out.println("***** ERROR: " + fieldError.getField()));
             return "registrationForm";
         }
 
