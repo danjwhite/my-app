@@ -28,8 +28,8 @@ public class UserPasswordDtoBuilder extends AbstractBuilder<UserPasswordDto> {
         return this;
     }
 
-    public UserPasswordDtoBuilder withConfirmNewPassword(String confirmNewPassword) {
-        getObject().setConfirmNewPassword(confirmNewPassword);
+    public UserPasswordDtoBuilder withConfirmPassword(String confirmNewPassword) {
+        getObject().setConfirmPassword(confirmNewPassword);
         return this;
     }
 }

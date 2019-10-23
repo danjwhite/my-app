@@ -15,12 +15,10 @@ import com.example.myapp.service.UserService;
 import com.example.myapp.test.WebMvcBaseTest;
 import org.apache.commons.lang3.StringUtils;
 import org.easymock.EasyMock;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
@@ -28,15 +26,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -672,7 +667,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmNewPassword", "NotBlank"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmPassword", "NotBlank"));
 
         verifyAll();
 
@@ -696,7 +691,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmNewPassword", "NotBlank"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmPassword", "NotBlank"));
 
         verifyAll();
 
@@ -720,7 +715,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmNewPassword", "FieldMatch"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmPassword", "FieldMatch"));
 
         verifyAll();
 
@@ -965,7 +960,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .withUsername("mjones")
                 .withPassword(password)
                 .withNewPassword(newPassword)
-                .withConfirmNewPassword(confirmNewPassword)
+                .withConfirmPassword(confirmNewPassword)
                 .build();
     }
 

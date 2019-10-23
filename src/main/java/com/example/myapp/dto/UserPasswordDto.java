@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @GroupSequence({UserPasswordDto.class, BlankCheck.class, MatchCheck.class})
-@FieldMatch(first = "newPassword", second = "confirmNewPassword",
+@FieldMatch(first = "newPassword", second = "confirmPassword",
         message = "The password fields must match",
         groups = MatchCheck.class)
 public class UserPasswordDto {
@@ -24,5 +24,5 @@ public class UserPasswordDto {
     private String newPassword;
 
     @NotBlank(message = "Cannot be blank", groups = BlankCheck.class)
-    private String confirmNewPassword;
+    private String confirmPassword;
 }

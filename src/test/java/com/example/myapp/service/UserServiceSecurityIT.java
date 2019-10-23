@@ -180,7 +180,7 @@ public class UserServiceSecurityIT {
         return UserPasswordDtoBuilder.givenUserPasswordDto().withUsername(username)
                 .withPassword(user.getPassword())
                 .withNewPassword("test")
-                .withConfirmNewPassword("test")
+                .withConfirmPassword("test")
                 .build();
     }
 }
