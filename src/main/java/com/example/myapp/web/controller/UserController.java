@@ -60,8 +60,9 @@ public class UserController {
     public String updateUserInfo(@PathVariable(value = "username") String username,
                                  @RequestParam(value = "mode", required = false) String mode,
                                  @ModelAttribute("user") @Valid UserDto user,
-                                 BindingResult result, RedirectAttributes redirectAttributes) {
+                                 BindingResult result, RedirectAttributes redirectAttributes, Model model) {
         if (result.hasErrors()) {
+            model.addAttribute("allRoles", roleService.findAll());
             return "accountForm";
         }
 

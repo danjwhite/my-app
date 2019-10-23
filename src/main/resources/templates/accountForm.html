@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head lang="en">
 
     <title>Account Settings</title>
@@ -13,29 +13,55 @@
     <div th:replace="fragments/general::navbar (${session.userInContext})"></div>
 
     <div class="row">
-        <form class="col-md-4">
+        <form class="col-md-4" th:object="${user}" th:action="@{'/user/' + *{username} + '/edit/info'}" method="post">
             <div class="row">
-                <h3 class="col-md-12 page-title">Edit Account Info</h3>
+                <div class="col-md">
+                    <h3 class="page-title">Edit Account Info</h3>
+                </div>
             </div>
             <div class="row form-group">
-                <label class="col-md-4" for="usernameInput">Username</label>
-                <input type="text" class="col-md-8 form-control" id="usernameInput" value="dwhite" disabled>
+                <div class="col-md-4">
+                    <label th:for="${#ids.next('username')}">Username</label>
+                </div>
+                <div class="col-md-8 pl-0 pr-0">
+                    <input type="text" class="form-control" th:id="username" th:name="username"
+                           th:value="*{username}" disabled>
+                </div>
             </div>
             <div class="row form-group">
-                <label class="col-md-4" for="firstNameInput">First Name</label>
-                <input type="text" class="col-md-8 form-control" id="firstNameInput" placeholder="First name">
+                <div class="col-md-4">
+                    <label th:for="${#ids.next('firstName')}">First Name</label>
+                </div>
+                <div class="col-md-8 pl-0 pr-0">
+                    <input type="text" class="form-control" th:errorClass="is-invalid" th:field="*{firstName}"
+                           placeholder="First name" required>
+                    <div class="invalid-feedback" th:each="error : ${#fields.errors('firstName')}"
+                         th:text="${error}"></div>
+                </div>
             </div>
             <div class="row form-group">
-                <label class="col-md-4" for="lastNameInput">Last Name</label>
-                <input type="text" class="col-md-8 form-control" id="lastNameInput" placeholder="Last name">
+                <div class="col-md-4">
+                    <label th:for="${#ids.next('lastName')}">Last Name</label>
+                </div>
+                <div class="col-md-8 pl-0 pr-0">
+                    <input type="text" class="form-control" th:errorClass="is-invalid" th:field="*{lastName}"
+                           placeholder="Last name" required>
+                    <div class="invalid-feedback" th:each="error : ${#fields.errors('lastName')}"
+                         th:text="${error}"></div>
+                </div>
             </div>
-            <div class="row form-group">
-                <label class="col-md-4" for="sel2">Roles</label>
-                <select multiple class="col-md-8 form-control" id="sel2" name="sellist2">
-                    <option>ROLE_USER</option>
-                    <option>ROLE_ADMIN</option>
-                </select>
+            <div sec:authorize="hasRole('ROLE_ADMIN')" class="row form-group">
+                <div class="col-md-4">
+                    <label th:for="${#ids.next('username')}">Roles</label>
+                </div>
+                <div class="col-md-8 pl-0 pr-0">
+                    <select multiple class="form-control" th:errorClass="is-invalid" th:field="*{roles}">
+                        <option th:each="role : ${allRoles}" th:value="${role.id}" th:text="${role.type}"></option>
+                    </select>
+                    <div class="invalid-feedback" th:each="error : ${#fields.errors('roles')}" th:text="${error}"></div>
+                </div>
             </div>
+            <input sec:authorize="!hasRole('ROLE_ADMIN')" th:field="*{roles}" type="hidden">
             <div class="row">
                 <div class="col-md-8 offset-md-4">
                     <div class="row form-group">
@@ -43,7 +69,9 @@
                             <button type="submit" class="btn btn-primary btn-block">Submit</button>
                         </div>
                         <div class="col-md-6">
-                            <button type="button" class="btn btn-danger btn-block">Cancel</button>
+                            <button type="button" class="btn btn-danger btn-block" onclick="window.history.back()">
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>

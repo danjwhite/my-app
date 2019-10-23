@@ -216,6 +216,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + username + "/edit/info").session(mockHttpSession)
@@ -223,9 +224,10 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user", "allRoles"))
                 .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"));
 
@@ -245,6 +247,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
@@ -252,9 +255,10 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user", "allRoles"))
                 .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"));
 
@@ -273,6 +277,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
@@ -280,9 +285,10 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user", "allRoles"))
                 .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"));
 
@@ -302,6 +308,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
@@ -309,9 +316,10 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user", "allRoles"))
                 .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"));
 
@@ -330,6 +338,7 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
+        expectFindAllRoles();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
@@ -337,9 +346,10 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .flashAttr("user", userDto))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user", "allRoles"))
                 .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
+                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "roles", "Size"));
 
