@@ -19,10 +19,12 @@ public class NoteDto {
 
     private String username;
 
+    // TODO: Use @NotBlank instead of @NotEmpty
     @NotEmpty(message = "Cannot be blank", groups = BlankCheck.class)
     @Size(min = 1, max = 140, message = "Title must be within 140 characters.", groups = SizeCheck.class)
     private String title;
 
+    // TODO: Use @NotBlank instead of @NotEmpty
     @NotEmpty(message = "Cannot be blank", groups = BlankCheck.class)
     @Size(min = 1, max = 5000, message = "Body must be within 5,000 characters.", groups = SizeCheck.class)
     private String body;

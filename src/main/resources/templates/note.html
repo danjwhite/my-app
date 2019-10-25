@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+
+    <title>Notes</title>
+
+    <!--/*/ <th:block th:include="fragments/general.html :: head">
+        </th:block> /*/-->
+
+</head>
+<body>
+<div class="container-fluid h-100">
+    <div th:replace="fragments/general::navbar (${session.userInContext})"></div>
+
+    <div class="row ml-5">
+        <div class="col-md-6">
+            <!-------------------------- PAGE TITLE -------------------------->
+            <div class="row">
+                <div class="col-md-12">
+                    <h3 class="page-title">View Note</h3>
+                </div>
+            </div>
+
+            <!-------------------------- NOTE VIEW HEADING -------------------------->
+            <div class="row mb-5">
+                <div class="col-md">
+                    <h5>Showing Single Note</h5>
+                </div>
+                <div class="col-md">
+                    <div class="text-right">
+                        <a class="btn btn-sm btn-primary" th:href="@{/notes/view}">Show All</a>
+                        <a class="btn btn-sm btn-success ml-3" th:href="@{/note/add}">New Note</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <!-------------------------- NOTE -------------------------->
+                    <div class="row mb-5">
+                        <div class="col-md">
+                            <div class="card bg-light shadow" th:object="${note}">
+                                <div class="card-header">
+                                    <h5 class="mb-0" th:text="*{title}"></h5>
+                                </div>
+                                <div class="card-body" th:text="*{body}"></div>
+                                <div class="card-footer padding-bottom-0">
+                                    <div class="row mb-0">
+                                        <div class="col-md timestamp" th:text="'Created: ' + *{createdAt}">
+                                        </div>
+                                        <div class="col-md text-right">
+                                            <a class="btn btn-sm btn-dark" th:href="@{'/note/' + *{id} + '/edit'}"><i
+                                                    class="fa fa-edit"></i></a>
+                                            <a class="btn btn-sm btn-dark ml-3"
+                                               th:href="@{'/note/' + *{id} + '/delete'}"><i
+                                                    class="fa fa-trash-alt"></i></a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/general::footer"></div>
+</div>
+</body>
+</html>

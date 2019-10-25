@@ -35,6 +35,7 @@ public class NoteController {
         return userService.getLoggedInUser();
     }
 
+    // TODO: Is user model attribute necessary?
     @GetMapping(value = "/notes/view")
     public String getNotes(@RequestParam(value = "display", required = false) String display,
                            @CookieValue(value = "displayCookie", required = false) String displayCookieValue,
@@ -65,6 +66,7 @@ public class NoteController {
         return "notes";
     }
 
+    // TODO: Is user model attribute necessary?
     @GetMapping(value = "/note/{noteId}/view")
     public String getNote(@PathVariable(value = "noteId") long noteId,
                           @ModelAttribute("user") User user, Model model) {
@@ -73,6 +75,7 @@ public class NoteController {
         return "note";
     }
 
+    // TODO: Is user model attribute necessary?
     @GetMapping(value = "/note/add")
     public String addNote(@ModelAttribute("user") User user, Model model) {
         model.addAttribute("noteDto", new NoteDto());
@@ -93,6 +96,7 @@ public class NoteController {
         return "redirect:/note/" + noteId + "/view";
     }
 
+    // TODO: Is user model attribute necessary?
     @GetMapping(value = "/note/{noteId}/edit")
     public String editNote(@PathVariable(value = "noteId") long noteId, @ModelAttribute("user") User user, Model model) {
         NoteDto noteDto = new NoteDto(noteService.findById(noteId));
