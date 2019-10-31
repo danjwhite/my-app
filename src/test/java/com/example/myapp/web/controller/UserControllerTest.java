@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -32,11 +33,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @WebMvcTest(UserController.class)
@@ -840,17 +844,18 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void deleteAccountShouldRedirectTo403ForbiddenErrorPageWhenDeleteThrowsAccessDeniedException()  throws Exception {
         final String username = "mjones";
 
-        expectGetLoggedInUser();
         expectDeleteThrowsException(username, new AccessDeniedException("Access is denied"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete").session(mockHttpSession))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete")
+                .session(mockHttpSession)
+                .sessionAttr("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
 
         verifyAll();
 
-        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
@@ -858,29 +863,31 @@ public class UserControllerTest extends WebMvcBaseTest {
     public void deleteAccountShouldRedirectTo404NotFoundErrorPageWhenDeleteThrowsUsernameNotFoundException() throws Exception {
         final String username = "mjones";
 
-        expectGetLoggedInUser();
         expectDeleteThrowsException(username, new UsernameNotFoundException("Invalid username"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete").session(mockHttpSession))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete")
+                .session(mockHttpSession)
+                .sessionAttr("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
 
         verifyAll();
 
-        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
     @Test
     @WithMockUser(username = "mjones")
-    public void deleteAccountShouldRedirectToExpectedView() throws Exception {
+    public void deleteAccountShouldRedirectToExpectedViewWhenUserInContextDeletesOwnAccount() throws Exception {
         final String username = "mjones";
 
-        expectGetLoggedInUser();
         expectDeleteUser(username);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete").session(mockHttpSession))
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete")
+                .session(mockHttpSession)
+                .sessionAttr("userInContext", loggedInUser))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/logout"));
 
@@ -888,6 +895,27 @@ public class UserControllerTest extends WebMvcBaseTest {
 
         Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void deleteAccountShouldRedirectToExpectedViewWhenUserInContextDeletesAnotherUserAccount() throws Exception {
+        final String username = "testuser";
+
+        expectDeleteUser(username);
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete")
+                .session(mockHttpSession)
+                .sessionAttr("userInContext", loggedInUser))
+                .andExpect(MockMvcResultMatchers.status().isFound())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/admin"));
+
+        verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
+    }
+
+    // TODO: Add tests for when the userInContext attribute isn't already set when deleting users
 
     private void expectGetLoggedInUser() {
         EasyMock.expect(userServiceMock.getLoggedInUser())

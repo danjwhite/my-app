@@ -14,7 +14,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.WebUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Controller
@@ -110,9 +113,11 @@ public class UserController {
     }
 
     @GetMapping(value = "/user/{username}/delete")
-    public String deleteAccount(@PathVariable(value = "username") String username) {
+    public String deleteAccount(@PathVariable(value = "username") String username, HttpSession httpSession) {
+        User userInContext = (User) httpSession.getAttribute("userInContext");
+        String redirectUrl = userInContext.getUsername().equals(username) ? "redirect:/logout" : "redirect:/admin";
         userService.delete(username);
 
-        return "redirect:/logout";
+        return redirectUrl;
     }
 }
