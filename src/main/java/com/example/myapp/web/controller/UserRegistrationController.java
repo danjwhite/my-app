@@ -71,13 +71,12 @@ public class UserRegistrationController {
         userService.add(userRegistrationDto);
         redirectAttributes.addAttribute("confirmation", "created");
 
-
+        String redirectUrl = "redirect:/user/" + username + "/view";
         if (securityService.currentAuthenticationHasRole(RoleType.ROLE_ADMIN)) {
-            return "redirect:/admin";
+            return redirectUrl;
         } else {
             securityService.autoLogin(username, userRegistrationDto.getPassword());
-
-            return "redirect:/user/" + username + "/view";
+            return redirectUrl;
         }
     }
 }

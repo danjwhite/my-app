@@ -576,7 +576,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
 
     @Test
     @WithMockUser(username = "mjones", roles = {"USER", "ADMIN"})
-    public void registerUserShouldRedirectToAdminViewWhenCurrentUserIsAdmin() throws Exception {
+    public void registerUserShouldRedirectToUserViewWhenCurrentUserIsAdmin() throws Exception {
         final UserRegistrationDto registrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
@@ -596,7 +596,7 @@ public class UserRegistrationControllerTest extends WebMvcBaseTest {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .flashAttr("user", registrationDto))
                 .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/admin?confirmation=created"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/user/" + registrationDto.getUsername() + "/view?confirmation=created"));
 
         verifyAll();
 
