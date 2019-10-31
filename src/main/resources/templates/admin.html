@@ -27,7 +27,7 @@
                     <h5>User Accounts</h5>
                 </div>
                 <div class="col-md text-right">
-                    <button type="button" class="btn btn-sm btn-success">Add User</button>
+                    <a class="btn btn-sm btn-success" th:href="@{/register}">Add User</a>
                 </div>
             </div>
 
@@ -44,36 +44,18 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>dwhite</td>
-                            <td>Daniel</td>
-                            <td>White</td>
+                        <tr th:each="user : ${users}">
+                            <td th:text="${user.username}">dwhite</td>
+                            <td th:text="${user.firstName}">Daniel</td>
+                            <td th:text="${user.lastName}">White</td>
                             <td>
                                 <div class="btn-toolbar">
-                                    <button type="button" class="btn btn-sm btn-primary grid-btn">Edit</button>
-                                    <button type="button" class="btn btn-sm btn-danger grid-btn ml-3">Delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>dwhite</td>
-                            <td>Daniel</td>
-                            <td>White</td>
-                            <td>
-                                <div class="btn-toolbar">
-                                    <button type="button" class="btn btn-sm btn-primary grid-btn">Edit</button>
-                                    <button type="button" class="btn btn-sm btn-danger grid-btn ml-3">Delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>dwhite</td>
-                            <td>Daniel</td>
-                            <td>White</td>
-                            <td>
-                                <div class="btn-toolbar">
-                                    <button type="button" class="btn btn-sm btn-primary grid-btn">Edit</button>
-                                    <button type="button" class="btn btn-sm btn-danger grid-btn ml-3">Delete</button>
+                                    <a class="btn btn-sm btn-dark"
+                                       th:href="@{'/user/' + ${user.username} + '/edit/info'}"><i
+                                            class="fa fa-edit"></i></a>
+                                    <a class="btn btn-sm btn-dark ml-3"
+                                       th:href="@{'/user/' + ${user.username} + '/delete'}"><i
+                                            class="fa fa-trash-alt"></i></a>
                                 </div>
                             </td>
                         </tr>
