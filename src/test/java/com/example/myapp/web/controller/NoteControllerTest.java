@@ -197,8 +197,6 @@ public class NoteControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    // TODO: Enable when note view is finished.
-    @Ignore
     @Test
     @WithMockUser(username = "mjones")
     public void getNoteShouldReturnExpectedViewWithExpectedAttributes() throws Exception {
@@ -255,7 +253,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 // TODO: Assert noteDto attribute - use flash attribute?
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasErrors("noteDto"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "title", "NotEmpty"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "title", "NotBlank"));
 
         verifyAll();
 
@@ -265,7 +263,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
 
     @Test
     @WithMockUser(username = "mjones")
-    public void saveNoteShouldNotProceedWhenNoteTitleIsBlank() throws Exception {
+    public void saveNoteShouldNotProceedWhenNoteTitleIsEmpty() throws Exception {
         expectGetLoggedInUser();
         replayAll();
 
@@ -280,7 +278,31 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 // TODO: Assert noteDto attribute - use flash attribute?
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasErrors("noteDto"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "title", "NotEmpty"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "title", "NotBlank"));
+
+        verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void saveNoteShouldNotProceedWhenNoteTitleIsAllWhitespace() throws Exception {
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/note/add").session(mockHttpSession)
+                .param("title", StringUtils.SPACE)
+                .param("body", "Body")
+                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("noteForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "noteDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
+                // TODO: Assert noteDto attribute - use flash attribute?
+                .andExpect(MockMvcResultMatchers.model().errorCount(1))
+                .andExpect(MockMvcResultMatchers.model().attributeHasErrors("noteDto"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "title", "NotBlank"));
 
         verifyAll();
 
@@ -325,7 +347,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 // TODO: Assert noteDto attribute - use flash attribute?
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasErrors("noteDto"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "body", "NotEmpty"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "body", "NotBlank"));
 
         verifyAll();
 
@@ -334,7 +356,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
 
     @Test
     @WithMockUser(username = "mjones")
-    public void saveNoteShouldNotProceedWhenNoteBodyIsBlank() throws Exception {
+    public void saveNoteShouldNotProceedWhenNoteBodyIsEmpty() throws Exception {
         expectGetLoggedInUser();
         replayAll();
 
@@ -349,7 +371,31 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 // TODO: Assert noteDto attribute - use flash attribute?
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasErrors("noteDto"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "body", "NotEmpty"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "body", "NotBlank"));
+
+        verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void saveNoteShouldNotProceedWhenNoteBodyIsAllWhitespace() throws Exception {
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/note/add").session(mockHttpSession)
+                .param("title", "Title")
+                .param("body", StringUtils.SPACE)
+                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("noteForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "noteDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
+                // TODO: Assert noteDto attribute - use flash attribute?
+                .andExpect(MockMvcResultMatchers.model().errorCount(1))
+                .andExpect(MockMvcResultMatchers.model().attributeHasErrors("noteDto"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "body", "NotBlank"));
 
         verifyAll();
 
@@ -481,7 +527,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 // TODO: Assert noteDto attribute - use flash attribute?
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasErrors("noteDto"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "title", "NotEmpty"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "title", "NotBlank"));
 
         verifyAll();
 
@@ -490,7 +536,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
 
     @Test
     @WithMockUser(username = "mjones")
-    public void updateNoteShouldNotProceedWhenNoteTitleIsBlank() throws Exception {
+    public void updateNoteShouldNotProceedWhenNoteTitleIsEmpty() throws Exception {
         expectGetLoggedInUser();
         replayAll();
 
@@ -505,7 +551,31 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 // TODO: Assert noteDto attribute - use flash attribute?
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasErrors("noteDto"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "title", "NotEmpty"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "title", "NotBlank"));
+
+        verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldNotProceedWhenNoteTitleIsAllWhitespace() throws Exception {
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/note/2/edit").session(mockHttpSession)
+                .param("title", StringUtils.SPACE)
+                .param("body", "Body")
+                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("noteForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "noteDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
+                // TODO: Assert noteDto attribute - use flash attribute?
+                .andExpect(MockMvcResultMatchers.model().errorCount(1))
+                .andExpect(MockMvcResultMatchers.model().attributeHasErrors("noteDto"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "title", "NotBlank"));
 
         verifyAll();
 
@@ -552,7 +622,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 // TODO: Assert noteDto attribute - use flash attribute?
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasErrors("noteDto"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "body", "NotEmpty"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "body", "NotBlank"));
 
         verifyAll();
 
@@ -561,7 +631,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
 
     @Test
     @WithMockUser(username = "mjones")
-    public void updateNoteShouldNotProceedWhenNoteBodyIsBlank() throws Exception {
+    public void updateNoteShouldNotProceedWhenNoteBodyIsEmpty() throws Exception {
         expectGetLoggedInUser();
         replayAll();
 
@@ -576,7 +646,31 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 // TODO: Assert noteDto attribute - use flash attribute?
                 .andExpect(MockMvcResultMatchers.model().errorCount(1))
                 .andExpect(MockMvcResultMatchers.model().attributeHasErrors("noteDto"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "body", "NotEmpty"));
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "body", "NotBlank"));
+
+        verifyAll();
+
+        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldNotProceedWhenNoteBodyIsAllWhitespace() throws Exception {
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/note/2/edit").session(mockHttpSession)
+                .param("title", "Title")
+                .param("body", StringUtils.SPACE)
+                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("noteForm"))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "noteDto"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
+                // TODO: Assert noteDto attribute - use flash attribute?
+                .andExpect(MockMvcResultMatchers.model().errorCount(1))
+                .andExpect(MockMvcResultMatchers.model().attributeHasErrors("noteDto"))
+                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("noteDto", "body", "NotBlank"));
 
         verifyAll();
 
