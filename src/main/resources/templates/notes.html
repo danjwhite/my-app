@@ -24,12 +24,14 @@
             <!-------------------------- NOTE VIEW HEADING -------------------------->
             <div class="row mb-5">
                 <div class="col-md">
-                    <h5>Showing All Notes</h5>
+                    <h5 th:text="${display == 'all' ? 'Showing All Notes' : 'Showing Recent Notes'}"></h5>
                 </div>
                 <div class="col-md">
                     <div class="text-right">
-                        <button type="button" class="btn btn-sm btn-primary">Show Recent</button>
-                        <button type="button" class="btn btn-sm btn-success ml-3">Add Note</button>
+                        <a class="btn btn-sm btn-primary"
+                           th:href="@{/notes/view(display=${display == 'all' ? 'recent' : 'all'})}"
+                           th:text="${display == 'all' ? 'Show Recent' : 'Show All'}">Show Recent</a>
+                        <a class="btn btn-sm btn-success ml-3" th:href="@{/note/add}">Add Note</a>
                     </div>
                 </div>
             </div>
@@ -38,57 +40,30 @@
             <div class="row">
                 <div class="col-md-12">
 
-                    <!-------------------------- NEW NOTE -------------------------->
-                    <div class="row mb-5">
+                    <!-------------------------- NOTE -------------------------->
+                    <div class="row mb-5" th:each="note : ${notes}">
                         <div class="col-md">
                             <div class="card bg-light shadow">
                                 <div class="card-header">
-                                    <h5 class="mb-0">Note title...</h5>
+                                    <h5 class="mb-0" th:text="${note.title}"></h5>
                                 </div>
-                                <div class="card-body">Content</div>
+                                <div class="card-body" th:text="${note.body}"></div>
                                 <div class="card-footer padding-bottom-0">
                                     <div class="row mb-0">
-                                        <div class="col-md timestamp">
-                                            Added: 2019-10-17
+                                        <div class="col-md timestamp" th:text="${note.createdAt}">
                                         </div>
                                         <div class="col-md text-right">
-                                            <button type="button" class="btn btn-sm btn-dark"><i
-                                                    class="fa fa-edit"></i></button>
-                                            <button type="button" class="btn btn-sm btn-dark ml-3"><i
-                                                    class="fa fa-trash-alt"></i></button>
+                                            <a class="btn btn-sm btn-dark" th:href="@{'/note/' + ${note.id} + '/edit'}"><i
+                                                    class="fa fa-edit"></i></a>
+                                            <a class="btn btn-sm btn-dark ml-3"
+                                               th:href="@{'/note/' + ${note.id} + '/delete'}"><i
+                                                    class="fa fa-trash-alt"></i></a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-------------------------- NEW NOTE -------------------------->
-
-                    <div class="row mb-5">
-                        <div class="col-md">
-                            <div class="card bg-light shadow">
-                                <div class="card-header">
-                                    <h5 class="mb-0">Note title...</h5>
-                                </div>
-                                <div class="card-body">Content</div>
-                                <div class="card-footer padding-bottom-0">
-                                    <div class="row mb-0">
-                                        <div class="col-md timestamp">
-                                            Added: 2019-10-17
-                                        </div>
-                                        <div class="col-md text-right">
-                                            <button type="button" class="btn btn-sm btn-dark"><i
-                                                    class="fa fa-edit"></i></button>
-                                            <button type="button" class="btn btn-sm btn-dark ml-3"><i
-                                                    class="fa fa-trash-alt"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>

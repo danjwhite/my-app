@@ -238,7 +238,7 @@ public class NoteServiceTest extends EasyMockSupport {
     }
 
     private void expectFindTop10ByUserIdOrderByCreatedAtDesc(long userId, List<Note> notes) {
-        EasyMock.expect(noteRepositoryMock.findTop10ByUserIdOrderByCreatedAtDesc(userId))
+        EasyMock.expect(noteRepositoryMock.findTop5ByUserIdOrderByCreatedAtDesc(userId))
                 .andReturn(notes);
     }
 

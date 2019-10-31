@@ -9,7 +9,7 @@ public interface NoteRepository extends CrudRepository<Note, Long> {
 
     List<Note> findAllByUserId(long userId);
 
-    List<Note> findTop10ByUserIdOrderByCreatedAtDesc(long userId);
+    List<Note> findTop5ByUserIdOrderByCreatedAtDesc(long userId);
 
     long countByUserId(long userId);
 }

@@ -63,15 +63,15 @@ public class NoteRepositoryTest {
     @Test
     @Transactional
     @Rollback
-    public void findTop10ByUserIdOrderByCreatedAtDescShouldReturnTenMostRecentNotes() {
+    public void findTop5ByUserIdOrderByCreatedAtDescShouldReturnFiveMostRecentNotes() {
         User user1 = newUser("user1");
         User user2 = newUser("user2");
 
         IntStream.range(0, 11).forEach(i -> newNote(user1));
         IntStream.range(0, 4).forEach(i -> newNote(user2));
 
-        List<Note> notes = noteRepository.findTop10ByUserIdOrderByCreatedAtDesc(user1.getId());
-        Assert.assertEquals(10, notes.size());
+        List<Note> notes = noteRepository.findTop5ByUserIdOrderByCreatedAtDesc(user1.getId());
+        Assert.assertEquals(5, notes.size());
 
         Date lastDate = null;
         for (Note note : notes) {

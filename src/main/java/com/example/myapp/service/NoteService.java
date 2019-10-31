@@ -35,7 +35,7 @@ public class NoteService {
     public List<Note> findRecent() {
         User user = userService.getLoggedInUser();
 
-        return noteRepository.findTop10ByUserIdOrderByCreatedAtDesc(user.getId());
+        return noteRepository.findTop5ByUserIdOrderByCreatedAtDesc(user.getId());
     }
 
     @PostAuthorize("returnObject.user.username == authentication.name")
