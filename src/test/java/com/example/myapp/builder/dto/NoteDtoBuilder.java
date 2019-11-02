@@ -13,8 +13,8 @@ public class NoteDtoBuilder extends AbstractBuilder<NoteDto> {
         return new NoteDtoBuilder();
     }
 
-    public NoteDtoBuilder withNoteId(Long noteId) {
-        getObject().setId(noteId);
+    public NoteDtoBuilder withId(Long id) {
+        getObject().setId(id);
         return this;
     }
 

@@ -11,11 +11,17 @@ import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDto;
 import com.example.myapp.service.NoteService;
 import com.example.myapp.service.UserService;
+import com.example.myapp.test.TestUtil;
 import com.example.myapp.test.WebMvcBaseTest;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.easymock.EasyMock;
-import org.junit.*;
+import org.hamcrest.collection.IsMapContaining;
+import org.hamcrest.collection.IsMapWithSize;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
@@ -26,9 +32,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -73,6 +79,8 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
     }
 
+    // ******************************************************** GET ALL TESTS ********************************************************
+
     @Test
     @WithMockUser(username = "mjones")
     public void getNotesShouldShowRecentNotesWhenDisplayParamIsNullAndDisplayCookieValueIsNull() throws Exception {
@@ -82,7 +90,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
         expectFindRecentNotes(notes);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/notes/view").session(mockHttpSession))
+        mockMvc.perform(MockMvcRequestBuilders.get("/notes").session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("notes"))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "notes", "display"))
@@ -104,7 +112,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
         expectFindAllNotes(notes);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/notes/view").session(mockHttpSession)
+        mockMvc.perform(MockMvcRequestBuilders.get("/notes").session(mockHttpSession)
                 .cookie(new Cookie("displayCookie", "all")))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("notes"))
@@ -128,7 +136,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
         expectFindAllNotes(notes);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/notes/view").session(mockHttpSession)
+        mockMvc.perform(MockMvcRequestBuilders.get("/notes").session(mockHttpSession)
                 .param("display", "all"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("notes"))
@@ -151,7 +159,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
         expectFindRecentNotes(notes);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/notes/view").session(mockHttpSession)
+        mockMvc.perform(MockMvcRequestBuilders.get("/notes").session(mockHttpSession)
                 .param("display", "recent"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("notes"))
@@ -167,9 +175,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
         Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
-    //TODO ******************************************************** GET TESTS ********************************************************
-
-    // TODO: refactor - get
+    // ******************************************************** GET TESTS ********************************************************
     @Test
     @WithMockUser(username = "mjones")
     public void getNoteShouldRedirectTo404NotFoundErrorPageWhenFindNoteByIdThrowsEntityNotFoundException() throws Exception {
@@ -179,12 +185,13 @@ public class NoteControllerTest extends WebMvcBaseTest {
         expectFindNoteByIdThrowsException(noteId, new EntityNotFoundException());
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/note/" + noteId + "/view"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/notes/" + noteId))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
+
+        verifyAll();
     }
 
-    // TODO: refactor - get
     @Test
     @WithMockUser(username = "mjones")
     public void getNoteShouldRedirectTo404ForbiddenErrorPageWhenFindNoteByIdThrowsAccessDeniedException() throws Exception {
@@ -194,26 +201,536 @@ public class NoteControllerTest extends WebMvcBaseTest {
         expectFindNoteByIdThrowsException(noteId, new AccessDeniedException("Access id denied"));
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/note/" + noteId + "/view"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/notes/" + noteId))
                 .andExpect(MockMvcResultMatchers.status().isFound())
                 .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
 
         verifyAll();
     }
 
-    //TODO ******************************************************** ADD TESTS ********************************************************
+    @Test
+    @WithMockUser(username = "mjones")
+    public void getNoteShouldReturnExpectedResult() throws Exception {
+        final Note note = newNote(1L, loggedInUser);
+        final NoteDto noteDto = new NoteDto(note);
 
+        expectGetLoggedInUser();
+        expectFindNoteById(note.getId(), note);
+        replayAll();
 
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/notes/" + note.getId())
+                .contentType(TestUtil.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
 
+        verifyAll();
 
+        Assert.assertEquals(noteDto, TestUtil.jsonToObject(result.getResponse().getContentAsString(), NoteDto.class));
+    }
 
-    //TODO ******************************************************** UPDATE TESTS ********************************************************
+    // ******************************************************** ADD TESTS ********************************************************
+    @Test
+    @WithMockUser(username = "mjones")
+    public void saveNoteShouldReturnExpectedResultWhenTitleIsNull() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withUsername(loggedInUser.getUsername())
+                .withBody("Body")
+                .build();
 
+        expectGetLoggedInUser();
+        replayAll();
 
+        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Cannot be blank")));
 
+        verifyAll();
+    }
 
+    @Test
+    @WithMockUser(username = "mjones")
+    public void saveNoteShouldReturnExpectedResultWhenTitleIsEmpty() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withUsername(loggedInUser.getUsername())
+                .withTitle(StringUtils.EMPTY)
+                .withBody("Body")
+                .build();
 
-    //TODO ******************************************************** DELETE TESTS ********************************************************
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Cannot be blank")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void saveNoteShouldReturnExpectedResultWhenTitleIsBlank() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withUsername(loggedInUser.getUsername())
+                .withTitle(StringUtils.SPACE)
+                .withBody("Body")
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Cannot be blank")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void saveNoteShouldReturnExpectedResultWhenTitleExceedsMaxLength() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withUsername(loggedInUser.getUsername())
+                .withTitle(RandomStringUtils.random(141))
+                .withBody("Body")
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Title must be within 140 characters.")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void saveNoteShouldReturnExpectedResultWhenBodyIsNull() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withUsername(loggedInUser.getUsername())
+                .withTitle("Title")
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Cannot be blank")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void saveNoteShouldReturnExpectedResultWhenBodyIsEmpty() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withUsername(loggedInUser.getUsername())
+                .withTitle("Title")
+                .withBody(StringUtils.EMPTY)
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Cannot be blank")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void saveNoteShouldReturnExpectedResultWhenBodyIsBlank() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withUsername(loggedInUser.getUsername())
+                .withTitle("Title")
+                .withBody(StringUtils.SPACE)
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Cannot be blank")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void saveNoteShouldReturnExpectedResultWhenBodyExceedsMaxLength() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withUsername(loggedInUser.getUsername())
+                .withTitle("Title")
+                .withBody(RandomStringUtils.random(5001))
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Body must be within 5,000 characters.")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void saveNoteShouldReturnExpectedResultWhenNoErrorsPresent() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withUsername(loggedInUser.getUsername())
+                .withTitle("Title")
+                .withBody("Body")
+                .build();
+
+        expectGetLoggedInUser();
+        expectAddNote(noteDto, new Note());
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
+
+        verifyAll();
+    }
+
+    // ******************************************************** UPDATE TESTS ********************************************************
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldReturnExpectedResultWhenTitleIsNull() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withId(1L)
+                .withUsername(loggedInUser.getUsername())
+                .withBody("Body")
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Cannot be blank")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldReturnExpectedResultWhenTitleIsEmpty() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withId(1L)
+                .withUsername(loggedInUser.getUsername())
+                .withTitle(StringUtils.EMPTY)
+                .withBody("Body")
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Cannot be blank")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldReturnExpectedResultWhenTitleIsBlank() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withId(1L)
+                .withUsername(loggedInUser.getUsername())
+                .withTitle(StringUtils.SPACE)
+                .withBody("Body")
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Cannot be blank")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldReturnExpectedResultWhenTitleExceedsMaxLength() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withId(1L)
+                .withUsername(loggedInUser.getUsername())
+                .withTitle(RandomStringUtils.random(141))
+                .withBody("Body")
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Title must be within 140 characters.")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldReturnExpectedResultWhenBodyIsNull() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withId(1L)
+                .withUsername(loggedInUser.getUsername())
+                .withTitle("Title")
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Cannot be blank")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldReturnExpectedResultWhenBodyIsEmpty() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withId(1L)
+                .withUsername(loggedInUser.getUsername())
+                .withTitle("Title")
+                .withBody(StringUtils.EMPTY)
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Cannot be blank")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldReturnExpectedResultWhenBodyIsBlank() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withId(1L)
+                .withUsername(loggedInUser.getUsername())
+                .withTitle("Title")
+                .withBody(StringUtils.SPACE)
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Cannot be blank")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldReturnExpectedResultWhenBodyExceedsMaxLength() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withId(1L)
+                .withUsername(loggedInUser.getUsername())
+                .withTitle("Title")
+                .withBody(RandomStringUtils.random(5001))
+                .build();
+
+        expectGetLoggedInUser();
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Body must be within 5,000 characters.")));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldReturnExpectedResultWhenNoErrorsPresent() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withId(1L)
+                .withUsername(loggedInUser.getUsername())
+                .withTitle("Title")
+                .withBody("Body")
+                .build();
+
+        expectGetLoggedInUser();
+        expectUpdateNote(noteDto);
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldRedirectToExpectedViewWhenEntityNotFoundExceptionThrown() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withId(1L)
+                .withUsername(loggedInUser.getUsername())
+                .withTitle("Title")
+                .withBody("Body")
+                .build();
+
+        expectGetLoggedInUser();
+        expectUpdateNoteThrowsException(noteDto, new EntityNotFoundException());
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isFound())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateNoteShouldRedirectToExpectedViewWhenAccessDeniedExceptionThrown() throws Exception {
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
+                .withId(1L)
+                .withUsername(loggedInUser.getUsername())
+                .withTitle("Title")
+                .withBody("Body")
+                .build();
+
+        expectGetLoggedInUser();
+        expectUpdateNoteThrowsException(noteDto, new AccessDeniedException("Access is denied"));
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isFound())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
+    }
+
+    // ******************************************************** DELETE TESTS ********************************************************
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void deleteNoteShouldReturnExpectedResult() throws Exception {
+        final Note note = newNote(1L, loggedInUser);
+
+        expectGetLoggedInUser();
+        expectFindNoteById(note.getId(), note);
+        expectDeleteNote(note);
+
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/notes/" + note.getId())
+                .contentType(TestUtil.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void deleteNoteShouldRedirectToExpectedViewWhenEntityNotFoundExceptionThrown() throws Exception {
+        final long noteId = 1L;
+
+        expectGetLoggedInUser();
+        expectFindNoteByIdThrowsException(noteId, new EntityNotFoundException());
+
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/notes/" + noteId)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isFound())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
+
+        verifyAll();
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void deleteNoteShouldRedirectToExpectedViewWhenAccessDeniedExceptionThrown() throws Exception {
+        final long noteId = 1L;
+
+        expectGetLoggedInUser();
+        expectFindNoteByIdThrowsException(noteId, new AccessDeniedException("Access is denied"));
+
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/notes/" + noteId)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isFound())
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
+
+        verifyAll();
+    }
+
 
     private void expectGetLoggedInUser() {
         EasyMock.expect(userServiceMock.getLoggedInUser())

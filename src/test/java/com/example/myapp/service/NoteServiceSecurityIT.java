@@ -3,11 +3,11 @@ package com.example.myapp.service;
 import com.example.myapp.builder.dto.NoteDtoBuilder;
 import com.example.myapp.builder.entity.NoteBuilder;
 import com.example.myapp.builder.entity.UserBuilder;
-import com.example.myapp.repository.RoleRepository;
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDto;
+import com.example.myapp.repository.RoleRepository;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -112,7 +112,7 @@ public class NoteServiceSecurityIT {
     private NoteDto newNoteDtoForUser(String username) {
         Note note = newNoteForUser(username);
 
-        return NoteDtoBuilder.givenNoteDto().withNoteId(note.getId())
+        return NoteDtoBuilder.givenNoteDto().withId(note.getId())
                 .withUsername(username)
                 .withTitle("New Title")
                 .withBody("New body")

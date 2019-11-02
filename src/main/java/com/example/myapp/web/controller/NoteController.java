@@ -3,9 +3,9 @@ package com.example.myapp.web.controller;
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDto;
-import com.example.myapp.web.RestResponse;
 import com.example.myapp.service.NoteService;
 import com.example.myapp.service.UserService;
+import com.example.myapp.web.RestResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -68,68 +68,58 @@ public class NoteController {
         return "notes";
     }
 
-    // TODO: Refactor tests
     @GetMapping(value = "/{id}")
     @ResponseBody
     public ResponseEntity<NoteDto> getNote(@PathVariable(value = "id") long id) {
         return new ResponseEntity<>(new NoteDto(noteService.findById(id)), HttpStatus.OK);
     }
 
-    // TODO: Refactor tests
     @PostMapping
     @ResponseBody
     public ResponseEntity<RestResponse> saveNote(@RequestBody @Valid NoteDto noteDto, BindingResult result) {
-        // TODO: Consolidate
         if (result.hasErrors()) {
-            RestResponse restResponse = new RestResponse();
-            restResponse.setHasErrors(true);
-            Map<String, String> errors = result.getFieldErrors().stream()
-                    .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
-            restResponse.setErrors(errors);
-
-            return new ResponseEntity<>(restResponse, HttpStatus.OK);
+            return getErrorResponse(result);
         }
 
         noteService.add(noteDto);
 
-        RestResponse restResponse = new RestResponse();
-        restResponse.setHasErrors(false);
-
-        return new ResponseEntity<>(restResponse, HttpStatus.CREATED);
+        return getSuccessResponse(HttpStatus.CREATED);
     }
 
-    // TODO: Refactor tests
     @PutMapping
     @ResponseBody
     public ResponseEntity<RestResponse> updateNote(@RequestBody @Valid NoteDto noteDto, BindingResult result) {
-        // TODO: Consolidate
         if (result.hasErrors()) {
-            RestResponse restResponse = new RestResponse();
-            restResponse.setHasErrors(true);
-            Map<String, String> errors = result.getFieldErrors().stream()
-                    .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
-            restResponse.setErrors(errors);
-
-            return new ResponseEntity<>(restResponse, HttpStatus.OK);
+            return getErrorResponse(result);
         }
 
         noteService.update(noteDto);
 
-        RestResponse restResponse = new RestResponse();
-        restResponse.setHasErrors(false);
-
-        return new ResponseEntity<>(restResponse, HttpStatus.ACCEPTED);
+        return getSuccessResponse(HttpStatus.CREATED);
     }
 
-    // TODO: Refactor tests
     @DeleteMapping(value = "/{id}")
     @ResponseBody
     public ResponseEntity<RestResponse> deleteNote(@PathVariable(value = "id") long id) {
         noteService.delete(noteService.findById(id));
 
+        return getSuccessResponse(HttpStatus.OK);
+    }
+
+    private ResponseEntity<RestResponse> getErrorResponse(BindingResult bindingResult) {
+        RestResponse restResponse = new RestResponse();
+        restResponse.setHasErrors(true);
+        Map<String, String> errors = bindingResult.getFieldErrors().stream()
+                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+        restResponse.setErrors(errors);
+
+        return new ResponseEntity<>(restResponse, HttpStatus.OK);
+    }
+
+    private ResponseEntity<RestResponse> getSuccessResponse(HttpStatus httpStatus) {
         RestResponse restResponse = new RestResponse();
         restResponse.setHasErrors(false);
 
-        return new ResponseEntity<>(restResponse, HttpStatus.OK);
+        return new ResponseEntity<>(restResponse, httpStatus);
     }
 }

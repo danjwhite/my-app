@@ -3,10 +3,10 @@ package com.example.myapp.service;
 import com.example.myapp.builder.dto.NoteDtoBuilder;
 import com.example.myapp.builder.entity.NoteBuilder;
 import com.example.myapp.builder.entity.UserBuilder;
-import com.example.myapp.repository.NoteRepository;
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDto;
+import com.example.myapp.repository.NoteRepository;
 import org.easymock.*;
 import org.junit.Assert;
 import org.junit.Before;
@@ -151,7 +151,7 @@ public class NoteServiceTest extends EasyMockSupport {
                 .build();
 
         NoteDto noteDto = NoteDtoBuilder.givenNoteDto()
-                .withNoteId(1L)
+                .withId(1L)
                 .withUsername("mjones")
                 .withTitle("New Title")
                 .withBody("New body")
@@ -175,7 +175,7 @@ public class NoteServiceTest extends EasyMockSupport {
 
     @Test
     public void updateShouldReturnExpectedResult() {
-        NoteDto noteDto = NoteDtoBuilder.givenNoteDto().withNoteId(1L).build();
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto().withId(1L).build();
         Note note = NoteBuilder.givenNote().withId(1L).build();
 
         expectFindById(noteDto.getId(), note);
@@ -189,7 +189,7 @@ public class NoteServiceTest extends EasyMockSupport {
 
     @Test
     public void updateShouldThrowEntityNotFoundExceptionWhenNoteNotFound() {
-        NoteDto noteDto = NoteDtoBuilder.givenNoteDto().withNoteId(1L).build();
+        NoteDto noteDto = NoteDtoBuilder.givenNoteDto().withId(1L).build();
 
         expectedException.expect(EntityNotFoundException.class);
         expectedException.expectMessage("Note not found for id: " + noteDto.getId());
