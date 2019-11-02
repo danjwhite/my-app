@@ -61,7 +61,7 @@ public class NoteService {
     @Transactional
     public Note update(NoteDto noteDto) {
 
-        Note note = findById(noteDto.getNoteId());
+        Note note = findById(noteDto.getId());
         note.setTitle(noteDto.getTitle());
         note.setBody(noteDto.getBody());
 

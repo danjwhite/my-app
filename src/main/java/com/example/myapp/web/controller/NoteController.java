@@ -3,23 +3,27 @@ package com.example.myapp.web.controller;
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDto;
+import com.example.myapp.web.RestResponse;
 import com.example.myapp.service.NoteService;
-import com.example.myapp.service.SecurityService;
 import com.example.myapp.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @SessionAttributes("userInContext")
-@RequestMapping("/")
+@RequestMapping("/notes")
 public class NoteController {
 
     private final UserService userService;
@@ -35,11 +39,9 @@ public class NoteController {
         return userService.getLoggedInUser();
     }
 
-    // TODO: Is user model attribute necessary?
-    @GetMapping(value = "/notes/view")
+    @GetMapping
     public String getNotes(@RequestParam(value = "display", required = false) String display,
                            @CookieValue(value = "displayCookie", required = false) String displayCookieValue,
-                           @ModelAttribute("user") User user,
                            Model model,
                            HttpServletResponse response) {
 
@@ -66,63 +68,68 @@ public class NoteController {
         return "notes";
     }
 
-    // TODO: Is user model attribute necessary?
-    @GetMapping(value = "/note/{noteId}/view")
-    public String getNote(@PathVariable(value = "noteId") long noteId,
-                          @ModelAttribute("user") User user, Model model) {
-        model.addAttribute("note", noteService.findById(noteId));
-
-        return "note";
+    // TODO: Refactor tests
+    @GetMapping(value = "/{id}")
+    @ResponseBody
+    public ResponseEntity<NoteDto> getNote(@PathVariable(value = "id") long id) {
+        return new ResponseEntity<>(new NoteDto(noteService.findById(id)), HttpStatus.OK);
     }
 
-    // TODO: Is user model attribute necessary?
-    @GetMapping(value = "/note/add")
-    public String addNote(@ModelAttribute("user") User user, Model model) {
-        model.addAttribute("noteDto", new NoteDto());
-        model.addAttribute("formType", "add");
-
-        return "noteForm";
-    }
-
-    @PostMapping(value = "/note/add")
-    public String saveNote(@Valid NoteDto noteDto, BindingResult result, RedirectAttributes redirectAttributes) {
+    // TODO: Refactor tests
+    @PostMapping
+    @ResponseBody
+    public ResponseEntity<RestResponse> saveNote(@RequestBody @Valid NoteDto noteDto, BindingResult result) {
+        // TODO: Consolidate
         if (result.hasErrors()) {
-            return "noteForm";
+            RestResponse restResponse = new RestResponse();
+            restResponse.setHasErrors(true);
+            Map<String, String> errors = result.getFieldErrors().stream()
+                    .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+            restResponse.setErrors(errors);
+
+            return new ResponseEntity<>(restResponse, HttpStatus.OK);
         }
 
-        Long noteId = noteService.add(noteDto).getId();
-        redirectAttributes.addAttribute("confirmation", "added");
+        noteService.add(noteDto);
 
-        return "redirect:/note/" + noteId + "/view";
+        RestResponse restResponse = new RestResponse();
+        restResponse.setHasErrors(false);
+
+        return new ResponseEntity<>(restResponse, HttpStatus.CREATED);
     }
 
-    // TODO: Is user model attribute necessary?
-    @GetMapping(value = "/note/{noteId}/edit")
-    public String editNote(@PathVariable(value = "noteId") long noteId, @ModelAttribute("user") User user, Model model) {
-        NoteDto noteDto = new NoteDto(noteService.findById(noteId));
-        model.addAttribute("noteDto", noteDto);
-        model.addAttribute("formType", "edit");
-
-        return "noteForm";
-    }
-
-    @PostMapping(value = "/note/{noteId}/edit")
-    public String updateNote(@Valid NoteDto noteDto, BindingResult result, @PathVariable(value = "noteId") long noteId, RedirectAttributes redirectAttributes) {
+    // TODO: Refactor tests
+    @PutMapping
+    @ResponseBody
+    public ResponseEntity<RestResponse> updateNote(@RequestBody @Valid NoteDto noteDto, BindingResult result) {
+        // TODO: Consolidate
         if (result.hasErrors()) {
-            return "noteForm";
+            RestResponse restResponse = new RestResponse();
+            restResponse.setHasErrors(true);
+            Map<String, String> errors = result.getFieldErrors().stream()
+                    .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+            restResponse.setErrors(errors);
+
+            return new ResponseEntity<>(restResponse, HttpStatus.OK);
         }
 
         noteService.update(noteDto);
-        redirectAttributes.addAttribute("confirmation", "edited");
 
-        return "redirect:/note/" + noteId + "/view";
+        RestResponse restResponse = new RestResponse();
+        restResponse.setHasErrors(false);
+
+        return new ResponseEntity<>(restResponse, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping(value = "/note/{noteId}/delete")
-    public String deleteNote(@PathVariable(value = "noteId") long noteId) {
-        Note note = noteService.findById(noteId);
-        noteService.delete(note);
+    // TODO: Refactor tests
+    @DeleteMapping(value = "/{id}")
+    @ResponseBody
+    public ResponseEntity<RestResponse> deleteNote(@PathVariable(value = "id") long id) {
+        noteService.delete(noteService.findById(id));
 
-        return "redirect:/notes/view";
+        RestResponse restResponse = new RestResponse();
+        restResponse.setHasErrors(false);
+
+        return new ResponseEntity<>(restResponse, HttpStatus.OK);
     }
 }

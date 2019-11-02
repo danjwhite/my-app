@@ -18,6 +18,7 @@
             th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
     <script src="http://cdn.jsdelivr.net/webjars/bootstrap/4.3.1/js/bootstrap.min.js"
             th:src="@{/webjars/bootstrap/4.3.1/js/bootstrap.min.js}"></script>
+    <script src="../../static/js/main.js" th:src="@{/js/main.js}"></script>
 </head>
 <body>
 
@@ -33,7 +34,7 @@
                 <a class="nav-link" th:href="@{/}">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/notes/view}">Notes</a>
+                <a class="nav-link" th:href="@{/notes}">Notes</a>
             </li>
             <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
                 <a class="nav-link" th:href="@{/admin}">Admin</a>

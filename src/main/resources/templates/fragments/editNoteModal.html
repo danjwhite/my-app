@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!------------------------------ HEAD ------------------------------>
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <!--/*/ <th:block th:include="general.html :: head">
+        </th:block> /*/-->
+</head>
+<body>
+
+<!-------------------------- MODAL FORM WRAPPER -------------------------->
+<div class="editNoteForm" th:fragment="editNoteModal">
+
+    <!-------------------------- FORM -------------------------->
+    <form th:action="@{/notes}" th:method="put">
+
+        <!-------------------------- MODAL -------------------------->
+        <div class="modal fade" id="editNoteModal" tabindex="-1" role="dialog" aria-labelledby="modalLabelCreate"
+             aria-hidden="true">
+
+            <!-------------------------- MODAL DIALOG -------------------------->
+            <div class="modal-dialog modal-dialog-centered" role="document">
+
+                <!-------------------------- MODAL CONTENT -------------------------->
+                <div class="modal-content">
+
+                    <!-------------------------- MODAL HEADER -------------------------->
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabelCreate">Edit Note</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <!-------------------------- MODAL BODY -------------------------->
+                    <div class="modal-body">
+                        <p class="alert alert-info">
+                            All fields are required.
+                        </p>
+
+                        <input type="hidden" id="id" name="id"/>
+                        <input type="hidden" id="username" name="username"/>
+
+                        <div class="form-group">
+                            <label for="title" class="col-form-label">Title:</label>
+                            <input type="text" class="form-control" id="title" name="title" placeholder="Title"
+                                   required/>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="body" class="col-form-label">Title:</label>
+                            <textarea type="text" class="form-control" rows="5" id="body" name="body"
+                                      placeholder="Body" required></textarea>
+                        </div>
+
+                    </div>
+
+                    <!-------------------------- MODAL FOOTER -------------------------->
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" id="editNoteSubmitBtn" value="Save"/>
+                        <button type="button" class="btn btn-secondary" id="editNoteCancelBtn" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

@@ -160,13 +160,13 @@ public class NoteServiceTest extends EasyMockSupport {
         Assert.assertNotEquals(noteDto.getTitle(), note.getTitle());
         Assert.assertNotEquals(noteDto.getBody(), note.getBody());
 
-        expectFindById(noteDto.getNoteId(), note);
+        expectFindById(noteDto.getId(), note);
         replayAll();
 
         Note updatedNote = noteService.update(noteDto);
         verifyAll();
 
-        Assert.assertEquals(noteDto.getNoteId(), updatedNote.getId());
+        Assert.assertEquals(noteDto.getId(), updatedNote.getId());
         Assert.assertEquals(createdAt, updatedNote.getCreatedAt());
         Assert.assertEquals(user, updatedNote.getUser());
         Assert.assertEquals(noteDto.getTitle(), updatedNote.getTitle());
@@ -178,7 +178,7 @@ public class NoteServiceTest extends EasyMockSupport {
         NoteDto noteDto = NoteDtoBuilder.givenNoteDto().withNoteId(1L).build();
         Note note = NoteBuilder.givenNote().withId(1L).build();
 
-        expectFindById(noteDto.getNoteId(), note);
+        expectFindById(noteDto.getId(), note);
         replayAll();
 
         Note result = noteService.update(noteDto);
@@ -192,9 +192,9 @@ public class NoteServiceTest extends EasyMockSupport {
         NoteDto noteDto = NoteDtoBuilder.givenNoteDto().withNoteId(1L).build();
 
         expectedException.expect(EntityNotFoundException.class);
-        expectedException.expectMessage("Note not found for id: " + noteDto.getNoteId());
+        expectedException.expectMessage("Note not found for id: " + noteDto.getId());
 
-        expectFindById(noteDto.getNoteId(), null);
+        expectFindById(noteDto.getId(), null);
         replayAll();
 
         noteService.update(noteDto);

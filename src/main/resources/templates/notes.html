@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head lang="en">
 
     <title>Notes</title>
@@ -29,9 +29,10 @@
                 <div class="col-md">
                     <div class="text-right">
                         <a class="btn btn-sm btn-primary"
-                           th:href="@{/notes/view(display=${display == 'all' ? 'recent' : 'all'})}"
+                           th:href="@{/notes(display=${display == 'all' ? 'recent' : 'all'})}"
                            th:text="${display == 'all' ? 'Show Recent' : 'Show All'}">Show Recent</a>
-                        <a class="btn btn-sm btn-success ml-3" th:href="@{/note/add}">Add Note</a>
+                        <!-- TODO: Rename nBtn class -->
+                        <button type="button" class="btn btn-sm btn-success ml-3 newBtn">Add Note</button>
                     </div>
                 </div>
             </div>
@@ -41,7 +42,7 @@
                 <div class="col-md-12">
 
                     <!-------------------------- NOTE -------------------------->
-                    <div class="row mb-5" th:each="note : ${notes}">
+                    <div class="row mb-5 note-entry" th:each="note : ${notes}">
                         <div class="col-md">
                             <div class="card bg-light shadow">
                                 <div class="card-header">
@@ -53,11 +54,12 @@
                                         <div class="col-md timestamp" th:text="${note.createdAt}">
                                         </div>
                                         <div class="col-md text-right">
-                                            <a class="btn btn-sm btn-dark" th:href="@{'/note/' + ${note.id} + '/edit'}"><i
+                                            <a class="btn btn-sm btn-dark editBtn"
+                                               th:href="@{/notes/{id}(id=${note.id})}"><i
                                                     class="fa fa-edit"></i></a>
-                                            <a class="btn btn-sm btn-dark ml-3"
-                                               th:href="@{'/note/' + ${note.id} + '/delete'}"><i
-                                                    class="fa fa-trash-alt"></i></a>
+                                            <button class="btn btn-sm btn-dark ml-3 deleteBtn"
+                                                    th:href="@{/notes/{id}(id=${note.id})}"><i
+                                                    class="fa fa-trash-alt"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -68,6 +70,11 @@
             </div>
         </div>
     </div>
+
+    <!-------------------------- MODAL FORM WRAPPER -------------------------->
+    <div th:replace="fragments/addNoteModal::addNoteModal"></div>
+    <div th:replace="fragments/editNoteModal::editNoteModal"></div>
+    <div th:replace="fragments/deleteNoteModal::deleteNoteModal"></div>
 
     <div th:replace="fragments/general::footer"></div>
 </div>

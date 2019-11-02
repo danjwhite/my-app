@@ -14,7 +14,7 @@ public class NoteDtoBuilder extends AbstractBuilder<NoteDto> {
     }
 
     public NoteDtoBuilder withNoteId(Long noteId) {
-        getObject().setNoteId(noteId);
+        getObject().setId(noteId);
         return this;
     }
 

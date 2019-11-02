@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.GroupSequence;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Data
@@ -16,7 +15,7 @@ import javax.validation.constraints.Size;
 @GroupSequence({NoteDto.class, BlankCheck.class, SizeCheck.class})
 public class NoteDto {
 
-    private Long noteId;
+    private Long id;
 
     private String username;
 
@@ -29,7 +28,7 @@ public class NoteDto {
     private String body;
 
     public NoteDto(Note note) {
-        noteId = note.getId();
+        id = note.getId();
         username = note.getUser().getUsername();
         title = note.getTitle();
         body = note.getBody();

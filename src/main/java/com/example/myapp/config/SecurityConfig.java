@@ -63,9 +63,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     // TODO: Work out the details of this
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/css/**", "/images/**", "/webjars/**", "/register").permitAll()
+                .antMatchers("/css/**", "/images/**", "/js/**", "/webjars/**", "/register").permitAll()
                 .antMatchers("/admin").access("hasRole('ROLE_ADMIN')")
                 .anyRequest().authenticated()
                 .and()
