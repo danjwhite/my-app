@@ -2,6 +2,7 @@ package com.example.myapp.web.controller;
 
 import com.example.myapp.builder.dto.UserDtoBuilder;
 import com.example.myapp.builder.dto.UserPasswordDtoBuilder;
+import com.example.myapp.builder.dto.UserRegistrationDtoBuilder;
 import com.example.myapp.builder.entity.RoleBuilder;
 import com.example.myapp.builder.entity.UserBuilder;
 import com.example.myapp.domain.Role;
@@ -9,933 +10,549 @@ import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
-import com.example.myapp.service.RoleService;
-import com.example.myapp.service.SecurityService;
+import com.example.myapp.dto.UserRegistrationDto;
 import com.example.myapp.service.UserService;
+import com.example.myapp.test.TestUtil;
 import com.example.myapp.test.WebMvcBaseTest;
 import org.apache.commons.lang3.StringUtils;
 import org.easymock.EasyMock;
+import org.hamcrest.collection.IsMapContaining;
+import org.hamcrest.collection.IsMapWithSize;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.HttpSession;
-import java.util.*;
+import java.util.Collections;
 
 @WebMvcTest(UserController.class)
 @ContextConfiguration(classes = {UserControllerTest.UserControllerTestConfig.class})
 public class UserControllerTest extends WebMvcBaseTest {
 
     private static final UserService userServiceMock = EasyMock.strictMock(UserService.class);
-    private static final RoleService roleServiceMock = EasyMock.strictMock(RoleService.class);
-    private static final SecurityService securityServiceMock = EasyMock.strictMock(SecurityService.class);
-    
-    private static final List<Role> roles = new ArrayList<>();
-    
-    static {
-        roles.add(RoleBuilder.givenRole().withId(1L).withType(RoleType.ROLE_USER).build());
-        roles.add(RoleBuilder.givenRole().withId(2L).withType(RoleType.ROLE_ADMIN).build());
-    }
 
     @Autowired
     private MockMvc mockMvc;
 
-    private MockHttpSession mockHttpSession;
-    private User loggedInUser;
-
     @BeforeClass
     public static void init() {
-        initMocks(userServiceMock, roleServiceMock, securityServiceMock);
+        initMocks(userServiceMock);
     }
 
-    @Before
-    public void setUp() {
-        mockHttpSession = new MockHttpSession();
-
-        loggedInUser = UserBuilder.givenUser()
-                .withId(1L)
-                .withFirstName("Mike")
-                .withLastName("Jones")
-                .withUsername("mjones")
-                .withPassword(new BCryptPasswordEncoder().encode("test123"))
-                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
-                .build();
-    }
-
-    @Test
+    @Test                                                                                                                                                       
     @WithMockUser(username = "mjones")
-    public void getUserAccountShouldRedirectTo403ForbiddenErrorPageWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
-        final String username = "mjones";
-
-        expectGetLoggedInUser();
-        expectFindByUsernameThrowsException(username, new AccessDeniedException("Access id denied"));
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/view").session(mockHttpSession))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
-
-        verifyAll();
-
-        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void getUserAccountShouldRedirectTo404NotFoundErrorPageWhenFindByUsernameThrowsUsernameNotFoundException() throws Exception {
-        final String username = "mjones";
-
-        expectGetLoggedInUser();
-        expectFindByUsernameThrowsException(username, new UsernameNotFoundException("Invalid username"));
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/view").session(mockHttpSession))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
-
-        verifyAll();
-
-        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void getUserAccountShouldReturnExpectedViewWithExpectedAttributes() throws Exception {
+    public void getUserShouldReturnExpectedResult() throws Exception {
         final User user = newUser();
+        final UserDto userDto = new UserDto(user);
 
-        expectGetLoggedInUser();
         expectFindByUserName(user.getUsername(), user);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + user.getUsername() + "/view").session(mockHttpSession))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/" + user.getUsername())
+                .contentType(TestUtil.APPLICATION_JSON_UTF8))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("user"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", user));
+                .andReturn();
 
         verifyAll();
 
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
+        Assert.assertEquals(userDto, TestUtil.jsonToObject(result.getResponse().getContentAsString(), UserDto.class));
+    }
+
+    // ------------------------------------------ ADD USER - FIRST NAME ------------------------------------------
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenFirstNameIsNull() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setFirstName(null);
+
+        addUserAndExpectFieldError(dto, "firstName", "Cannot be blank");
     }
 
     @Test
     @WithMockUser(username = "mjones")
-    public void editUserInfoShouldRedirectTo403ForbiddenErrorPageWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
-        final String username = "mjones";
+    public void addUserShouldReturnExpectedResultWhenFirstNameIsEmpty() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setFirstName(StringUtils.EMPTY);
 
-        expectGetLoggedInUser();
-        expectFindByUsernameThrowsException(username, new AccessDeniedException("Access is denied"));
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/edit/info").session(mockHttpSession))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
-
-        verifyAll();
-
-        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        addUserAndExpectFieldError(dto, "firstName", "Cannot be blank");
     }
 
     @Test
     @WithMockUser(username = "mjones")
-    public void editUserInfoShouldRedirectTo404NotFoundErrorPageWhenFindByUsernameThrowsUsernameNotFoundException() throws Exception {
-        final String username = "mjones";
+    public void addUserShouldReturnExpectedResultWhenFirstNameIsBlank() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setFirstName(StringUtils.SPACE);
 
-        expectGetLoggedInUser();
-        expectFindByUsernameThrowsException(username, new UsernameNotFoundException("Invalid username"));
-        replayAll();
+        addUserAndExpectFieldError(dto, "firstName", "Cannot be blank");
+    }
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/edit/info").session(mockHttpSession))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
+    // ------------------------------------------ ADD USER - LAST NAME ------------------------------------------
 
-        verifyAll();
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenLastNameIsNull() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setLastName(null);
 
-        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
+        addUserAndExpectFieldError(dto, "lastName", "Cannot be blank");
     }
 
     @Test
     @WithMockUser(username = "mjones")
-    public void editUserInfoShouldReturnExpectedViewWithExpectedAttributes() throws Exception {
-        final User user = newUser();
-        final UserDto userDto = UserDtoBuilder.givenUserDto().withUsername(user.getUsername())
-                .withFirstName(user.getFirstName())
-                .withLastName(user.getLastName())
-                .withRoles(user.getRoles())
-                .build();
+    public void addUserShouldReturnExpectedResultWhenLastNameIsEmpty() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setLastName(StringUtils.EMPTY);
 
-        expectGetLoggedInUser();
-        expectFindByUserName(user.getUsername(), user);
-        expectFindAllRoles();
+        addUserAndExpectFieldError(dto, "lastName", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenLastNameIsBlank() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setLastName(StringUtils.SPACE);
+
+        addUserAndExpectFieldError(dto, "lastName", "Cannot be blank");
+    }
+
+    // ------------------------------------------ ADD USER - USERNAME ------------------------------------------
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenUsernameIsNull() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setUsername(null);
+
+        addUserAndExpectFieldError(dto, "username", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenUsernameIsEmpty() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setUsername(StringUtils.EMPTY);
+
+        addUserAndExpectFieldError(dto, "username", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenUsernameIsBlank() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setUsername(StringUtils.SPACE);
+
+        addUserAndExpectFieldError(dto, "username", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenUsernameAlreadyExists() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+
+        expectUserExistsCheck(dto.getUsername(), true);
+        addUserAndExpectFieldError(dto, "username", "There is already an account registered with this username.");
+    }
+
+    // ------------------------------------------ ADD USER - PASSWORD ------------------------------------------
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenPasswordIsNull() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setPassword(null);
+
+        addUserAndExpectFieldError(dto, "password", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenPasswordIsEmpty() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setPassword(StringUtils.EMPTY);
+
+        addUserAndExpectFieldError(dto, "password", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenPasswordIsBlank() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setPassword(StringUtils.SPACE);
+
+        addUserAndExpectFieldError(dto, "password", "Cannot be blank");
+    }
+
+    // ------------------------------------------ ADD USER - CONFIRM PASSWORD ------------------------------------------
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenConfirmPasswordIsNull() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setConfirmPassword(null);
+
+        addUserAndExpectFieldError(dto, "confirmPassword", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenConfirmPasswordIsEmpty() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setConfirmPassword(StringUtils.EMPTY);
+
+        addUserAndExpectFieldError(dto, "confirmPassword", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenConfirmPasswordIsBlank() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setConfirmPassword(StringUtils.SPACE);
+
+        addUserAndExpectFieldError(dto, "confirmPassword", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenPasswordFieldsDoNotMatch() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setConfirmPassword("test");
+
+        addUserAndExpectFieldError(dto, "confirmPassword", "Password fields must match.");
+    }
+
+    // ------------------------------------------ ADD USER - ROLES ------------------------------------------
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultWhenNoRolesArePresent() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+        dto.setRoleTypes(Collections.emptyList());
+
+        addUserAndExpectFieldError(dto, "roleTypes", "At least one role must be selected.");
+    }
+
+    // ------------------------------------------ ADD USER - SUCCESS ------------------------------------------
+    @Test
+    @WithMockUser(username = "mjones")
+    public void addUserShouldReturnExpectedResultOnSuccess() throws Exception {
+        UserRegistrationDto dto = newUserRegistrationDto();
+
+        expectUserExistsCheck(dto.getUsername(), false);
+        expectAddUser(dto);
+
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + user.getUsername() + "/edit/info").session(mockHttpSession))
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.objectToJson(dto)))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
+
+        verifyAll();
+    }
+
+    // ------------------------------------------ UPDATE USER - FIRST NAME ------------------------------------------
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateUserShouldReturnExpectedResultWhenFirstNameIsNull() throws Exception {
+        UserDto dto = newUserDto();
+        dto.setFirstName(null);
+
+        updateUserAndExpectFieldError(dto, "firstName", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateUserShouldReturnExpectedResultWhenFirstNameIsEmpty() throws Exception {
+        UserDto dto = newUserDto();
+        dto.setFirstName(StringUtils.EMPTY);
+
+        updateUserAndExpectFieldError(dto, "firstName", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateUserShouldReturnExpectedResultWhenFirstNameIsBlank() throws Exception {
+        UserDto dto = newUserDto();
+        dto.setFirstName(StringUtils.SPACE);
+
+        updateUserAndExpectFieldError(dto, "firstName", "Cannot be blank");
+    }
+
+    // ------------------------------------------ UPDATE USER - LAST NAME ------------------------------------------
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateUserShouldReturnExpectedResultWhenLastNameIsNull() throws Exception {
+        UserDto dto = newUserDto();
+        dto.setLastName(null);
+
+        updateUserAndExpectFieldError(dto, "lastName", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateUserShouldReturnExpectedResultWhenLastNameIsEmpty() throws Exception {
+        UserDto dto = newUserDto();
+        dto.setLastName(StringUtils.EMPTY);
+
+        updateUserAndExpectFieldError(dto, "lastName", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateUserShouldReturnExpectedResultWhenLastNameIsBlank() throws Exception {
+        UserDto dto = newUserDto();
+        dto.setLastName(StringUtils.SPACE);
+
+        updateUserAndExpectFieldError(dto, "lastName", "Cannot be blank");
+    }
+
+    // ------------------------------------------ UPDATE USER - ROLES ------------------------------------------
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateUserShouldReturnExpectedResultWhenNoRolesArePresent() throws Exception {
+        UserDto dto = newUserDto();
+        dto.setRoleTypes(Collections.emptyList());
+
+        updateUserAndExpectFieldError(dto, "roleTypes", "At least one role must be selected.");
+    }
+
+    // ------------------------------------------ UPDATE USER - SUCCESS ------------------------------------------
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updateUserShouldReturnExpectedResultOnSuccess() throws Exception {
+        UserDto dto = newUserDto();
+
+        expectUpdateUser(dto);
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.objectToJson(dto)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user", "allRoles"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
 
         verifyAll();
+    }
 
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
+    // ------------------------------------------ UPDATE PASSWORD - PASSWORD ------------------------------------------
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updatePasswordShouldReturnExpectedResultWhenPasswordIsNull() throws Exception {
+        UserPasswordDto dto = newPasswordDto();
+        dto.setPassword(null);
+
+        updatePasswordAndExpectFieldErrors(dto, "password", "Cannot be blank");
     }
 
     @Test
     @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldNotProceedWhenFirstNameIsNull() throws Exception {
-        final String username = "mjones";
-        final UserDto userDto = UserDtoBuilder.givenUserDto()
-                .withUsername("mjones")
-                .withLastName("Jones")
-                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
-                .build();
+    public void updatePasswordShouldReturnExpectedResultWhenPasswordIsEmpty() throws Exception {
+        UserPasswordDto dto = newPasswordDto();
+        dto.setPassword(StringUtils.EMPTY);
 
-        expectGetLoggedInUser();
-        expectFindAllRoles();
+        updatePasswordAndExpectFieldErrors(dto, "password", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updatePasswordShouldReturnExpectedResultWhenPasswordIsBlank() throws Exception {
+        UserPasswordDto dto = newPasswordDto();
+        dto.setPassword(StringUtils.SPACE);
+
+        updatePasswordAndExpectFieldErrors(dto, "password", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updatePasswordShouldReturnExpectedResultWhenPasswordIsInvalid() throws Exception {
+        UserPasswordDto dto = newPasswordDto();
+        dto.setPassword("test");
+
+        User user = newUser();
+        Assert.assertFalse(BCrypt.checkpw(dto.getPassword(), user.getPassword()));
+
+        expectFindByUserName(dto.getUsername(), newUser());
+        updatePasswordAndExpectFieldErrors(dto, "password", "Current password is invalid.");
+    }
+
+    // ------------------------------------------ UPDATE PASSWORD - NEW PASSWORD ------------------------------------------
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updatePasswordShouldReturnExpectedResultWhenNewPasswordIsNull() throws Exception {
+        UserPasswordDto dto = newPasswordDto();
+        dto.setNewPassword(null);
+
+        updatePasswordAndExpectFieldErrors(dto, "newPassword", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updatePasswordShouldReturnExpectedResultWhenNewPasswordIsEmpty() throws Exception {
+        UserPasswordDto dto = newPasswordDto();
+        dto.setNewPassword(StringUtils.EMPTY);
+
+        updatePasswordAndExpectFieldErrors(dto, "newPassword", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updatePasswordShouldReturnExpectedResultWhenNewPasswordIsBlank() throws Exception {
+        UserPasswordDto dto = newPasswordDto();
+        dto.setNewPassword(StringUtils.SPACE);
+
+        updatePasswordAndExpectFieldErrors(dto, "newPassword", "Cannot be blank");
+    }
+
+    // ------------------------------------------ UPDATE PASSWORD - CONFIRM PASSWORD ------------------------------------------
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updatePasswordShouldReturnExpectedResultWhenConfirmPasswordIsNull() throws Exception {
+        UserPasswordDto dto = newPasswordDto();
+        dto.setConfirmPassword(null);
+
+        updatePasswordAndExpectFieldErrors(dto, "confirmPassword", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updatePasswordShouldReturnExpectedResultWhenConfirmPasswordIsEmpty() throws Exception {
+        UserPasswordDto dto = newPasswordDto();
+        dto.setConfirmPassword(StringUtils.EMPTY);
+
+        updatePasswordAndExpectFieldErrors(dto, "confirmPassword", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updatePasswordShouldReturnExpectedResultWhenConfirmPasswordIsBlank() throws Exception {
+        UserPasswordDto dto = newPasswordDto();
+        dto.setConfirmPassword(StringUtils.SPACE);
+
+        updatePasswordAndExpectFieldErrors(dto, "confirmPassword", "Cannot be blank");
+    }
+
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updatePasswordShouldReturnExpectedResultWhenPasswordFieldsDoNotMatch() throws Exception {
+        UserPasswordDto dto = newPasswordDto();
+        dto.setConfirmPassword("test");
+
+        Assert.assertNotEquals(dto.getNewPassword(), dto.getConfirmPassword());
+
+        updatePasswordAndExpectFieldErrors(dto, "confirmPassword", "The password fields must match.");
+    }
+
+    // ------------------------------------------ UPDATE PASSWORD - SUCCESS ------------------------------------------
+    @Test
+    @WithMockUser(username = "mjones")
+    public void updatePasswordShouldReturnExpectedResultOnSuccess() throws Exception {
+        UserPasswordDto dto = newPasswordDto();
+        User user = newUser();
+
+        Assert.assertTrue(BCrypt.checkpw(dto.getPassword(), user.getPassword()));
+
+        expectFindByUserName(dto.getUsername(), user);
+        expectUpdatePassword(dto);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + username + "/edit/info").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("user", userDto))
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/password")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.objectToJson(dto)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user", "allRoles"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
 
         verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
+    // ------------------------------------------ DELETE USER ------------------------------------------
     @Test
     @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldNotProceedWhenFirstNameIsBlank() throws Exception {
-        final UserDto userDto = UserDtoBuilder.givenUserDto()
-                .withUsername("mjones")
-                .withFirstName(StringUtils.EMPTY)
-                .withLastName("Jones")
-                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
-                .build();
-
-        expectGetLoggedInUser();
-        expectFindAllRoles();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("user", userDto))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user", "allRoles"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "firstName", "NotBlank"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldNotProceedWhenLastNameIsNull() throws Exception {
-        final UserDto userDto = UserDtoBuilder.givenUserDto()
-                .withUsername("mjones")
-                .withFirstName("Mike")
-                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
-                .build();
-
-        expectGetLoggedInUser();
-        expectFindAllRoles();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("user", userDto))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user", "allRoles"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldNotProceedWhenLastNameIsBlank() throws Exception {
-        final UserDto userDto = UserDtoBuilder.givenUserDto()
-                .withUsername("mjones")
-                .withFirstName("Mike")
-                .withLastName(StringUtils.EMPTY)
-                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
-                .build();
-
-        expectGetLoggedInUser();
-        expectFindAllRoles();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("user", userDto))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user", "allRoles"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "lastName", "NotBlank"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldNotProceedWhenNoRolesAreSelected() throws Exception {
-        final UserDto userDto = UserDtoBuilder.givenUserDto()
-                .withUsername("mjones")
-                .withFirstName("Mike")
-                .withLastName("Jones")
-                .build();
-
-        expectGetLoggedInUser();
-        expectFindAllRoles();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("user", userDto))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("accountForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "user", "allRoles"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("user", userDto))
-                .andExpect(MockMvcResultMatchers.model().attribute("allRoles", roles))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("user", "roles", "Size"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldRedirectTo403ForbiddenErrorPageWhenUpdateUserThrowsAccessDeniedException() throws Exception {
-        final UserDto userDto = UserDtoBuilder.givenUserDto()
-                .withUsername("mjones")
-                .withFirstName("Mike")
-                .withLastName("Jones")
-                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
-                .build();
-
-        expectGetLoggedInUser();
-        expectUpdateUserThrowsException(userDto, new AccessDeniedException("Access is denied"));
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("user", userDto))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
-
-        verifyAll();
-
-        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldRedirectTo404NotFoundErrorPageWhenUpdateUserThrowsUsernameNotFoundException() throws Exception {
-        final UserDto userDto = UserDtoBuilder.givenUserDto()
-                .withUsername("mjones")
-                .withFirstName("Mike")
-                .withLastName("Jones")
-                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
-                .build();
-
-        expectGetLoggedInUser();
-        expectUpdateUserThrowsException(userDto, new UsernameNotFoundException("Invalid username"));
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("user", userDto))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
-
-        verifyAll();
-
-        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldRedirectTo404NotFoundErrorPageWhenUpdateUserThrowsEntityNotFoundException() throws Exception {
-        final UserDto userDto = UserDtoBuilder.givenUserDto()
-                .withUsername("mjones")
-                .withFirstName("Mike")
-                .withLastName("Jones")
-                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
-                .build();
-
-        expectGetLoggedInUser();
-        expectUpdateUserThrowsException(userDto, new EntityNotFoundException());
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("user", userDto))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
-
-        verifyAll();
-
-        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldRedirectToAdminPageWhenModeParamIsSetToAdminAndCurrentUserIsAdmin() throws Exception {
-        final UserDto userDto = UserDtoBuilder.givenUserDto()
-                .withUsername("mjones")
-                .withFirstName("Mike")
-                .withLastName("Jones")
-                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
-                .build();
-
-        expectGetLoggedInUser();
-        expectUpdateUser(userDto);
-        expectAdminRoleCheck(true);
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .param("mode", "admin")
-                .flashAttr("user", userDto))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/admin?confirmation=edited"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldRedirectToUserPageWhenModeParamIsSetToAdminAndCurrentUserIsNotAdmin() throws Exception {
-        final UserDto userDto = UserDtoBuilder.givenUserDto()
-                .withUsername("mjones")
-                .withFirstName("Mike")
-                .withLastName("Jones")
-                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
-                .build();
-
-        expectGetLoggedInUser();
-        expectUpdateUser(userDto);
-        expectAdminRoleCheck(false);
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .param("mode", "admin")
-                .flashAttr("user", userDto))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/user/" + userDto.getUsername() + "/view?confirmation=infoUpdated"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldRedirectToUserPageWhenModeParamIsNotAdmin() throws Exception {
-        final UserDto userDto = UserDtoBuilder.givenUserDto()
-                .withUsername("mjones")
-                .withFirstName("Mike")
-                .withLastName("Jones")
-                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
-                .build();
-
-        expectGetLoggedInUser();
-        expectUpdateUser(userDto);
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .param("mode", "test")
-                .flashAttr("user", userDto))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/user/" + userDto.getUsername() + "/view?confirmation=infoUpdated"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void updateUserInfoShouldRedirectToUserPageWhenModeParamIsNull() throws Exception {
-        final UserDto userDto = UserDtoBuilder.givenUserDto()
-                .withUsername("mjones")
-                .withFirstName("Mike")
-                .withLastName("Jones")
-                .withRoles(Collections.singleton(newRole(1L, RoleType.ROLE_USER)))
-                .build();
-
-        expectGetLoggedInUser();
-        expectUpdateUser(userDto);
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userDto.getUsername() + "/edit/info").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("user", userDto))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/user/" + userDto.getUsername() + "/view?confirmation=infoUpdated"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldReturnExpectedViewWithExpectedAttributes() throws Exception {
-        final UserPasswordDto userPasswordDto = UserPasswordDtoBuilder.givenUserPasswordDto()
-                .withUsername("mjones").build();
-
-        expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldNotProceedWhenPasswordIsNull() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto(null, "test", "test");
-
-        expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "password", "NotBlank"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldNotProceedWhenPasswordIsBlank() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto(StringUtils.EMPTY, "test", "test");
-
-        expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "password", "NotBlank"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldNotProceedWhenNewPasswordIsNull() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", null, "test");
-
-        expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "newPassword", "NotBlank"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldNotProceedWhenNewPasswordIsBlank() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", StringUtils.EMPTY, "test");
-
-        expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "newPassword", "NotBlank"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldNotProceedwhenConfirmNewPasswordIsNull() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", null);
-
-        expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmPassword", "NotBlank"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldNotProceedWhenConfirmNewPasswordIsBlank() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", StringUtils.EMPTY);
-
-        expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmPassword", "NotBlank"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldNotProceedWhenPasswordsDoNotMatch() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "doesnotmatch");
-
-        expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "confirmPassword", "FieldMatch"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldRedirectTo403ForbiddenErrorPageWhenFindByUsernameThrowsAccessDeniedException() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
-
-        expectGetLoggedInUser();
-        expectFindByUsernameThrowsException(userPasswordDto.getUsername(), new AccessDeniedException("Access is denied"));
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
-
-        verifyAll();
-
-        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldRedirectTo404NotFoundErrorPageWhenfindByUsernameThrowsUsernameNotFoundException() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
-
-        expectGetLoggedInUser();
-        expectFindByUsernameThrowsException(userPasswordDto.getUsername(), new UsernameNotFoundException("Invalid username"));
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
-
-        verifyAll();
-
-        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldNotProceedWhenCurrentPasswordIsInvalid() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("invalid", "test", "test");
-        final User user = newUser();
-
-        Assert.assertFalse(BCrypt.checkpw(userPasswordDto.getPassword(), user.getPassword()));
-
-        expectGetLoggedInUser();
-        expectFindByUserName(userPasswordDto.getUsername(), user);
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("passwordForm"))
-                .andExpect(MockMvcResultMatchers.model().attributeExists("userInContext", "userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.model().errorCount(1))
-                .andExpect(MockMvcResultMatchers.model().attributeHasErrors("userPasswordDto"))
-                .andExpect(MockMvcResultMatchers.model().attributeHasFieldErrorCode("userPasswordDto", "password", "InvalidPassword"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldRedirectTo403ForbiddenErrorPageWhenUpdatePasswordThrowsAccessDeniedException() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
-        final User user = newUser();
-
-        expectGetLoggedInUser();
-        expectFindByUserName(userPasswordDto.getUsername(), user);
-        expectUpdatePasswordThrowsException(userPasswordDto, new AccessDeniedException("Access is denied"));
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
-
-        verifyAll();
-
-        Assert.assertNull(mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void editPasswordShouldRedirectToExpectedView() throws Exception {
-        final UserPasswordDto userPasswordDto = newUserPasswordDto("test123", "test", "test");
-        final User user = newUser();
-
-        expectGetLoggedInUser();
-        expectFindByUserName(userPasswordDto.getUsername(), user);
-        expectUpdatePassword(userPasswordDto);
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/" + userPasswordDto.getUsername() + "/edit/password").session(mockHttpSession)
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .flashAttr("userPasswordDto", userPasswordDto))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/user/" + userPasswordDto.getUsername() + "/view?confirmation=passwordUpdated"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void deleteAccountShouldRedirectTo403ForbiddenErrorPageWhenDeleteThrowsAccessDeniedException()  throws Exception {
-        final String username = "mjones";
-
-        expectDeleteThrowsException(username, new AccessDeniedException("Access is denied"));
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete")
-                .session(mockHttpSession)
-                .sessionAttr("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void deleteAccountShouldRedirectTo404NotFoundErrorPageWhenDeleteThrowsUsernameNotFoundException() throws Exception {
-        final String username = "mjones";
-
-        expectDeleteThrowsException(username, new UsernameNotFoundException("Invalid username"));
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete")
-                .session(mockHttpSession)
-                .sessionAttr("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/404"));
-
-        verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    @Test
-    @WithMockUser(username = "mjones")
-    public void deleteAccountShouldRedirectToExpectedViewWhenUserInContextDeletesOwnAccount() throws Exception {
-        final String username = "mjones";
+    public void deleteUserShouldReturnExpectedResult() throws Exception {
+        String username = "mjones";
 
         expectDeleteUser(username);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete")
-                .session(mockHttpSession)
-                .sessionAttr("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/logout"));
+        mockMvc.perform(MockMvcRequestBuilders.delete("/users/" + username)
+                .contentType(TestUtil.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
 
         verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
-    @Test
-    @WithMockUser(username = "mjones")
-    public void deleteAccountShouldRedirectToExpectedViewWhenUserInContextDeletesAnotherUserAccount() throws Exception {
-        final String username = "testuser";
-
-        expectDeleteUser(username);
+    public void addUserAndExpectFieldError(UserRegistrationDto dto, String fieldName, String message) throws Exception {
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/" + username + "/delete")
-                .session(mockHttpSession)
-                .sessionAttr("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/admin"));
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.objectToJson(dto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry(fieldName, message)));
 
         verifyAll();
-
-        Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
-    // TODO: Add tests for when the userInContext attribute isn't already set when deleting users
+    public void updateUserAndExpectFieldError(UserDto dto, String fieldName, String message) throws Exception {
+        replayAll();
 
-    private void expectGetLoggedInUser() {
-        EasyMock.expect(userServiceMock.getLoggedInUser())
-                .andReturn(loggedInUser);
+        mockMvc.perform(MockMvcRequestBuilders.put("/users")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.objectToJson(dto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry(fieldName, message)));
+
+        verifyAll();
     }
 
-    private void expectFindAllRoles() {
-        EasyMock.expect(roleServiceMock.findAll()).andReturn(roles);
+    public void updatePasswordAndExpectFieldErrors(UserPasswordDto dto, String fieldName, String message) throws Exception {
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/password")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.objectToJson(dto)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry(fieldName, message)));
+
+        verifyAll();
     }
 
-    private <T extends RuntimeException> void expectFindByUsernameThrowsException(String username, T exception) {
-        EasyMock.expect(userServiceMock.findByUsername(username)).andThrow(exception);
+    private void expectUserExistsCheck(String username, boolean userExists) {
+        EasyMock.expect(userServiceMock.userExists(username))
+                .andReturn(userExists);
+    }
+
+    private void expectAddUser(UserRegistrationDto userRegistrationDto) {
+        EasyMock.expect(userServiceMock.add(userRegistrationDto))
+                .andReturn(new User());
     }
 
     private void expectFindByUserName(String username, User user) {
         EasyMock.expect(userServiceMock.findByUsername(username)).andReturn(user);
-    }
-
-    private <T extends RuntimeException> void expectUpdateUserThrowsException(UserDto userDto, T exception) {
-        EasyMock.expect(userServiceMock.update(userDto)).andThrow(exception);
     }
 
     private void expectUpdateUser(UserDto user) {
@@ -943,22 +560,8 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .andReturn(new User());
     }
 
-    private void expectAdminRoleCheck(boolean userIsAdmin) {
-        EasyMock.expect(securityServiceMock.currentAuthenticationHasRole(RoleType.ROLE_ADMIN))
-                .andReturn(userIsAdmin);
-    }
-
-    private <T extends RuntimeException> void expectUpdatePasswordThrowsException(UserPasswordDto userPasswordDto, T exception) {
-        EasyMock.expect(userServiceMock.updatePassword(userPasswordDto)).andThrow(exception);
-    }
-
     private void expectUpdatePassword(UserPasswordDto userPasswordDto) {
         EasyMock.expect(userServiceMock.updatePassword(userPasswordDto)).andReturn(new User());
-    }
-
-    private <T extends RuntimeException> void expectDeleteThrowsException(String username, T exception) {
-        userServiceMock.delete(username);
-        EasyMock.expectLastCall().andThrow(exception);
     }
 
     private void expectDeleteUser(String username) {
@@ -966,29 +569,46 @@ public class UserControllerTest extends WebMvcBaseTest {
         EasyMock.expectLastCall();
     }
 
-    private Role newRole(long id, RoleType roleType) {
-        return RoleBuilder.givenRole().withId(id).withType(roleType).build();
+    private Role newRole() {
+        return RoleBuilder.givenRole().withId(1L).withType(RoleType.ROLE_USER).build();
     }
 
     private User newUser() {
-        Set<Role> roles = Collections.singleton(newRole(1L, RoleType.ROLE_USER));
-
         return UserBuilder.givenUser()
                 .withId(1L)
                 .withFirstName("Mike")
                 .withLastName("Jones")
                 .withUsername("mjones")
-                .withPassword(new BCryptPasswordEncoder().encode("test123"))
-                .withRoles(roles)
+                .withPassword(new BCryptPasswordEncoder().encode("password"))
+                .withRoles(Collections.singleton(newRole()))
                 .build();
     }
 
-    private UserPasswordDto newUserPasswordDto(String password, String newPassword, String confirmNewPassword) {
-        return UserPasswordDtoBuilder.givenUserPasswordDto()
+    private UserRegistrationDto newUserRegistrationDto() {
+        return UserRegistrationDtoBuilder.givenUserRegistrationDto()
+                .withFirstName("Mike")
+                .withLastName("Jones")
                 .withUsername("mjones")
-                .withPassword(password)
-                .withNewPassword(newPassword)
-                .withConfirmPassword(confirmNewPassword)
+                .withPassword("password")
+                .withConfirmPassword("password")
+                .withRoleTypes(Collections.singletonList(RoleType.ROLE_USER))
+                .build();
+    }
+
+    private UserDto newUserDto() {
+        return UserDtoBuilder.givenUserDto()
+                .withFirstName("Mike")
+                .withLastName("Jones")
+                .withUsername("mjones")
+                .withRoleTypes(Collections.singletonList(RoleType.ROLE_USER))
+                .build();
+    }
+
+    private UserPasswordDto newPasswordDto() {
+        return UserPasswordDtoBuilder.givenUserPasswordDto()
+                .withPassword("password")
+                .withNewPassword("newpassword")
+                .withConfirmPassword("newpassword")
                 .build();
     }
 
@@ -998,7 +618,7 @@ public class UserControllerTest extends WebMvcBaseTest {
 
         @Bean
         public UserController userController() {
-            return new UserController(userServiceMock, roleServiceMock, securityServiceMock);
+            return new UserController(userServiceMock);
         }
     }
 }

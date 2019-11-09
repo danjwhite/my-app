@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!------------------------------ HEAD ------------------------------>
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <!--/*/ <th:block th:include="general.html :: head">
+        </th:block> /*/-->
+</head>
+<body>
+
+<!-------------------------- MODAL FORM WRAPPER -------------------------->
+<div class="editUserForm" th:fragment="editUserModal (roles)">
+
+    <!-------------------------- FORM -------------------------->
+    <form action="#" method="post">
+
+        <!-------------------------- MODAL -------------------------->
+        <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="modalLabelCreate"
+             aria-hidden="true">
+
+            <!-------------------------- MODAL DIALOG -------------------------->
+            <div class="modal-dialog modal-dialog-centered" role="document">
+
+                <!-------------------------- MODAL CONTENT -------------------------->
+                <div class="modal-content">
+
+                    <!-------------------------- MODAL HEADER -------------------------->
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabelCreate">Edit User</h5>
+                        <button type="button" class="close exitBtn" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <!-------------------------- MODAL BODY -------------------------->
+                    <div class="modal-body">
+                        <!--<p class="alert alert-info">-->
+                        <!--All fields are required.-->
+                        <!--</p>-->
+
+                        <div class="form-group">
+                            <label for="username" class="col-form-label">Username:</label>
+                            <input type="text" class="form-control" id="username" name="username" disabled/>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="firstName" class="col-form-label">First Name:</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName"
+                                   placeholder="First name"
+                                   required/>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="lastName" class="col-form-label">Last Name:</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName"
+                                   placeholder="Last name"
+                                   required/>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="roleTypes" class="col-form-label">Roles:</label>
+                            <select multiple class="form-control" id="roleTypes" name="roleTypes">
+                                <option th:each="role : ${roles}" th:value="${role}"
+                                        th:text="${role}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-------------------------- MODAL FOOTER -------------------------->
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" id="editUserSubmitBtn" value="Save"/>
+                        <button type="button" class="btn btn-secondary exitBtn">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

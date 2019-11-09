@@ -1,6 +1,7 @@
 package com.example.myapp.service;
 
 import com.example.myapp.domain.Role;
+import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
@@ -15,9 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -77,12 +79,7 @@ public class UserService {
         user.setLastName(userRegistrationDto.getLastName());
         user.setUsername(userRegistrationDto.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(userRegistrationDto.getPassword()));
-
-        for (Role role : userRegistrationDto.getRoles()) {
-            Role userRole = roleRepository.findById(role.getId())
-                    .orElseThrow(() -> new EntityNotFoundException("Role not found for id: " + role.getId()));
-            user.getRoles().add(userRole);
-        }
+        user.setRoles(new HashSet<>(roleRepository.findByTypeIn(userRegistrationDto.getRoleTypes())));
 
         return userRepository.save(user);
     }
@@ -97,20 +94,18 @@ public class UserService {
         user.setFirstName(userDto.getFirstName());
         user.setLastName(userDto.getLastName());
 
-        Set<Role> newRoles = userDto.getRoles();
-        Set<Role> originalRoles = user.getRoles();
+        List<RoleType> updatedRoleTypes = userDto.getRoleTypes();
+        List<RoleType> currentRoleTypes = user.getRoles().stream().map(Role::getType).collect(Collectors.toList());
 
         // Add any new roles.
-        for (Role role : newRoles) {
-            if (!originalRoles.contains(role)) {
-                Role userRole = roleRepository.findById(role.getId())
-                        .orElseThrow(() -> new EntityNotFoundException("Role not found for id: " + role.getId()));
-                user.getRoles().add(userRole);
+        for (RoleType roleType : updatedRoleTypes) {
+            if (!currentRoleTypes.contains(roleType)) {
+                user.getRoles().add(roleRepository.findByType(roleType));
             }
         }
 
         // Remove roles that were removed.
-        user.getRoles().removeIf(role -> !newRoles.contains(role));
+        user.getRoles().removeIf(role -> !updatedRoleTypes.contains(role.getType()));
 
         return user;
     }

@@ -24,14 +24,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
-@WebMvcTest(AdminController.class)
-@ContextConfiguration(classes = {AdminControllerTest.AdminControllerTestConfig.class})
-public class AdminControllerTest extends WebMvcBaseTest {
+@WebMvcTest(AccountController.class)
+@ContextConfiguration(classes = {AccountControllerTest.AccountControllerTestConfig.class})
+public class AccountControllerTest extends WebMvcBaseTest {
 
     private static final UserService userServiceMock = EasyMock.strictMock(UserService.class);
 
@@ -52,47 +49,24 @@ public class AdminControllerTest extends WebMvcBaseTest {
 
     @Test
     @WithMockUser(username = "mjones")
-    public void getAdminPageShouldRedirectToErrorPageWhenUserIsNotAdmin() throws Exception {
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/admin"))
-                .andExpect(MockMvcResultMatchers.status().isFound())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/error/403"));
-
-        verifyAll();
-    }
-
-    @Test
-    @WithMockUser(username = "mjones", roles = {"USER", "ADMIN"})
-    public void getAdminPageShouldReturnExpectedResultWhenUserIsAmin() throws Exception {
+    public void getAccountPageShouldReturnExpectedResult() throws Exception {
         final User loggedInUser = newUser();
-        final List<User> users = Collections.singletonList(loggedInUser);
-        final List<RoleType> roles = Arrays.stream(RoleType.values()).collect(Collectors.toList());
 
         expectGetLoggedInUser(loggedInUser);
-        expectFindAllUsers(users);
         replayAll();
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/admin")
+        mockMvc.perform(MockMvcRequestBuilders.get("/account")
                 .session(mockHttpSession))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("admin"))
-                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("users", users))
-                .andExpect(MockMvcResultMatchers.model().attribute("roles", roles))
-                .andExpect(MockMvcResultMatchers.model().attribute("defaultRole", RoleType.ROLE_USER));
+                .andExpect(MockMvcResultMatchers.view().name("account"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser));
 
         Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-
-        verifyAll();
     }
 
     private void expectGetLoggedInUser(User user) {
-        EasyMock.expect(userServiceMock.getLoggedInUser()).andReturn(user);
-    }
-
-    private void expectFindAllUsers(List<User> users) {
-        EasyMock.expect(userServiceMock.findAll()).andReturn(users);
+        EasyMock.expect(userServiceMock.getLoggedInUser())
+                .andReturn(user);
     }
 
     private User newUser() {
@@ -111,11 +85,11 @@ public class AdminControllerTest extends WebMvcBaseTest {
 
     @Configuration
     @Import(WebMvcBaseTest.TestConfig.class)
-    static class AdminControllerTestConfig {
+    static class AccountControllerTestConfig {
 
         @Bean
-        public AdminController adminController() {
-            return new AdminController(userServiceMock);
+        public AccountController accountController() {
+            return new AccountController(userServiceMock);
         }
     }
 }

@@ -3,11 +3,12 @@ package com.example.myapp.service;
 import com.example.myapp.builder.dto.UserDtoBuilder;
 import com.example.myapp.builder.dto.UserPasswordDtoBuilder;
 import com.example.myapp.builder.entity.UserBuilder;
-import com.example.myapp.repository.RoleRepository;
+import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
+import com.example.myapp.repository.RoleRepository;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -169,7 +171,7 @@ public class UserServiceSecurityIT {
 
         return UserDtoBuilder.givenUserDto().withFirstName("Test").withLastName("User")
                 .withUsername(username)
-                .withRoles(user.getRoles())
+                .withRoleTypes(user.getRoles().stream().map(Role::getType).collect(Collectors.toList()))
                 .build();
 
     }

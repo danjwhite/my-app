@@ -7,12 +7,17 @@
     <!--/*/ <th:block th:include="fragments/general.html :: head">
         </th:block> /*/-->
 
+    <script th:src="@{/js/account.js}"></script>
+    <script th:src="@{/js/users.js}"></script>
 </head>
 <body>
 <div class="container-fluid h-100">
     <div th:replace="fragments/general::navbar (${session.userInContext})"></div>
 
-    <div class="row ml-5" th:object="${user}">
+    <!-- Used for retrieving account info via ajax -->
+    <div id="usernameVar" th:text="${session.userInContext.username}" hidden></div>
+
+    <div class="row ml-5">
         <div class="col-md-4">
             <!-------------------------- PAGE TITLE CONTENT -------------------------->
             <div class="row">
@@ -25,29 +30,29 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card bg-light shadow">
+                    <div class="card bg-light shadow account-panel">
                         <div class="card-header">
                             <h5>Account Info</h5>
                         </div>
                         <div class="card-body">
-                            <table class="table table-borderless mb-0">
+                            <!-- Values in this table are loaded via ajax -->
+                            <table class="table table-borderless mb-0 account-table">
                                 <tr>
                                     <th width="200px">Username:</th>
-                                    <td th:text="*{username}"></td>
+                                    <td id="username"></td>
                                 </tr>
                                 <tr>
                                     <th width="200px">First Name:</th>
-                                    <td th:text="*{firstName}"></td>
+                                    <td id="firstName"></td>
                                 </tr>
                                 <tr>
                                     <th width="200px">Last Name:</th>
-                                    <td th:text="*{lastName}">White</td>
+                                    <td id="lastName"></td>
                                 </tr>
                                 <tr>
                                     <th width="200px">Roles:</th>
                                     <td>
-                                        <ul class="list-group">
-                                            <li class="list-group-item" th:each="role : *{roles}" th:text="${role.type}"></li>
+                                        <ul id="roles" class="list-group">
                                         </ul>
                                     </td>
                                 </tr>
@@ -55,7 +60,8 @@
 
                         </div>
                         <div class="card-footer text-right">
-                            <a class="text-right" th:href="@{'/user/' + *{username} + '/edit/info'}">Edit</a>
+                            <button id="editAccountBtn" type="button" class="btn btn-sm btn-dark"><i
+                                    class="fa fa-edit"></i></button>
                         </div>
                     </div>
                 </div>
@@ -70,10 +76,10 @@
                         <div class="card-body">
                             <table class="table table-borderless mb-0">
                                 <tr>
-                                    <td><a th:href="@{'/user/' + *{username} + '/edit/password'}">Change password</a></td>
+                                    <td><a id="changePasswordLink" href="#">Change password</a></td>
                                 </tr>
                                 <tr>
-                                    <td><a th:href="@{'/user/' + *{username} + '/delete'}">Delete account</a></td>
+                                    <td><a id="deleteAccountLink" href="#">Delete account</a></td>
                                 </tr>
                             </table>
                         </div>
@@ -83,6 +89,9 @@
         </div>
     </div>
 
+    <div th:replace="fragments/editAccountModal::editAccountModal"></div>
+    <div th:replace="fragments/passwordModal::passwordModal"></div>
+    <div th:replace="fragments/confirmationModal::confirmationModal ('deleteAccountModal', 'Delete account?')"></div>
     <div th:replace="fragments/general::footer"></div>
 </div>
 </body>

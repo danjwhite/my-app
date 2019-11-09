@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @GroupSequence({UserPasswordDto.class, BlankCheck.class, MatchCheck.class})
 @FieldMatch(first = "newPassword", second = "confirmPassword",
-        message = "The password fields must match",
+        message = "The password fields must match.",
         groups = MatchCheck.class)
 public class UserPasswordDto {
 

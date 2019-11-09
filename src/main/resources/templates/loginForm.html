@@ -7,10 +7,15 @@
     <!--/*/ <th:block th:include="fragments/general.html :: head">
         </th:block> /*/-->
 
+    <script th:src="@{/js/login.js}"></script>
+
 </head>
 <body>
 
 <div class="container h-100">
+
+    <div id="userRoleVar" th:text="${userRole}" hidden></div>
+
     <div class="row h-100 justify-content-center align-items-center">
         <form class="col-md-4 offset-md-4" th:action="@{/login}" method="post">
             <div class="row margin-bottom-50">
@@ -37,7 +42,7 @@
             </div>
             <div class="row">
                 <div class="col-md-8 offset-md-4 text-center">
-                    <a th:href="@{/register}">Register</a>
+                    <a id="registrationLink" href="#">Register</a>
                 </div>
             </div>
             <div class="row">
@@ -48,6 +53,8 @@
         </form>
         <div class="col-md-4"></div>
     </div>
+
+    <div th:replace="fragments/registrationModal::registrationModal"></div>
     <div th:replace="fragments/general::footer"></div>
 </div>
 

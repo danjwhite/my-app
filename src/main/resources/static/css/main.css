@@ -37,3 +37,7 @@ body {
     height: 40px;
     line-height: 40px;
 }
+
+.notification {
+    width: 40%;
+}

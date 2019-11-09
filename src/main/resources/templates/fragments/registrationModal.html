@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!------------------------------ HEAD ------------------------------>
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <!--/*/ <th:block th:include="general.html :: head">
+        </th:block> /*/-->
+</head>
+<body>
+
+<!-------------------------- MODAL FORM WRAPPER -------------------------->
+<div class="registrationForm" th:fragment="registrationModal">
+
+    <!-------------------------- FORM -------------------------->
+    <form action="#" method="post">
+
+        <!-------------------------- MODAL -------------------------->
+        <div class="modal fade" id="registrationModal" tabindex="-1" role="dialog" aria-labelledby="modalLabelCreate"
+             aria-hidden="true">
+
+            <!-------------------------- MODAL DIALOG -------------------------->
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+
+                <!-------------------------- MODAL CONTENT -------------------------->
+                <div class="modal-content">
+
+                    <!-------------------------- MODAL HEADER -------------------------->
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabelCreate">Register</h5>
+                        <button type="button" class="close exitBtn" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <!-------------------------- MODAL BODY -------------------------->
+                    <div class="modal-body">
+                        <!--<p class="alert alert-info">-->
+                        <!--All fields are required.-->
+                        <!--</p>-->
+
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="firstName" class="col-form-label">First Name:</label>
+                                        <input type="text" class="form-control" id="firstName" name="firstName"
+                                               placeholder="First name"
+                                               required/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="lastName" class="col-form-label">Last Name:</label>
+                                        <input type="text" class="form-control" id="lastName" name="lastName"
+                                               placeholder="Last name"
+                                               required/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="username" class="col-form-label">Username:</label>
+                                        <input type="text" class="form-control" id="username" name="username"
+                                               placeholder="Username"
+                                               required/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="password" class="col-form-label">Password:</label>
+                                        <input type="password" class="form-control" id="password" name="password"
+                                               placeholder="Password"
+                                               required/>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="confirmPassword" class="col-form-label">Confirm Password:</label>
+                                        <input type="password" class="form-control" id="confirmPassword"
+                                               name="confirmPassword" placeholder="Confirm password"
+                                               required/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="roleTypes" name="roleTypes" value="">
+
+                        </div>
+                    </div>
+
+                    <!-------------------------- MODAL FOOTER -------------------------->
+                    <div class="modal-footer">
+                        <input type="submit" class="btn btn-primary" id="registrationSubmitBtn" value="Submit"/>
+                        <button type="button" class="btn btn-secondary exitBtn">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

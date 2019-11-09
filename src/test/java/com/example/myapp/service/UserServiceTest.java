@@ -5,13 +5,14 @@ import com.example.myapp.builder.dto.UserPasswordDtoBuilder;
 import com.example.myapp.builder.dto.UserRegistrationDtoBuilder;
 import com.example.myapp.builder.entity.RoleBuilder;
 import com.example.myapp.builder.entity.UserBuilder;
-import com.example.myapp.repository.RoleRepository;
-import com.example.myapp.repository.UserRepository;
 import com.example.myapp.domain.Role;
+import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDto;
 import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.dto.UserRegistrationDto;
+import com.example.myapp.repository.RoleRepository;
+import com.example.myapp.repository.UserRepository;
 import org.easymock.*;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,6 +26,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RunWith(EasyMockRunner.class)
 public class UserServiceTest extends EasyMockSupport {
@@ -191,44 +193,28 @@ public class UserServiceTest extends EasyMockSupport {
     }
 
     @Test
-    public void addShouldThrowEntityNotFoundExceptionWhenRoleNotFound() {
-        Role role = RoleBuilder.givenRole().withId(1L).build();
-
-        expectedException.expect(EntityNotFoundException.class);
-        expectedException.expectMessage("Role not found for id: " + role.getId());
-
-        UserRegistrationDto userRegistrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
-                .withRoles(Collections.singleton(role)).build();
-
-        expectEncodePassword();
-        expectFindRoleById(role.getId(), null);
-        replayAll();
-
-        userService.add(userRegistrationDto);
-        verifyAll();
-    }
-
-    @Test
     public void addShouldSetExpectedFields() {
         String password = "test123";
         String encodedPassword = "98978hifd876f76njhj";
 
-        Set<Role> roles = new HashSet<>(Arrays.asList(
-                RoleBuilder.givenRole().withId(1L).build(),
-                RoleBuilder.givenRole().withId(2L).build()));
+        List<Role> roles = Arrays.asList(
+                RoleBuilder.givenRole().withType(RoleType.ROLE_USER).build(),
+                RoleBuilder.givenRole().withType(RoleType.ROLE_ADMIN).build());
+
+        List<RoleType> roleTypes = roles.stream().map(Role::getType).collect(Collectors.toList());
 
         UserRegistrationDto userRegistrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
                 .withUsername("mjones")
                 .withPassword(password)
-                .withRoles(roles)
+                .withRoleTypes(roleTypes)
                 .build();
 
         Capture<User> userCapture = EasyMock.newCapture();
 
         expectEncodePassword(password, encodedPassword);
-        expectFindEachRoleById(roles);
+        expectFindRolesByTypeList(roleTypes, roles);
         expectSaveUser(userCapture);
         replayAll();
 
@@ -240,7 +226,7 @@ public class UserServiceTest extends EasyMockSupport {
         Assert.assertEquals(userRegistrationDto.getLastName(), user.getLastName());
         Assert.assertEquals(userRegistrationDto.getUsername(), user.getUsername());
         Assert.assertEquals(encodedPassword, user.getPassword());
-        Assert.assertEquals(userRegistrationDto.getRoles(), user.getRoles());
+        Assert.assertEquals(userRegistrationDto.getRoleTypes(), roleTypes);
     }
 
     @Test
@@ -248,6 +234,7 @@ public class UserServiceTest extends EasyMockSupport {
         User user = UserBuilder.givenUser().withId(1L).build();
 
         expectEncodePassword();
+        expectFindRolesByTypeList();
         expectSaveUser(user);
         replayAll();
 
@@ -273,49 +260,24 @@ public class UserServiceTest extends EasyMockSupport {
     }
 
     @Test
-    public void updateShouldThrowEntityNotFoundExceptionWhenRoleNotFound() {
-        Role role = RoleBuilder.givenRole().withId(1L).build();
-
-        expectedException.expect(EntityNotFoundException.class);
-        expectedException.expectMessage("Role not found for id: " + role.getId());
-
-        UserDto userDto = UserDtoBuilder.givenUserDto().withUsername("mjones")
-                .withRoles(Collections.singleton(role))
-                .build();
-
-        expectFindUserByUsername(userDto.getUsername(), new User());
-        expectFindRoleById(role.getId(), null);
-        replayAll();
-
-        userService.update(userDto);
-        verifyAll();
-    }
-
-    @Test
     public void updateShouldUpdateExpectedFields() {
 
         final Long id = 1L;
         final String username = "mjones";
         final String password = "test123";
 
-        Role role1 = RoleBuilder.givenRole().withId(2L).build();
-        Role role2 = RoleBuilder.givenRole().withId(3L).build();
-        Role role3 = RoleBuilder.givenRole().withId(4L).build();
-        Role role4 = RoleBuilder.givenRole().withId(5L).build();
+        Role userRole = RoleBuilder.givenRole().withType(RoleType.ROLE_USER).build();
+        Role adminRole = RoleBuilder.givenRole().withType(RoleType.ROLE_ADMIN).build();
 
         Set<Role> roles = new HashSet<>();
-        roles.add(role1);
-        roles.add(role2);
+        roles.add(userRole);
 
-        Set<Role> newRoles = new HashSet<>();
-        newRoles.add(role1);
-        newRoles.add(role3);
-        newRoles.add(role4);
+        List<RoleType> newRoles = Collections.singletonList(adminRole.getType());
 
         UserDto userDto = UserDtoBuilder.givenUserDto().withFirstName("Mike")
                 .withLastName("Jones")
                 .withUsername(username)
-                .withRoles(newRoles)
+                .withRoleTypes(newRoles)
                 .build();
 
         User user = UserBuilder.givenUser().withId(id).withFirstName("James")
@@ -327,15 +289,14 @@ public class UserServiceTest extends EasyMockSupport {
 
         Assert.assertNotEquals(userDto.getFirstName(), user.getFirstName());
         Assert.assertNotEquals(userDto.getLastName(), user.getLastName());
-        Assert.assertNotEquals(userDto.getRoles(), user.getRoles());
+        Assert.assertNotEquals(userDto.getRoleTypes(), getRoleTypes(user));
 
         Assert.assertEquals(id, user.getId());
         Assert.assertEquals(username, user.getUsername());
         Assert.assertEquals(password, user.getPassword());
 
         expectFindUserByUsername(userDto.getUsername(), user);
-        expectFindRoleById(role3.getId(), role3);
-        expectFindRoleById(role4.getId(), role4);
+        expectFindRoleByType(adminRole.getType(), adminRole);
         replayAll();
 
         userService.update(userDto);
@@ -347,7 +308,7 @@ public class UserServiceTest extends EasyMockSupport {
 
         Assert.assertEquals(userDto.getFirstName(), user.getFirstName());
         Assert.assertEquals(userDto.getLastName(), user.getLastName());
-        Assert.assertEquals(userDto.getRoles(), user.getRoles());
+        Assert.assertEquals(userDto.getRoleTypes(), getRoleTypes(user));
     }
 
     @Test
@@ -459,9 +420,9 @@ public class UserServiceTest extends EasyMockSupport {
         EasyMock.expect(userRepositoryMock.findAll()).andReturn(users);
     }
 
-    private void expectFindRoleById(long id, Role role) {
-        EasyMock.expect(roleRepositoryMock.findById(id))
-                .andReturn(Optional.ofNullable(role));
+    private void expectFindRoleByType(RoleType roleType, Role role) {
+        EasyMock.expect(roleRepositoryMock.findByType(roleType))
+                .andReturn(role);
     }
 
     private void expectFindEachRoleById(Set<Role> roles) {
@@ -484,5 +445,18 @@ public class UserServiceTest extends EasyMockSupport {
     private void expectEncodePassword(String password, String encodedPassword) {
         EasyMock.expect(bCryptPasswordEncoderMock.encode(password))
                 .andReturn(encodedPassword);
+    }
+
+    private void expectFindRolesByTypeList() {
+        EasyMock.expect(roleRepositoryMock.findByTypeIn(EasyMock.anyObject(List.class)))
+                .andReturn(new ArrayList());
+    }
+
+    private void expectFindRolesByTypeList(List<RoleType> roleTypes, List<Role> roles) {
+        EasyMock.expect(roleRepositoryMock.findByTypeIn(roleTypes)).andReturn(roles);
+    }
+
+    private List<RoleType> getRoleTypes(User user) {
+        return user.getRoles().stream().map(Role::getType).collect(Collectors.toList());
     }
 }

@@ -7,10 +7,14 @@
     <!--/*/ <th:block th:include="fragments/general.html :: head">
         </th:block> /*/-->
 
+    <script th:src="@{/js/users.js}"></script>
+
 </head>
 <body>
 <div class="container-fluid h-100">
     <div th:replace="fragments/general::navbar (${session.userInContext})"></div>
+
+    <div id="defaultRoleVar" th:text="${defaultRole.name()}" hidden></div>
 
     <div class="row ml-5">
         <div class="col-md-8">
@@ -27,7 +31,7 @@
                     <h5>User Accounts</h5>
                 </div>
                 <div class="col-md text-right">
-                    <a class="btn btn-sm btn-success" th:href="@{/register}">Add User</a>
+                    <button type="button" class="btn btn-sm btn-success" id="addUserBtn">Add User</button>
                 </div>
             </div>
 
@@ -50,11 +54,11 @@
                             <td th:text="${user.lastName}"></td>
                             <td>
                                 <div class="btn-toolbar">
-                                    <a class="btn btn-sm btn-dark"
-                                       th:href="@{'/user/' + ${user.username} + '/edit/info'}"><i
+                                    <a class="btn btn-sm btn-dark editUserBtn"
+                                       th:href="@{/users/{username}(username=${user.username})}"><i
                                             class="fa fa-edit"></i></a>
-                                    <a class="btn btn-sm btn-dark ml-3"
-                                       th:href="@{'/user/' + ${user.username} + '/delete'}"><i
+                                    <a class="btn btn-sm btn-dark ml-3 deleteUserBtn"
+                                       th:href="@{/users/{username}(username=${user.username})}"><i
                                             class="fa fa-trash-alt"></i></a>
                                 </div>
                             </td>
@@ -66,6 +70,9 @@
         </div>
     </div>
 
+    <div th:replace="fragments/addUserModal::addUserModal (${roles})"></div>
+    <div th:replace="fragments/editUserModal::editUserModal (${roles})"></div>
+    <div th:replace="fragments/confirmationModal::confirmationModal ('deleteUserModal', 'Delete user?')"></div>
     <div th:replace="fragments/general::footer"></div>
 </div>
 </body>

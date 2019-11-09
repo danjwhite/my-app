@@ -7,6 +7,8 @@
     <!--/*/ <th:block th:include="fragments/general.html :: head">
         </th:block> /*/-->
 
+    <script th:src="@{/js/notes.js}"></script>
+
 </head>
 <body>
 <div class="container-fluid h-100">
@@ -74,8 +76,7 @@
     <!-------------------------- MODAL FORM WRAPPER -------------------------->
     <div th:replace="fragments/addNoteModal::addNoteModal"></div>
     <div th:replace="fragments/editNoteModal::editNoteModal"></div>
-    <div th:replace="fragments/deleteNoteModal::deleteNoteModal"></div>
-
+    <div th:replace="fragments/confirmationModal::confirmationModal ('deleteNoteModal', 'Delete note?')"></div>
     <div th:replace="fragments/general::footer"></div>
 </div>
 </body>

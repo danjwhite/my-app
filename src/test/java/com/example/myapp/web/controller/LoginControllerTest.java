@@ -1,5 +1,6 @@
 package com.example.myapp.web.controller;
 
+import com.example.myapp.domain.RoleType;
 import com.example.myapp.test.WebMvcBaseTest;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -34,7 +35,8 @@ public class LoginControllerTest extends WebMvcBaseTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/login"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.view().name("loginForm"));
+                .andExpect(MockMvcResultMatchers.view().name("loginForm"))
+                .andExpect(MockMvcResultMatchers.model().attribute("userRole", RoleType.ROLE_USER));
 
         verifyAll();
     }

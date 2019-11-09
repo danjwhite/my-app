@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!------------------------------ HEAD ------------------------------>
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <!--/*/ <th:block th:include="general.html :: head">
+        </th:block> /*/-->
+</head>
+<body>
+
+<!-------------------------- MODAL -------------------------->
+<div class="modal fade" th:id="${id}" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalTitle"
+     aria-hidden="true" th:fragment="confirmationModal (id, message)">
+
+    <!-------------------------- MODAL DIALOG -------------------------->
+    <div class="modal-dialog modal-dialog-centered" role="document">
+
+        <!-------------------------- MODAL CONTENT -------------------------->
+        <div class="modal-content">
+
+            <!-------------------------- MODAL HEADER -------------------------->
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteUserModalTitle">Alert Message</h5>
+                <button type="button" class="close exitBtn" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-------------------------- MODAL BODY -------------------------->
+            <div class="modal-body">
+                <p class="alert alert-danger" th:text="${message}">
+                </p>
+            </div>
+
+            <!-------------------------- MODAL FOOTER -------------------------->
+            <div class="modal-footer">
+                <a href="" class="btn btn-danger" id="continueBtn">Continue</a>
+                <button type="button" class="btn btn-secondary exitBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

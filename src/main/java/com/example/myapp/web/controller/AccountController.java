@@ -1,27 +1,21 @@
 package com.example.myapp.web.controller;
 
-import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import com.example.myapp.service.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Controller
 @SessionAttributes("userInContext")
-@RequestMapping("/admin")
-public class AdminController {
+@RequestMapping("/account")
+public class AccountController {
 
     private final UserService userService;
 
-    public AdminController(UserService userService) {
+    public AccountController(UserService userService) {
         this.userService = userService;
     }
 
@@ -30,22 +24,8 @@ public class AdminController {
         return userService.getLoggedInUser();
     }
 
-    @ModelAttribute("roles")
-    public List<RoleType> roles() {
-        return Arrays.stream(RoleType.values()).collect(Collectors.toList());
-    }
-
-    @ModelAttribute("defaultRole")
-    public RoleType defaultRole() {
-        return RoleType.ROLE_USER;
-    }
-
     @GetMapping
-    public String getAdminPage(Model model) {
-
-        List<User> users = userService.findAll();
-        model.addAttribute("users", users);
-
-        return "admin";
+    public String getAccountPage() {
+        return "account";
     }
 }

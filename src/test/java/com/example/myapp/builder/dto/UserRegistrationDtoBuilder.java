@@ -1,10 +1,10 @@
 package com.example.myapp.builder.dto;
 
 import com.example.myapp.builder.AbstractBuilder;
-import com.example.myapp.domain.Role;
+import com.example.myapp.domain.RoleType;
 import com.example.myapp.dto.UserRegistrationDto;
 
-import java.util.Set;
+import java.util.List;
 
 public class UserRegistrationDtoBuilder extends AbstractBuilder<UserRegistrationDto> {
 
@@ -41,8 +41,8 @@ public class UserRegistrationDtoBuilder extends AbstractBuilder<UserRegistration
         return this;
     }
 
-    public UserRegistrationDtoBuilder withRoles(Set<Role> roles) {
-        getObject().setRoles(roles);
+    public UserRegistrationDtoBuilder withRoleTypes(List<RoleType> roleTypes) {
+        getObject().setRoleTypes(roleTypes);
         return this;
     }
 }

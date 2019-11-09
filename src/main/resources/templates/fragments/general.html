@@ -45,7 +45,7 @@
                 <a class="nav-link dropdown-toggle" id="accountDropdown" data-toggle="dropdown" th:text="${user.firstName} + ' ' + ${user.lastName}"></a>
                 <div class="dropdown-menu bg-dark navbar-dark">
                     <a class="nav-link dropdown-item bg-dark navbar-dark" th:href="@{/logout}">Logout</a>
-                    <a class="nav-link dropdown-item bg-dark navbar-dark" th:href="@{'/user/' + ${user.username} + '/view'}">Account</a>
+                    <a class="nav-link dropdown-item bg-dark navbar-dark" th:href="@{/account}">Account</a>
                 </div>
             </li>
         </ul>

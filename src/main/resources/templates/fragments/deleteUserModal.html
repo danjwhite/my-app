@@ -10,8 +10,8 @@
 <body>
 
 <!-------------------------- MODAL -------------------------->
-<div class="modal fade" id="deleteNoteModal" tabindex="-1" role="dialog" aria-labelledby="deleteNoteModalTitle"
-     aria-hidden="true" th:fragment="deleteNoteModal">
+<div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalTitle"
+     aria-hidden="true" th:fragment="deleteUserModal">
 
     <!-------------------------- MODAL DIALOG -------------------------->
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -21,8 +21,8 @@
 
             <!-------------------------- MODAL HEADER -------------------------->
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteNoteModalTitle">Alert Message</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title" id="deleteUserModalTitle">Alert Message</h5>
+                <button type="button" class="close exitBtn" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -30,19 +30,18 @@
             <!-------------------------- MODAL BODY -------------------------->
             <div class="modal-body">
                 <p class="alert alert-danger">
-                    Delete note?
+                    Delete user?
                 </p>
             </div>
 
             <!-------------------------- MODAL FOOTER -------------------------->
             <div class="modal-footer">
-                <a href="" class="btn btn-danger" id="confirmDeleteNoteBtn">Delete</a>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a href="" class="btn btn-danger" id="confirmDeleteUserBtn">Continue</a>
+                <button type="button" class="btn btn-secondary exitBtn">Cancel</button>
             </div>
         </div>
     </div>
 </div>
-
 
 </body>
 </html>

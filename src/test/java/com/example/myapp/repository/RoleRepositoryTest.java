@@ -52,4 +52,16 @@ public class RoleRepositoryTest {
         Assert.assertNotNull(result);
         Assert.assertEquals(RoleType.ROLE_USER, result.getType());
     }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void findByTypeInShouldReturnExpectedResult() {
+        List<RoleType> roleTypes = Arrays.stream(RoleType.values()).collect(Collectors.toList());
+
+        List<Role> result = roleRepository.findByTypeIn(roleTypes);
+
+        Assert.assertTrue(result.stream().map(Role::getType)
+                .collect(Collectors.toList()).containsAll(roleTypes));
+    }
 }
