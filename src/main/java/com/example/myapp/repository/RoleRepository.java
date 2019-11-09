@@ -10,6 +10,5 @@ public interface RoleRepository extends CrudRepository<Role, Long> {
 
     Role findByType(RoleType type);
 
-    // TODO: Add tests
     List<Role> findByTypeIn(List<RoleType> roleTypes);
 }

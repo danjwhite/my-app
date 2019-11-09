@@ -1,15 +1,11 @@
 package com.example.myapp.test;
 
 import com.example.myapp.config.SecurityConfig;
-import com.example.myapp.config.WebConfig;
-import com.example.myapp.converter.RoleConverter;
-import com.example.myapp.service.UserService;
 import com.example.myapp.web.AccessDeniedHandlerImpl;
 import com.example.myapp.web.GlobalExceptionHandler;
 import org.apache.commons.lang3.ArrayUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,12 +20,11 @@ import java.util.Objects;
 public abstract class WebMvcBaseTest {
 
     private static final UserDetailsService userDetailsServiceMock = EasyMock.strictMock(UserDetailsService.class);
-    private static final RoleConverter roleConverterMock = EasyMock.strictMock(RoleConverter.class);
 
     private static Object[] mocks;
 
     protected static void initMocks(Object... mocks) {
-        Object[] defaultMocks = new Object[] {userDetailsServiceMock, roleConverterMock};
+        Object[] defaultMocks = new Object[] {userDetailsServiceMock};
 
         if (mocks != null && mocks.length > 0) {
             WebMvcBaseTest.mocks = ArrayUtils.addAll(defaultMocks, mocks);
@@ -60,7 +55,7 @@ public abstract class WebMvcBaseTest {
     }
 
     @Configuration
-    @Import(value = {SecurityConfig.class, WebConfig.class})
+    @Import(value = {SecurityConfig.class})
     protected static class TestConfig {
 
         @Bean
@@ -76,11 +71,6 @@ public abstract class WebMvcBaseTest {
         @Bean("userDetailsServiceImpl")
         public UserDetailsService userDetailsService() {
             return userDetailsServiceMock;
-        }
-
-        @Bean
-        public RoleConverter roleConverter() {
-            return roleConverterMock;
         }
     }
 }
