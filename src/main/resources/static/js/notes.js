@@ -2,9 +2,6 @@ $(document).ready(function () {
 
     // ************************ ADD NOTE MODAL ************************
     $('.newBtn').on('click', function () {
-
-        alert("test!!!");
-
         $('.addNoteForm #title').val('');
         $('.addNoteForm #body').val('');
         $('.addNoteForm #addNoteModal').modal('show');
