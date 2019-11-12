@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Controller
+@RestController
 @RequestMapping("/users")
 public class UserController {
 
@@ -27,14 +27,12 @@ public class UserController {
     }
 
     @GetMapping("/{username}")
-    @ResponseBody
     public ResponseEntity<UserDto> getUser(@PathVariable(value = "username") String username) {
         User user = userService.findByUsername(username);
         return new ResponseEntity<>(new UserDto(user), HttpStatus.OK);
     }
 
     @PostMapping
-    @ResponseBody
     public ResponseEntity<RestResponse> addUser(@RequestBody @Valid UserRegistrationDto registrationDto, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseFactory.error(result);
@@ -51,7 +49,6 @@ public class UserController {
     }
 
     @PutMapping
-    @ResponseBody
     public ResponseEntity<RestResponse> updateUser(@RequestBody @Valid UserDto userDto, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseFactory.error(result);
@@ -63,7 +60,6 @@ public class UserController {
     }
 
     @PutMapping("/password")
-    @ResponseBody
     public ResponseEntity<RestResponse> updatePassword(@RequestBody @Valid UserPasswordDto passwordDto,
                                                        BindingResult result) {
         if (result.hasErrors()) {
@@ -81,7 +77,6 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{username}")
-    @ResponseBody
     public ResponseEntity<RestResponse> deleteUser(@PathVariable("username") String username) {
         userService.delete(username);
         return ResponseFactory.success(HttpStatus.OK);
