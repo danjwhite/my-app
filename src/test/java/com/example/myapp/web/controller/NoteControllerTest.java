@@ -238,17 +238,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                .content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Cannot be blank")));
-
-        verifyAll();
+        saveNoteAndExpectFieldError(noteDto, "title", "Cannot be blank");
     }
 
     @Test
@@ -261,16 +251,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Cannot be blank")));
-
-        verifyAll();
+        saveNoteAndExpectFieldError(noteDto, "title", "Cannot be blank");;
     }
 
     @Test
@@ -283,16 +264,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Cannot be blank")));
-
-        verifyAll();
+        saveNoteAndExpectFieldError(noteDto, "title", "Cannot be blank");
     }
 
     @Test
@@ -305,16 +277,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Title must be within 140 characters.")));
-
-        verifyAll();
+        saveNoteAndExpectFieldError(noteDto, "title", "Title must be within 140 characters.");
     }
 
     @Test
@@ -326,16 +289,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Cannot be blank")));
-
-        verifyAll();
+        saveNoteAndExpectFieldError(noteDto, "body", "Cannot be blank");
     }
 
     @Test
@@ -348,16 +302,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Cannot be blank")));
-
-        verifyAll();
+        saveNoteAndExpectFieldError(noteDto, "body", "Cannot be blank");
     }
 
     @Test
@@ -370,16 +315,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Cannot be blank")));
-
-        verifyAll();
+        saveNoteAndExpectFieldError(noteDto, "body", "Cannot be blank");
     }
 
     @Test
@@ -392,16 +328,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Body must be within 5,000 characters.")));
-
-        verifyAll();
+        saveNoteAndExpectFieldError(noteDto, "body", "Body must be within 5,000 characters.");
     }
 
     @Test
@@ -419,9 +346,8 @@ public class NoteControllerTest extends WebMvcBaseTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/notes")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
+                .andExpect(MockMvcResultMatchers.status().isNoContent())
+                .andExpect(TestUtil.emptyResponse());
 
         verifyAll();
     }
@@ -438,16 +364,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Cannot be blank")));
-
-        verifyAll();
+        updateNoteAndExpectFieldError(noteDto, "title", "Cannot be blank");
     }
 
     @Test
@@ -461,16 +378,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Cannot be blank")));
-
-        verifyAll();
+        updateNoteAndExpectFieldError(noteDto, "title", "Cannot be blank");
     }
 
     @Test
@@ -484,16 +392,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Cannot be blank")));
-
-        verifyAll();
+        updateNoteAndExpectFieldError(noteDto, "title", "Cannot be blank");
     }
 
     @Test
@@ -507,16 +406,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("title", "Title must be within 140 characters.")));
-
-        verifyAll();
+        updateNoteAndExpectFieldError(noteDto, "title", "Title must be within 140 characters.");
     }
 
     @Test
@@ -529,16 +419,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Cannot be blank")));
-
-        verifyAll();
+        updateNoteAndExpectFieldError(noteDto, "body", "Cannot be blank");
     }
 
     @Test
@@ -552,16 +433,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Cannot be blank")));
-
-        verifyAll();
+        updateNoteAndExpectFieldError(noteDto, "body", "Cannot be blank");
     }
 
     @Test
@@ -575,16 +447,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Cannot be blank")));
-
-        verifyAll();
+        updateNoteAndExpectFieldError(noteDto, "body", "Cannot be blank");
     }
 
     @Test
@@ -598,16 +461,7 @@ public class NoteControllerTest extends WebMvcBaseTest {
                 .build();
 
         expectGetLoggedInUser();
-        replayAll();
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
-                .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry("body", "Body must be within 5,000 characters.")));
-
-        verifyAll();
+        updateNoteAndExpectFieldError(noteDto, "body", "Body must be within 5,000 characters.");
     }
 
     @Test
@@ -626,9 +480,8 @@ public class NoteControllerTest extends WebMvcBaseTest {
 
         mockMvc.perform(MockMvcRequestBuilders.put("/notes")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8).content(TestUtil.objectToJson(noteDto)))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
+                .andExpect(MockMvcResultMatchers.status().isNoContent())
+                .andExpect(TestUtil.emptyResponse());
 
         verifyAll();
     }
@@ -688,9 +541,8 @@ public class NoteControllerTest extends WebMvcBaseTest {
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/notes/" + note.getId())
                 .contentType(TestUtil.APPLICATION_JSON_UTF8))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
+                .andExpect(MockMvcResultMatchers.status().isNoContent())
+                .andExpect(TestUtil.emptyResponse());
 
         verifyAll();
     }
@@ -731,6 +583,31 @@ public class NoteControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
+    private void saveNoteAndExpectFieldError(NoteDto noteDto, String fieldName, String message) throws Exception {
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry(fieldName, message)));
+
+        verifyAll();
+    }
+
+    private void updateNoteAndExpectFieldError(NoteDto noteDto, String fieldName, String message) throws Exception {
+        replayAll();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/notes")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.objectToJson(noteDto)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry(fieldName, message)));
+
+        verifyAll();
+    }
 
     private void expectGetLoggedInUser() {
         EasyMock.expect(userServiceMock.getLoggedInUser())

@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    // ************************ ADD USER MODAL ************************
+    /* ------------------------------ ADD USER BUTTON ------------------------------ */
     $('#addUserBtn').on('click', function () {
         $('.addUserForm #firstName').val('');
         $('.addUserForm #lastName').val('');
@@ -10,31 +10,7 @@ $(document).ready(function () {
         $('.addUserForm #addUserModal').modal('show');
     });
 
-    // ************************ EDIT USER MODAL ************************
-    $('.editUserBtn').on('click', function (event) {
-        event.preventDefault();
-        const href = $(this).attr('href');
-
-        $.get(href, function (user) {
-            $('.editUserForm #username').val(user.username);
-            $('.editUserForm #firstName').val(user.firstName);
-            $('.editUserForm #lastName').val(user.lastName);
-            $('.editUserForm #roleTypes').val(user.roleTypes);
-        });
-
-        $('#editUserModal').modal('show');
-    });
-
-    // ************************ DELETE USER MODAL ************************
-    $('.deleteUserBtn').on('click', function (event) {
-        event.preventDefault();
-        const href = $(this).attr('href');
-
-        $('#deleteUserModal').find('#continueBtn').attr('href', href);
-        $('#deleteUserModal').modal('show');
-    });
-
-    // ************************ ADD USER BUTTON ************************
+    /* ------------------------------ ADD USER SUBMIT BUTTON ------------------------------ */
     $('#addUserSubmitBtn').on('click', function (event) {
         event.preventDefault();
         resetValidation();
@@ -54,16 +30,46 @@ $(document).ready(function () {
             contentType: 'application/json',
             data: JSON.stringify(formData),
             dataType: 'json',
-            success: function (response) {
-                if (validateInput('.addUserForm', response)) {
-                    $('#addUserModal').modal('hide');
-                    location.reload();
-                }
+            success: function () {
+                $('#addUserModal').modal('hide');
+                location.reload();
+            },
+            error: function(xhr){
+                validateInput('.addUserForm', xhr);
             }
         });
     });
 
-    // ************************ EDIT USER SUBMIT BUTTON ************************
+    /* ------------------------------ ADD USER CANCEL BUTTONS ------------------------------ */
+    $('#addUserModal').find('.exitBtn').on('click', function () {
+        resetValidation();
+        $('.addUserForm #firstName').val('');
+        $('.addUserForm #lastName').val('');
+        $('.addUserForm #username').val('');
+        $('.addUserForm #password').val('');
+        $('.addUserForm #confirmPassword').val('');
+
+        const defaultRole = $('#defaultRoleVar').text();
+        $('.addUserForm #roleTypes').val([defaultRole]);
+
+        $('#addUserModal').modal('hide');
+    });
+
+    /* ------------------------------ EDIT USER BUTTON ------------------------------ */
+    $('#userTable').on('click', '.editUserBtn', function () {
+        const href = $(this).attr('href');
+
+        $.get(href, function (user) {
+            $('.editUserForm #username').val(user.username);
+            $('.editUserForm #firstName').val(user.firstName);
+            $('.editUserForm #lastName').val(user.lastName);
+            $('.editUserForm #roleTypes').val(user.roleTypes);
+        });
+
+        $('#editUserModal').modal('show');
+    });
+
+    /* ------------------------------ EDIT USER SUBMIT BUTTON ------------------------------ */
     $('#editUserSubmitBtn').on('click', function (event) {
         event.preventDefault();
         resetValidation();
@@ -81,16 +87,31 @@ $(document).ready(function () {
             contentType: 'application/json',
             data: JSON.stringify(formData),
             dataType: 'json',
-            success: function (response) {
-                if (validateInput('.editUserForm', response)) {
-                    $('#editUserModal').modal('hide');
-                    location.reload();
-                }
+            success: function () {
+                $('#editUserModal').modal('hide');
+                location.reload();
+            },
+            error: function (xhr) {
+                validateInput('.editUserForm', xhr);
             }
         });
     });
 
-    // ************************ CONFIRM DELETE USER BUTTON ************************
+    /* ------------------------------ EDIT USER CANCEL BUTTONS ------------------------------ */
+    $('#editUserModal').find('.exitBtn').on('click', function () {
+        $('#editUserModal').modal('hide');
+        resetValidation()
+    });
+
+    /* ------------------------------ DELETE USER BUTTON ------------------------------ */
+    $('#userTable').on('click', '.deleteUserBtn', function () {
+        const href = $(this).attr('href');
+
+        $('#deleteUserModal').find('#continueBtn').attr('href', href);
+        $('#deleteUserModal').modal('show');
+    });
+
+    /* ------------------------------ DELETE USER CONFIRM BUTTON ------------------------------ */
     $('#deleteUserModal').find('#continueBtn').click(function (event) {
         event.preventDefault();
 
@@ -104,29 +125,89 @@ $(document).ready(function () {
         });
     });
 
-    // ************************ DELETE USER CANCEL BUTTONS ************************
+    /* ------------------------------ DELETE USER CANCEL BUTTONS ------------------------------ */
     $('#deleteUserModal').find('.exitBtn').on('click', function () {
         $('#deleteUserModal').modal('hide');
     });
 
-    // ************************ ADD USER CANCEL BUTTON ************************
-    $('#addUserModal').find('.exitBtn').on('click', function () {
-        resetValidation();
-        $('.addUserForm #firstName').val('');
-        $('.addUserForm #lastName').val('');
-        $('.addUserForm #username').val('');
-        $('.addUserForm #password').val('');
-        $('.addUserForm #confirmPassword').val('');
+    /* ------------------------------ USER TABLE ------------------------------ */
+    $('#userTable').DataTable({
+        serverSide: true,
+        lengthMenu: [10, 25, 50],
+        ordering: true,
+        paging: true,
+        pagingType: "full_numbers",
+        processing: true,
+        autoWidth: true,
+        ajax: {
+            url: '/users',
+            dataSrc: 'content',
+            dataFilter: function (data) {
+                const json = jQuery.parseJSON(data);
 
-        const defaultRole = $('#defaultRoleVar').text();
-        $('.addUserForm #roleTypes').val([defaultRole]);
+                // Add these for "Next" button functionality.
+                json.recordsTotal = json.totalElements;
+                json.recordsFiltered = json.totalElements;
+                return JSON.stringify(json);
+            },
+            data: function (data) {
+                // Add parameters for Spring.
+                data.page = (data.start / data.length);
+                data.size = data.length;
+                data.sort = getSort(data);
+                data.search = data.search.value;
 
-        $('#addUserModal').modal('hide');
-    });
+                // Remove unnecessary parameters (optional).
+                delete data.start;
+                delete data.length;
+                delete data.columns;
+                delete data.order;
+                delete data.draw;
+            }
+        },
 
-    // ************************ EDIT USER CANCEL BUTTON ************************
-    $('#editUserModal').find('.exitBtn').on('click', function () {
-        $('#editUserModal').modal('hide');
-        resetValidation()
+        columnDefs: [
+            {
+                targets: 0,
+                data: "username"
+            },
+            {
+                targets: 1,
+                data: "firstName"
+            },
+            {
+                targets: 2,
+                data: "lastName"
+            },
+
+            {
+                targets: 3,
+                data: function (data) {
+                    return getActionToolbar(data);
+                },
+                orderable: false
+            }
+        ]
     });
 });
+
+function getActionToolbar(data) {
+    const url = '/users/' + data.username;
+
+    return "<div class='btn-toolbar'>\n" +
+        "   <button class='btn btn-sm btn-dark editUserBtn'\n" +
+        "      href='" + url + "'><i\n" +
+        "      class='fa fa-edit'></i></button>\n" +
+        "   <button class='btn btn-sm btn-dark ml-3 deleteUserBtn'\n" +
+        "      href='" + url + "'><i\n" +
+        "      class='fa fa-trash-alt'></i></button>\n" +
+        "</div>";
+}
+
+function getSort(data) {
+    const index = data.order[0].column;
+    const columnName = data.columns[index].data;
+    const dir = data.order[0].dir;
+
+    return columnName + ',' + dir;
+}

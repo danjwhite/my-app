@@ -4,7 +4,6 @@ import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import com.example.myapp.service.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,11 +40,7 @@ public class AdminController {
     }
 
     @GetMapping
-    public String getAdminPage(Model model) {
-
-        List<User> users = userService.findAll();
-        model.addAttribute("users", users);
-
+    public String getAdminPage() {
         return "admin";
     }
 }

@@ -3,9 +3,7 @@ package com.example.myapp.web.controller;
 import com.example.myapp.dto.UserRegistrationDto;
 import com.example.myapp.service.SecurityService;
 import com.example.myapp.service.UserService;
-import com.example.myapp.web.ResponseFactory;
-import com.example.myapp.web.RestResponse;
-import org.springframework.http.HttpStatus;
+import com.example.myapp.web.response.ResponseFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -30,19 +28,19 @@ public class RegistrationController {
 
     @PostMapping
     @ResponseBody
-    public ResponseEntity<RestResponse> registerUser(@RequestBody @Valid UserRegistrationDto registrationDto, BindingResult result) {
+    public ResponseEntity<?> registerUser(@RequestBody @Valid UserRegistrationDto registrationDto, BindingResult result) {
         if (result.hasErrors()) {
-            return ResponseFactory.error(result);
+            return ResponseFactory.badRequest(result);
         }
 
         if (userService.userExists(registrationDto.getUsername())) {
             result.rejectValue("username", "UsernameAlreadyTaken", "There is already an account registered with this username.");
-            return ResponseFactory.error(result);
+            return ResponseFactory.badRequest(result);
         }
 
         userService.add(registrationDto);
         securityService.autoLogin(registrationDto.getUsername(), registrationDto.getPassword());
 
-        return ResponseFactory.success(HttpStatus.CREATED);
+        return ResponseFactory.noContent();
     }
 }

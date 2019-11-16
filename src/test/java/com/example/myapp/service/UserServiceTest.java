@@ -24,7 +24,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -54,33 +53,6 @@ public class UserServiceTest extends EasyMockSupport {
     @Before
     public void setUp() {
         userService = new UserService(userRepositoryMock, roleRepositoryMock, securityServiceMock, bCryptPasswordEncoderMock);
-    }
-
-    @Test
-    public void findByIdShouldThrowEntityNotFoundExceptionWhenUserNotFound() {
-        long userId = 1L;
-
-        expectedException.expect(EntityNotFoundException.class);
-        expectedException.expectMessage("User not found for id: " + userId);
-
-        expectFindUserById(userId, null);
-        replayAll();
-
-        userService.findById(userId);
-        verifyAll();
-    }
-
-    @Test
-    public void findByIdShouldReturnExpectedResult() {
-        User user = UserBuilder.givenUser().withId(1L).build();
-
-        expectFindUserById(user.getId(), user);
-        replayAll();
-
-        User result = userService.findById(user.getId());
-        verifyAll();
-
-        Assert.assertEquals(user, result);
     }
 
     @Test
@@ -164,32 +136,6 @@ public class UserServiceTest extends EasyMockSupport {
         verifyAll();
 
         Assert.assertEquals(user, result);
-    }
-
-    @Test
-    public void findAllShouldReturnExpectedResult() {
-        List<User> users = Collections.singletonList(UserBuilder.givenUser().withId(1L).build());
-
-        expectFindAllUsers(users);
-        replayAll();
-
-        List<User> result = userService.findAll();
-        verifyAll();
-
-        Assert.assertEquals(users, result);
-    }
-
-    @Test
-    public void countShouldReturnExpectedResult() {
-        long count = 12;
-
-        expectCountUsers(count);
-        replayAll();
-
-        long result = userService.count();
-        verifyAll();
-
-        Assert.assertEquals(count, result);
     }
 
     @Test
@@ -397,18 +343,9 @@ public class UserServiceTest extends EasyMockSupport {
                 .andReturn(user);
     }
 
-    private void expectCountUsers(long count) {
-        EasyMock.expect(userRepositoryMock.count()).andReturn(count);
-    }
-
     private void expectDeleteUser(User user) {
         userRepositoryMock.delete(user);
         EasyMock.expectLastCall();
-    }
-
-    private void expectFindUserById(long id, User user) {
-        EasyMock.expect(userRepositoryMock.findById(id))
-                .andReturn(Optional.ofNullable(user));
     }
 
     private void expectFindUserByUsername(String username, User user) {
@@ -416,17 +353,9 @@ public class UserServiceTest extends EasyMockSupport {
                 .andReturn(user);
     }
 
-    private void expectFindAllUsers(List<User> users) {
-        EasyMock.expect(userRepositoryMock.findAll()).andReturn(users);
-    }
-
     private void expectFindRoleByType(RoleType roleType, Role role) {
         EasyMock.expect(roleRepositoryMock.findByType(roleType))
                 .andReturn(role);
-    }
-
-    private void expectFindEachRoleById(Set<Role> roles) {
-        roles.forEach(role -> EasyMock.expect(roleRepositoryMock.findById(role.getId())).andReturn(Optional.of(role)));
     }
 
     private void expectGetPrincipal() {

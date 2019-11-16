@@ -8,6 +8,9 @@ import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.dto.UserRegistrationDto;
 import com.example.myapp.repository.RoleRepository;
 import com.example.myapp.repository.UserRepository;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,7 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -38,12 +40,6 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User findById(long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found for id: " + id));
-    }
-
-    @Transactional(readOnly = true)
     @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
     public User findByUsername(String username) {
         return fetchByUsername(username);
@@ -60,15 +56,10 @@ public class UserService {
         return fetchByUsername(userDetails.getUsername());
     }
 
-    @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public List<User> findAll() {
-        return (List<User>) userRepository.findAll();
-    }
-
-    @Transactional(readOnly = true)
-    public long count() {
-        return userRepository.count();
+    @Transactional
+    public Page<User> findAll(Pageable pageable, String search) {
+        return StringUtils.isNotBlank(search) ? userRepository.search(pageable, search) :
+                userRepository.findAll(pageable);
     }
 
     @Transactional

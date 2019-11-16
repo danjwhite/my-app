@@ -72,23 +72,6 @@ public class UserServiceSecurityIT {
     @Transactional
     @Rollback
     @WithMockUser(username = "mjones")
-    public void findAllShouldThrowExceptionWhenUserIsNotAdmin() {
-        expectAccessDeniedException();
-        userService.findAll();
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    @WithMockUser(username = "mjones", roles = {"USER", "ADMIN"})
-    public void findAllShouldNotThrowExceptionWhenUserIsAdmin() {
-        userService.findAll();
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    @WithMockUser(username = "mjones")
     public void updateShouldThrowExceptionWhenUsernameDoesNotMatchAuthenticatedUsernameAndUserIsNotAdmin() {
         expectAccessDeniedException();
         userService.update(newUserDto("test"));

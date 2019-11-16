@@ -5,9 +5,7 @@ import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDto;
 import com.example.myapp.service.NoteService;
 import com.example.myapp.service.UserService;
-import com.example.myapp.web.ResponseFactory;
-import com.example.myapp.web.RestResponse;
-import org.springframework.http.HttpStatus;
+import com.example.myapp.web.response.ResponseFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -69,38 +67,38 @@ public class NoteController {
     @GetMapping(value = "/{id}")
     @ResponseBody
     public ResponseEntity<NoteDto> getNote(@PathVariable(value = "id") long id) {
-        return new ResponseEntity<>(new NoteDto(noteService.findById(id)), HttpStatus.OK);
+        return ResponseFactory.ok(new NoteDto(noteService.findById(id)));
     }
 
     @PostMapping
     @ResponseBody
-    public ResponseEntity<RestResponse> saveNote(@RequestBody @Valid NoteDto noteDto, BindingResult result) {
+    public ResponseEntity<?> saveNote(@RequestBody @Valid NoteDto noteDto, BindingResult result) {
         if (result.hasErrors()) {
-            return ResponseFactory.error(result);
+            return ResponseFactory.badRequest(result);
         }
 
         noteService.add(noteDto);
 
-        return ResponseFactory.success(HttpStatus.CREATED);
+        return ResponseFactory.noContent();
     }
 
     @PutMapping
     @ResponseBody
-    public ResponseEntity<RestResponse> updateNote(@RequestBody @Valid NoteDto noteDto, BindingResult result) {
+    public ResponseEntity<?> updateNote(@RequestBody @Valid NoteDto noteDto, BindingResult result) {
         if (result.hasErrors()) {
-            return ResponseFactory.error(result);
+            return ResponseFactory.badRequest(result);
         }
 
         noteService.update(noteDto);
 
-        return ResponseFactory.success(HttpStatus.CREATED);
+        return ResponseFactory.noContent();
     }
 
     @DeleteMapping(value = "/{id}")
     @ResponseBody
-    public ResponseEntity<RestResponse> deleteNote(@PathVariable(value = "id") long id) {
+    public ResponseEntity<Void> deleteNote(@PathVariable(value = "id") long id) {
         noteService.delete(noteService.findById(id));
 
-        return ResponseFactory.success(HttpStatus.OK);
+        return ResponseFactory.noContent();
     }
 }

@@ -9,10 +9,6 @@ body {
     margin-bottom: 40px;
 }
 
-#banner {
-    background-color: beige;
-}
-
 .margin-bottom-50 {
     margin-bottom: 50px;
 }
@@ -20,10 +16,6 @@ body {
 .page-title {
     margin-top: 20px;
     margin-bottom: 20px;
-}
-
-.grid-btn {
-    width: 80px;
 }
 
 .timestamp {
@@ -38,6 +30,18 @@ body {
     line-height: 40px;
 }
 
-.notification {
-    width: 40%;
+/* ------------------------------ DATA TABLES ------------------------------ */
+/* For search box */
+.dataTables_filter input {
+    border-radius: 5px;
+}
+
+/* Remove horizontal line from table header */
+table.dataTable thead th {
+    border-bottom: 0;
+}
+
+/* Remove horizontal line from bottom of table */
+table.dataTable.no-footer {
+    border-bottom: 0 !important;
 }

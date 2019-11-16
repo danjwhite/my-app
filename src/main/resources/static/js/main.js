@@ -1,15 +1,10 @@
 // ************************ HELPER FUNCTIONS ************************
-function validateInput(selector, response) {
-    if (response.hasErrors) {
-        $.each(response.errors, function (key, value) {
-            $(selector + ' .form-control[name=' + key + ']').addClass('is-invalid')
-                .after('<span class="invalid-feedback">' + value + '</span>');
-        });
-
-        return false;
-    } else {
-        return true;
-    }
+function validateInput(selector, xhr) {
+    const response = JSON.parse(xhr.responseText);
+    $.each(response.errors, function (key, value) {
+        $(selector + ' .form-control[name=' + key + ']').addClass('is-invalid')
+            .after('<span class="invalid-feedback">' + value + '</span>');
+    });
 }
 
 // TODO: Refactor to accept a selector parameter

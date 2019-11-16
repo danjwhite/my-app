@@ -2,6 +2,8 @@ package com.example.myapp.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.nio.charset.Charset;
 
@@ -27,5 +29,9 @@ public class TestUtil {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ResultMatcher emptyResponse() {
+        return MockMvcResultMatchers.content().bytes(new byte[0]);
     }
 }

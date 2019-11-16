@@ -30,11 +30,12 @@ $(document).ready(function () {
             contentType: 'application/json',
             data: JSON.stringify(formData),
             dataType: 'json',
-            success: function (response) {
-                if (validateInput('.registrationForm', response)) {
-                    $('#addUserModal').modal('hide');
-                    window.location = "/";
-                }
+            success: function () {
+                $('#addUserModal').modal('hide');
+                window.location = "/";
+            },
+            error: function (xhr) {
+                validateInput('.registrationForm', xhr);
             }
         });
     });

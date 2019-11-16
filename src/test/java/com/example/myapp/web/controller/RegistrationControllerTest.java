@@ -211,9 +211,8 @@ public class RegistrationControllerTest extends WebMvcBaseTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/registration")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.objectToJson(dto)))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
+                .andExpect(MockMvcResultMatchers.status().isNoContent())
+                .andExpect(TestUtil.emptyResponse());
 
         verifyAll();
     }
@@ -224,8 +223,7 @@ public class RegistrationControllerTest extends WebMvcBaseTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/registration")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.objectToJson(dto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry(fieldName, message)));
 

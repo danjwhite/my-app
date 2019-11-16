@@ -257,9 +257,8 @@ public class UserControllerTest extends WebMvcBaseTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.objectToJson(dto)))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
+                .andExpect(MockMvcResultMatchers.status().isNoContent())
+                .andExpect(TestUtil.emptyResponse());
 
         verifyAll();
     }
@@ -343,9 +342,8 @@ public class UserControllerTest extends WebMvcBaseTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/users")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.objectToJson(dto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
+                .andExpect(MockMvcResultMatchers.status().isNoContent())
+                .andExpect(TestUtil.emptyResponse());
 
         verifyAll();
     }
@@ -357,7 +355,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         UserPasswordDto dto = newPasswordDto();
         dto.setPassword(null);
 
-        updatePasswordAndExpectFieldErrors(dto, "password", "Cannot be blank");
+        updatePasswordAndExpectFieldError(dto, "password", "Cannot be blank");
     }
 
     @Test
@@ -366,7 +364,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         UserPasswordDto dto = newPasswordDto();
         dto.setPassword(StringUtils.EMPTY);
 
-        updatePasswordAndExpectFieldErrors(dto, "password", "Cannot be blank");
+        updatePasswordAndExpectFieldError(dto, "password", "Cannot be blank");
     }
 
     @Test
@@ -375,7 +373,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         UserPasswordDto dto = newPasswordDto();
         dto.setPassword(StringUtils.SPACE);
 
-        updatePasswordAndExpectFieldErrors(dto, "password", "Cannot be blank");
+        updatePasswordAndExpectFieldError(dto, "password", "Cannot be blank");
     }
 
     @Test
@@ -388,7 +386,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         Assert.assertFalse(BCrypt.checkpw(dto.getPassword(), user.getPassword()));
 
         expectFindByUserName(dto.getUsername(), newUser());
-        updatePasswordAndExpectFieldErrors(dto, "password", "Current password is invalid.");
+        updatePasswordAndExpectFieldError(dto, "password", "Current password is invalid.");
     }
 
     // ------------------------------------------ UPDATE PASSWORD - NEW PASSWORD ------------------------------------------
@@ -398,7 +396,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         UserPasswordDto dto = newPasswordDto();
         dto.setNewPassword(null);
 
-        updatePasswordAndExpectFieldErrors(dto, "newPassword", "Cannot be blank");
+        updatePasswordAndExpectFieldError(dto, "newPassword", "Cannot be blank");
     }
 
     @Test
@@ -407,7 +405,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         UserPasswordDto dto = newPasswordDto();
         dto.setNewPassword(StringUtils.EMPTY);
 
-        updatePasswordAndExpectFieldErrors(dto, "newPassword", "Cannot be blank");
+        updatePasswordAndExpectFieldError(dto, "newPassword", "Cannot be blank");
     }
 
     @Test
@@ -416,7 +414,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         UserPasswordDto dto = newPasswordDto();
         dto.setNewPassword(StringUtils.SPACE);
 
-        updatePasswordAndExpectFieldErrors(dto, "newPassword", "Cannot be blank");
+        updatePasswordAndExpectFieldError(dto, "newPassword", "Cannot be blank");
     }
 
     // ------------------------------------------ UPDATE PASSWORD - CONFIRM PASSWORD ------------------------------------------
@@ -426,7 +424,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         UserPasswordDto dto = newPasswordDto();
         dto.setConfirmPassword(null);
 
-        updatePasswordAndExpectFieldErrors(dto, "confirmPassword", "Cannot be blank");
+        updatePasswordAndExpectFieldError(dto, "confirmPassword", "Cannot be blank");
     }
 
     @Test
@@ -435,7 +433,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         UserPasswordDto dto = newPasswordDto();
         dto.setConfirmPassword(StringUtils.EMPTY);
 
-        updatePasswordAndExpectFieldErrors(dto, "confirmPassword", "Cannot be blank");
+        updatePasswordAndExpectFieldError(dto, "confirmPassword", "Cannot be blank");
     }
 
     @Test
@@ -444,7 +442,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         UserPasswordDto dto = newPasswordDto();
         dto.setConfirmPassword(StringUtils.SPACE);
 
-        updatePasswordAndExpectFieldErrors(dto, "confirmPassword", "Cannot be blank");
+        updatePasswordAndExpectFieldError(dto, "confirmPassword", "Cannot be blank");
     }
 
     @Test
@@ -455,7 +453,7 @@ public class UserControllerTest extends WebMvcBaseTest {
 
         Assert.assertNotEquals(dto.getNewPassword(), dto.getConfirmPassword());
 
-        updatePasswordAndExpectFieldErrors(dto, "confirmPassword", "The password fields must match.");
+        updatePasswordAndExpectFieldError(dto, "confirmPassword", "The password fields must match.");
     }
 
     // ------------------------------------------ UPDATE PASSWORD - SUCCESS ------------------------------------------
@@ -474,9 +472,8 @@ public class UserControllerTest extends WebMvcBaseTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/users/password")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.objectToJson(dto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
+                .andExpect(MockMvcResultMatchers.status().isNoContent())
+                .andExpect(TestUtil.emptyResponse());
 
         verifyAll();
     }
@@ -492,9 +489,8 @@ public class UserControllerTest extends WebMvcBaseTest {
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/users/" + username)
                 .contentType(TestUtil.APPLICATION_JSON_UTF8))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(false))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.anEmptyMap()));
+                .andExpect(MockMvcResultMatchers.status().isNoContent())
+                .andExpect(TestUtil.emptyResponse());
 
         verifyAll();
     }
@@ -505,8 +501,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.objectToJson(dto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry(fieldName, message)));
 
@@ -519,22 +514,20 @@ public class UserControllerTest extends WebMvcBaseTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/users")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.objectToJson(dto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry(fieldName, message)));
 
         verifyAll();
     }
 
-    public void updatePasswordAndExpectFieldErrors(UserPasswordDto dto, String fieldName, String message) throws Exception {
+    public void updatePasswordAndExpectFieldError(UserPasswordDto dto, String fieldName, String message) throws Exception {
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.put("/users/password")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
                 .content(TestUtil.objectToJson(dto)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.hasErrors").value(true))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapWithSize.aMapWithSize(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.errors", IsMapContaining.hasEntry(fieldName, message)));
 

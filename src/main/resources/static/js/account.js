@@ -27,11 +27,12 @@ $(document).ready(function () {
             contentType: 'application/json',
             data: JSON.stringify(formData),
             dataType: 'json',
-            success: function (response) {
-                if (validateInput('.editAccountForm', response)) {
-                    $('#editAccountModal').modal('hide');
-                    loadAccountInfo();
-                }
+            success: function () {
+                $('#editAccountModal').modal('hide');
+                loadAccountInfo();
+            },
+            error: function (xhr) {
+                validateInput('.editAccountForm', xhr);
             }
         });
     });
@@ -65,11 +66,12 @@ $(document).ready(function () {
             contentType: 'application/json',
             data: JSON.stringify(formData),
             dataType: 'json',
-            success: function (response) {
-                if (validateInput('.passwordForm', response)) {
-                    $('#passwordModal').modal('hide');
-                    clearPasswordForm();
-                }
+            success: function () {
+                $('#passwordModal').modal('hide');
+                clearPasswordForm();
+            },
+            error: function (xhr) {
+                validateInput('.passwordForm', xhr);
             }
         });
     });

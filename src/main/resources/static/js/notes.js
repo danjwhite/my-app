@@ -47,11 +47,12 @@ $(document).ready(function () {
             contentType: 'application/json',
             data: JSON.stringify(formData),
             dataType: 'json',
-            success: function (response) {
-                if (validateInput('.addNoteForm', response)) {
-                    $('#addNoteModal').modal('hide');
-                    location.reload();
-                }
+            success: function () {
+                $('#addNoteModal').modal('hide');
+                location.reload();
+            },
+            error: function (xhr) {
+                validateInput('.addNoteForm', xhr);
             }
         });
     });
@@ -74,11 +75,12 @@ $(document).ready(function () {
             contentType: 'application/json',
             data: JSON.stringify(formData),
             dataType: 'json',
-            success: function (response) {
-                if (validateInput('.editNoteForm', response)) {
-                    $('#editNoteModal').modal('hide');
-                    location.reload();
-                }
+            success: function () {
+                $('#editNoteModal').modal('hide');
+                location.reload();
+            },
+            error: function (xhr) {
+                validateInput('.editNoteForm', xhr);
             }
         });
     });

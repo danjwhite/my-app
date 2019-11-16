@@ -64,13 +64,11 @@ public class AdminControllerTest extends WebMvcBaseTest {
 
     @Test
     @WithMockUser(username = "mjones", roles = {"USER", "ADMIN"})
-    public void getAdminPageShouldReturnExpectedResultWhenUserIsAmin() throws Exception {
+    public void getAdminPageShouldReturnExpectedResultWhenUserIsAdmin() throws Exception {
         final User loggedInUser = newUser();
-        final List<User> users = Collections.singletonList(loggedInUser);
         final List<RoleType> roles = Arrays.stream(RoleType.values()).collect(Collectors.toList());
 
         expectGetLoggedInUser(loggedInUser);
-        expectFindAllUsers(users);
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/admin")
@@ -78,7 +76,6 @@ public class AdminControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("admin"))
                 .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser))
-                .andExpect(MockMvcResultMatchers.model().attribute("users", users))
                 .andExpect(MockMvcResultMatchers.model().attribute("roles", roles))
                 .andExpect(MockMvcResultMatchers.model().attribute("defaultRole", RoleType.ROLE_USER));
 
@@ -89,10 +86,6 @@ public class AdminControllerTest extends WebMvcBaseTest {
 
     private void expectGetLoggedInUser(User user) {
         EasyMock.expect(userServiceMock.getLoggedInUser()).andReturn(user);
-    }
-
-    private void expectFindAllUsers(List<User> users) {
-        EasyMock.expect(userServiceMock.findAll()).andReturn(users);
     }
 
     private User newUser() {
