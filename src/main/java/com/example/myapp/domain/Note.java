@@ -15,10 +15,6 @@ import java.util.Date;
 @Table(name = "note")
 public class Note extends UUIDBaseEntity implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "created_at", updatable = false)
     private Date createdAt;
 

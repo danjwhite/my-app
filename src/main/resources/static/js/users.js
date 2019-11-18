@@ -26,7 +26,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: 'POST',
-            url: '/users',
+            url: '/user-management/users',
             contentType: 'application/json',
             data: JSON.stringify(formData),
             dataType: 'json',
@@ -66,6 +66,8 @@ $(document).ready(function () {
             $('.editUserForm #roleTypes').val(user.roleTypes);
         });
 
+        $('#editUserSubmitBtn').attr('href', href);
+
         $('#editUserModal').modal('show');
     });
 
@@ -73,6 +75,8 @@ $(document).ready(function () {
     $('#editUserSubmitBtn').on('click', function (event) {
         event.preventDefault();
         resetValidation();
+
+        const href = $(this).attr('href');
 
         const formData = {
             username: $('.editUserForm #username').val(),
@@ -83,7 +87,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: 'PUT',
-            url: '/users',
+            url: href,
             contentType: 'application/json',
             data: JSON.stringify(formData),
             dataType: 'json',
@@ -140,7 +144,7 @@ $(document).ready(function () {
         processing: true,
         autoWidth: true,
         ajax: {
-            url: '/users',
+            url: '/user-management/users',
             dataSrc: 'content',
             dataFilter: function (data) {
                 const json = jQuery.parseJSON(data);
@@ -192,7 +196,7 @@ $(document).ready(function () {
 });
 
 function getActionToolbar(data) {
-    const url = '/users/' + data.username;
+    const url = '/user-management/users/' + data.guid;
 
     return "<div class='btn-toolbar'>\n" +
         "   <button class='btn btn-sm btn-dark editUserBtn'\n" +

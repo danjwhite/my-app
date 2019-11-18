@@ -15,10 +15,6 @@ import java.util.Set;
 @Table(name = "user")
 public class User extends UUIDBaseEntity implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @NotBlank
     private String username;
 

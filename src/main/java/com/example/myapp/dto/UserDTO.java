@@ -10,11 +10,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
-public class UserDto {
+public class UserDTO {
+
+    private UUID guid;
 
     private String username;
 
@@ -27,7 +30,7 @@ public class UserDto {
     @Size(min = 1, message = "At least one role must be selected.")
     private List<RoleType> roleTypes = new ArrayList<>(0);
 
-    public UserDto(User user) {
+    public UserDTO(User user) {
         username = user.getUsername();
         firstName = user.getFirstName();
         lastName = user.getLastName();

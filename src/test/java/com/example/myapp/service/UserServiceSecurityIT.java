@@ -1,12 +1,12 @@
 package com.example.myapp.service;
 
-import com.example.myapp.builder.dto.UserDtoBuilder;
+import com.example.myapp.builder.dto.UserDTOBuilder;
 import com.example.myapp.builder.dto.UserPasswordDtoBuilder;
 import com.example.myapp.builder.entity.UserBuilder;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
-import com.example.myapp.dto.UserDto;
+import com.example.myapp.dto.UserDTO;
 import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.repository.RoleRepository;
 import org.junit.Rule;
@@ -149,10 +149,10 @@ public class UserServiceSecurityIT {
                 .build();
     }
 
-    private UserDto newUserDto(String username) {
+    private UserDTO newUserDto(String username) {
         User user = newUser(username);
 
-        return UserDtoBuilder.givenUserDto().withFirstName("Test").withLastName("User")
+        return UserDTOBuilder.givenUserDto().withFirstName("Test").withLastName("User")
                 .withUsername(username)
                 .withRoleTypes(user.getRoles().stream().map(Role::getType).collect(Collectors.toList()))
                 .build();

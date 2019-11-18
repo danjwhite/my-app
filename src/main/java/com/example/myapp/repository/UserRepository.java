@@ -7,9 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.util.UUID;
+
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 
     User findByUsername(String username);
+
+    User findByGuid(UUID guid);
 
     @Query(value = "SELECT * FROM user u WHERE u.username LIKE %:search% OR u.first_name LIKE %:search% OR u.last_name LIKE %:search%", nativeQuery = true)
     Page<User> search(Pageable pageable, @Param("search") String search);

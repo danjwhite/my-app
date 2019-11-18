@@ -1,6 +1,6 @@
 package com.example.myapp.web.controller;
 
-import com.example.myapp.builder.dto.UserDtoBuilder;
+import com.example.myapp.builder.dto.UserDTOBuilder;
 import com.example.myapp.builder.dto.UserPasswordDtoBuilder;
 import com.example.myapp.builder.dto.UserRegistrationDtoBuilder;
 import com.example.myapp.builder.entity.RoleBuilder;
@@ -8,7 +8,7 @@ import com.example.myapp.builder.entity.UserBuilder;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
-import com.example.myapp.dto.UserDto;
+import com.example.myapp.dto.UserDTO;
 import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.dto.UserRegistrationDto;
 import com.example.myapp.service.UserService;
@@ -55,7 +55,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     @WithMockUser(username = "mjones")
     public void getUserShouldReturnExpectedResult() throws Exception {
         final User user = newUser();
-        final UserDto userDto = new UserDto(user);
+        final UserDTO userDTO = new UserDTO(user);
 
         expectFindByUserName(user.getUsername(), user);
         replayAll();
@@ -67,7 +67,7 @@ public class UserControllerTest extends WebMvcBaseTest {
 
         verifyAll();
 
-        Assert.assertEquals(userDto, TestUtil.jsonToObject(result.getResponse().getContentAsString(), UserDto.class));
+        Assert.assertEquals(userDTO, TestUtil.jsonToObject(result.getResponse().getContentAsString(), UserDTO.class));
     }
 
     // ------------------------------------------ ADD USER - FIRST NAME ------------------------------------------
@@ -267,7 +267,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void updateUserShouldReturnExpectedResultWhenFirstNameIsNull() throws Exception {
-        UserDto dto = newUserDto();
+        UserDTO dto = newUserDto();
         dto.setFirstName(null);
 
         updateUserAndExpectFieldError(dto, "firstName", "Cannot be blank");
@@ -276,7 +276,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void updateUserShouldReturnExpectedResultWhenFirstNameIsEmpty() throws Exception {
-        UserDto dto = newUserDto();
+        UserDTO dto = newUserDto();
         dto.setFirstName(StringUtils.EMPTY);
 
         updateUserAndExpectFieldError(dto, "firstName", "Cannot be blank");
@@ -285,7 +285,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void updateUserShouldReturnExpectedResultWhenFirstNameIsBlank() throws Exception {
-        UserDto dto = newUserDto();
+        UserDTO dto = newUserDto();
         dto.setFirstName(StringUtils.SPACE);
 
         updateUserAndExpectFieldError(dto, "firstName", "Cannot be blank");
@@ -296,7 +296,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void updateUserShouldReturnExpectedResultWhenLastNameIsNull() throws Exception {
-        UserDto dto = newUserDto();
+        UserDTO dto = newUserDto();
         dto.setLastName(null);
 
         updateUserAndExpectFieldError(dto, "lastName", "Cannot be blank");
@@ -305,7 +305,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void updateUserShouldReturnExpectedResultWhenLastNameIsEmpty() throws Exception {
-        UserDto dto = newUserDto();
+        UserDTO dto = newUserDto();
         dto.setLastName(StringUtils.EMPTY);
 
         updateUserAndExpectFieldError(dto, "lastName", "Cannot be blank");
@@ -314,7 +314,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void updateUserShouldReturnExpectedResultWhenLastNameIsBlank() throws Exception {
-        UserDto dto = newUserDto();
+        UserDTO dto = newUserDto();
         dto.setLastName(StringUtils.SPACE);
 
         updateUserAndExpectFieldError(dto, "lastName", "Cannot be blank");
@@ -324,7 +324,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void updateUserShouldReturnExpectedResultWhenNoRolesArePresent() throws Exception {
-        UserDto dto = newUserDto();
+        UserDTO dto = newUserDto();
         dto.setRoleTypes(Collections.emptyList());
 
         updateUserAndExpectFieldError(dto, "roleTypes", "At least one role must be selected.");
@@ -334,7 +334,7 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Test
     @WithMockUser(username = "mjones")
     public void updateUserShouldReturnExpectedResultOnSuccess() throws Exception {
-        UserDto dto = newUserDto();
+        UserDTO dto = newUserDto();
 
         expectUpdateUser(dto);
         replayAll();
@@ -508,7 +508,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         verifyAll();
     }
 
-    public void updateUserAndExpectFieldError(UserDto dto, String fieldName, String message) throws Exception {
+    public void updateUserAndExpectFieldError(UserDTO dto, String fieldName, String message) throws Exception {
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.put("/users")
@@ -548,7 +548,7 @@ public class UserControllerTest extends WebMvcBaseTest {
         EasyMock.expect(userServiceMock.findByUsername(username)).andReturn(user);
     }
 
-    private void expectUpdateUser(UserDto user) {
+    private void expectUpdateUser(UserDTO user) {
         EasyMock.expect(userServiceMock.update(user))
                 .andReturn(new User());
     }
@@ -588,8 +588,8 @@ public class UserControllerTest extends WebMvcBaseTest {
                 .build();
     }
 
-    private UserDto newUserDto() {
-        return UserDtoBuilder.givenUserDto()
+    private UserDTO newUserDto() {
+        return UserDTOBuilder.givenUserDto()
                 .withFirstName("Mike")
                 .withLastName("Jones")
                 .withUsername("mjones")
