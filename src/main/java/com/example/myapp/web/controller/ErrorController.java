@@ -1,6 +1,7 @@
 package com.example.myapp.web.controller;
 
 import com.example.myapp.domain.User;
+import com.example.myapp.dto.UserDTO;
 import com.example.myapp.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,8 +19,8 @@ public class ErrorController {
     }
 
     @ModelAttribute("userInContext")
-    public User user() {
-        return userService.getLoggedInUser();
+    public UserDTO userInContext() {
+        return userService.getUserInContext();
     }
 
     @GetMapping(value = "/error/{code}")

@@ -3,6 +3,7 @@ package com.example.myapp.web.controller;
 import com.example.myapp.domain.Note;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDto;
+import com.example.myapp.dto.UserDTO;
 import com.example.myapp.service.NoteService;
 import com.example.myapp.service.UserService;
 import com.example.myapp.web.response.ResponseFactory;
@@ -31,8 +32,8 @@ public class NoteController {
     }
 
     @ModelAttribute("userInContext")
-    public User user() {
-        return userService.getLoggedInUser();
+    public UserDTO userInContext() {
+        return userService.getUserInContext();
     }
 
     @GetMapping

@@ -1,6 +1,7 @@
 package com.example.myapp.web.controller;
 
 import com.example.myapp.domain.User;
+import com.example.myapp.dto.UserDTO;
 import com.example.myapp.service.SecurityService;
 import com.example.myapp.service.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,8 +25,8 @@ public class HomeController {
     }
 
     @ModelAttribute("userInContext")
-    public User user() {
-        return userService.getLoggedInUser();
+    public UserDTO userInContext() {
+        return userService.getUserInContext();
     }
 
     @GetMapping

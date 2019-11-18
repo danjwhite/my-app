@@ -42,7 +42,7 @@ public class UserService {
     @Transactional(readOnly = true)
     @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
     public User findByUsername(String username) {
-        return fetchByUsername(username);
+        return getUserByUsername(username);
     }
 
     @Transactional(readOnly = true)
@@ -59,7 +59,15 @@ public class UserService {
     @Transactional
     public User getLoggedInUser() {
         UserDetails userDetails = securityService.getPrincipal();
-        return fetchByUsername(userDetails.getUsername());
+        return getUserByUsername(userDetails.getUsername());
+    }
+
+    @Transactional
+    public UserDTO getUserInContext() {
+        UserDetails userDetails = securityService.getPrincipal();
+        User user = getUserByUsername(userDetails.getUsername());
+
+        return userDTOMapper.map(user);
     }
 
     @Transactional
@@ -102,7 +110,7 @@ public class UserService {
 
         // The persisted user will automatically be updated in the database at the end of the transaction
         // without the need to call the DAO to issue an update.
-        User user = fetchByUsername(userDTO.getUsername());
+        User user = getUserByUsername(userDTO.getUsername());
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
 
@@ -153,7 +161,7 @@ public class UserService {
 
         // The persisted user will automatically be updated in the database at the end of the transaction
         // without the need to call the DAO to issue an update.
-        User user = fetchByUsername(userPasswordDto.getUsername());
+        User user = getUserByUsername(userPasswordDto.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(userPasswordDto.getNewPassword()));
 
         return user;
@@ -162,7 +170,7 @@ public class UserService {
     @Transactional
     @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
     public void delete(String username) {
-        userRepository.delete(fetchByUsername(username));
+        userRepository.delete(getUserByUsername(username));
     }
 
     @Transactional
@@ -180,7 +188,7 @@ public class UserService {
         return user;
     }
 
-    private User fetchByUsername(String username) {
+    private User getUserByUsername(String username) {
         return Optional.ofNullable(userRepository.findByUsername(username))
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username."));
     }
