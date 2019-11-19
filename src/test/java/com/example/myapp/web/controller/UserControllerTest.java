@@ -23,7 +23,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -37,7 +36,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Collections;
 
-@WebMvcTest(UserController.class)
+// TODO: Remove
+@WebMvcTest
 @ContextConfiguration(classes = {UserControllerTest.UserControllerTestConfig.class})
 public class UserControllerTest extends WebMvcBaseTest {
 
@@ -609,9 +609,5 @@ public class UserControllerTest extends WebMvcBaseTest {
     @Import(WebMvcBaseTest.TestConfig.class)
     static class UserControllerTestConfig {
 
-        @Bean
-        public UserController userController() {
-            return new UserController(userServiceMock);
-        }
     }
 }

@@ -14,9 +14,8 @@
 <div class="container-fluid h-100">
     <div th:replace="fragments/general::navbar (${session.userInContext})"></div>
 
-    <!-- TODO: change to guid -->
     <!-- Used for retrieving account info via ajax -->
-    <div id="usernameVar" th:text="${session.userInContext.username}" hidden></div>
+    <div id="guidVar" th:text="${session.userInContext.guid}" hidden></div>
 
     <div class="row ml-5">
         <div class="col-md-4">
@@ -49,13 +48,6 @@
                                 <tr>
                                     <th width="200px">Last Name:</th>
                                     <td id="lastName"></td>
-                                </tr>
-                                <tr>
-                                    <th width="200px">Roles:</th>
-                                    <td>
-                                        <ul id="roles" class="list-group">
-                                        </ul>
-                                    </td>
                                 </tr>
                             </table>
 

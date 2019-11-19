@@ -3,10 +3,7 @@ package com.example.myapp.service;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
-import com.example.myapp.dto.AddUserDTO;
-import com.example.myapp.dto.UserDTO;
-import com.example.myapp.dto.UserPasswordDto;
-import com.example.myapp.dto.UserRegistrationDto;
+import com.example.myapp.dto.*;
 import com.example.myapp.repository.RoleRepository;
 import com.example.myapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +15,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +47,17 @@ public class UserService {
     @PostAuthorize("returnObject.username == authentication.name or hasRole('ROLE_ADMIN')")
     public UserDTO findByGuid(UUID guid) {
         return userDTOMapper.map(getUserByGuid(guid));
+    }
+
+    public AccountInfoDTO getAccountInfo(UUID guid) {
+        User user = getUserByGuid(guid);
+
+        AccountInfoDTO accountInfo = new AccountInfoDTO();
+        accountInfo.setUsername(user.getUsername());
+        accountInfo.setFirstName(user.getFirstName());
+        accountInfo.setLastName(user.getLastName());
+
+        return accountInfo;
     }
 
     @Transactional
@@ -156,6 +165,30 @@ public class UserService {
     }
 
     @Transactional
+    @PreAuthorize("#accountInfoDTO.username == authentication.name")
+    public void updateAccountInfo(UUID guid, AccountInfoDTO accountInfoDTO) {
+        // The persisted user will automatically be updated in the database at the end of the transaction
+        // without the need to call the DAO to issue an update.
+        User user = getUserByGuid(guid);
+        user.setFirstName(accountInfoDTO.getFirstName());
+        user.setLastName(accountInfoDTO.getLastName());
+    }
+
+    @Transactional
+    public boolean passwordMatches(UUID guid, String password) {
+        String currentPassword = getUserByGuid(guid).getPassword();
+        return BCrypt.checkpw(password, currentPassword);
+    }
+
+    @Transactional
+    public void updatePassword(UUID guid, PasswordDTO passwordDTO) {
+        // The persisted user will automatically be updated in the database at the end of the transaction
+        // without the need to call the DAO to issue an update.
+        User user = getUserByGuid(guid);
+        user.setPassword(bCryptPasswordEncoder.encode(passwordDTO.getNewPassword()));
+    }
+
+    @Transactional
     @PreAuthorize("#userPasswordDto.username == authentication.name")
     public User updatePassword(UserPasswordDto userPasswordDto) {
 
@@ -173,6 +206,7 @@ public class UserService {
         userRepository.delete(getUserByUsername(username));
     }
 
+    // TODO: secure
     @Transactional
     public void delete(UUID guid) {
         userRepository.delete(getUserByGuid(guid));

@@ -1,11 +1,14 @@
 $(document).ready(function () {
 
+    const guid = $('#guidVar').text();
+    const baseUrl = '/account-management/users/' + guid;
+
     // TODO: Determine approach for caching account info to prevent unnecessary calls to the database
-    loadAccountInfo();
+    loadAccountInfo(baseUrl);
 
     // ************************ EDIT ACCOUNT MODAL ************************
     $('#editAccountBtn').on('click', function () {
-        loadAccountInfo();
+        loadAccountInfo(baseUrl);
         $('#editAccountModal').modal('show');
     });
 
@@ -17,19 +20,18 @@ $(document).ready(function () {
         const formData = {
             username: $('.editAccountForm #username').val(),
             firstName: $('.editAccountForm #firstName').val(),
-            lastName: $('.editAccountForm #lastName').val(),
-            roleTypes: JSON.parse($('.editAccountForm #roleTypes').val())
+            lastName: $('.editAccountForm #lastName').val()
         };
 
         $.ajax({
             type: 'PUT',
-            url: '/users',
+            url: baseUrl,
             contentType: 'application/json',
             data: JSON.stringify(formData),
             dataType: 'json',
             success: function () {
                 $('#editAccountModal').modal('hide');
-                loadAccountInfo();
+                loadAccountInfo(baseUrl);
             },
             error: function (xhr) {
                 validateInput('.editAccountForm', xhr);
@@ -62,7 +64,7 @@ $(document).ready(function () {
 
         $.ajax({
             type: 'PUT',
-            url: '/users/password',
+            url: baseUrl + '/password',
             contentType: 'application/json',
             data: JSON.stringify(formData),
             dataType: 'json',
@@ -90,11 +92,9 @@ $(document).ready(function () {
 
     // ************************ DELETE ACCOUNT BUTTON ************************
     $('#deleteAccountModal').find('#continueBtn').on('click', function () {
-        const username = $('#usernameVar').text();
-
         $.ajax({
             type: 'DELETE',
-            url: '/users/' + username,
+            url: baseUrl,
             success: function () {
                 window.location = "/logout";
             }
@@ -107,10 +107,8 @@ $(document).ready(function () {
     })
 });
 
-function loadAccountInfo() {
-    const username = $('#usernameVar').text();
-
-    $.get('/users/' + username, function (user) {
+function loadAccountInfo(url) {
+    $.get(url, function (user) {
         populateAccountPanel(user);
         populateAccountModal(user);
         populatePasswordModal(user);
@@ -121,11 +119,6 @@ function populateAccountPanel(user) {
     $('.account-table #username').html(user.username);
     $('.account-table #firstName').html(user.firstName);
     $('.account-table #lastName').html(user.lastName);
-
-    $('.account-table #roles').empty();
-    $.each(user.roleTypes, function (index, value) {
-        $('.account-table #roles').append("<li class='list-group-item'>" + value + "</li>");
-    });
 }
 
 function populateAccountModal(user) {
