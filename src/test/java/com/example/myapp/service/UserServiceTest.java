@@ -1,16 +1,14 @@
 package com.example.myapp.service;
 
+import com.example.myapp.builder.dto.RegistrationDTOBuilder;
 import com.example.myapp.builder.dto.UserDTOBuilder;
-import com.example.myapp.builder.dto.UserPasswordDtoBuilder;
-import com.example.myapp.builder.dto.UserRegistrationDtoBuilder;
 import com.example.myapp.builder.entity.RoleBuilder;
 import com.example.myapp.builder.entity.UserBuilder;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
+import com.example.myapp.dto.RegistrationDTO;
 import com.example.myapp.dto.UserDTO;
-import com.example.myapp.dto.UserPasswordDto;
-import com.example.myapp.dto.UserRegistrationDto;
 import com.example.myapp.repository.RoleRepository;
 import com.example.myapp.repository.UserRepository;
 import org.easymock.*;
@@ -152,12 +150,11 @@ public class UserServiceTest extends EasyMockSupport {
 
         List<RoleType> roleTypes = roles.stream().map(Role::getType).collect(Collectors.toList());
 
-        UserRegistrationDto userRegistrationDto = UserRegistrationDtoBuilder.givenUserRegistrationDto()
+        RegistrationDTO registrationDTO = RegistrationDTOBuilder.givenRegistrationDTO()
                 .withFirstName("Mike")
                 .withLastName("Jones")
                 .withUsername("mjones")
                 .withPassword(password)
-                .withRoleTypes(roleTypes)
                 .build();
 
         Capture<User> userCapture = EasyMock.newCapture();
@@ -167,15 +164,14 @@ public class UserServiceTest extends EasyMockSupport {
         expectSaveUser(userCapture);
         replayAll();
 
-        userService.add(userRegistrationDto);
+        userService.registerUser(registrationDTO);
         verifyAll();
 
         User user = userCapture.getValue();
-        Assert.assertEquals(userRegistrationDto.getFirstName(), user.getFirstName());
-        Assert.assertEquals(userRegistrationDto.getLastName(), user.getLastName());
-        Assert.assertEquals(userRegistrationDto.getUsername(), user.getUsername());
+        Assert.assertEquals(registrationDTO.getFirstName(), user.getFirstName());
+        Assert.assertEquals(registrationDTO.getLastName(), user.getLastName());
+        Assert.assertEquals(registrationDTO.getUsername(), user.getUsername());
         Assert.assertEquals(encodedPassword, user.getPassword());
-        Assert.assertEquals(userRegistrationDto.getRoleTypes(), roleTypes);
     }
 
     @Test
@@ -187,7 +183,7 @@ public class UserServiceTest extends EasyMockSupport {
         expectSaveUser(user);
         replayAll();
 
-        User result = userService.add(new UserRegistrationDto());
+        User result = userService.registerUser(new RegistrationDTO());
         verifyAll();
 
         Assert.assertEquals(user, result);
@@ -269,56 +265,6 @@ public class UserServiceTest extends EasyMockSupport {
         replayAll();
 
         User result = userService.update(userDTO);
-        verifyAll();
-
-        Assert.assertEquals(user, result);
-    }
-
-    @Test
-    public void updatePasswordShouldThrowUsernameNotFoundExceptionWhenUserNotFound() {
-        expectedException.expect(UsernameNotFoundException.class);
-        expectedException.expectMessage("Invalid username");
-
-        UserPasswordDto userPasswordDto = UserPasswordDtoBuilder.givenUserPasswordDto().withUsername("mjones").build();
-
-        expectFindUserByUsername(userPasswordDto.getUsername(), null);
-        replayAll();
-
-        userService.updatePassword(userPasswordDto);
-        verifyAll();
-    }
-
-    @Test
-    public void updatePasswordShouldUpdatePassword() {
-        String newEncodedPassword = "newEncodedPassword";
-        User user = UserBuilder.givenUser().withPassword("oldEncodedPassword").build();
-        UserPasswordDto userPasswordDto = UserPasswordDtoBuilder.givenUserPasswordDto().withUsername("mjones")
-                .withNewPassword("test456")
-                .build();
-
-        Assert.assertNotEquals(newEncodedPassword, user.getPassword());
-
-        expectFindUserByUsername(userPasswordDto.getUsername(), user);
-        expectEncodePassword(userPasswordDto.getNewPassword(), newEncodedPassword);
-        replayAll();
-
-        userService.updatePassword(userPasswordDto);
-        verifyAll();
-
-        Assert.assertEquals(newEncodedPassword, user.getPassword());
-    }
-
-    @Test
-    public void updatePasswordShouldReturnExpectedResult() {
-
-        UserPasswordDto userPasswordDto = UserPasswordDtoBuilder.givenUserPasswordDto().withUsername("mjones").build();
-        User user = UserBuilder.givenUser().withId(1L).build();
-
-        expectFindUserByUsername(userPasswordDto.getUsername(), user);
-        expectEncodePassword();
-        replayAll();
-
-        User result = userService.updatePassword(userPasswordDto);
         verifyAll();
 
         Assert.assertEquals(user, result);

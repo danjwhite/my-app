@@ -1,8 +1,5 @@
 $(document).ready(function () {
 
-    // ************************ SET USER ROLE HIDDEN INPUT VALUE ************************
-    populateRegistrationModal();
-
     // ************************ REGISTRATION MODAL ************************
     $('#registrationLink').on('click', function () {
         $('#registrationModal').modal('show');
@@ -18,8 +15,7 @@ $(document).ready(function () {
             lastName: $('.registrationForm #lastName').val(),
             username: $('.registrationForm #username').val(),
             password: $('.registrationForm #password').val(),
-            confirmPassword: $('.registrationForm #confirmPassword').val(),
-            roleTypes: JSON.parse($('.registrationForm #roleTypes').val())
+            confirmPassword: $('.registrationForm #confirmPassword').val()
         };
 
         console.log(JSON.stringify(formData));
@@ -51,8 +47,3 @@ $(document).ready(function () {
         $('#registrationModal').modal('hide');
     })
 });
-
-function populateRegistrationModal() {
-    const roles = [$('#userRoleVar').text()];
-    $('.registrationForm #roleTypes').val(JSON.stringify(roles));
-}

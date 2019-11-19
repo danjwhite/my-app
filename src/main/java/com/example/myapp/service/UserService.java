@@ -88,14 +88,14 @@ public class UserService {
     }
 
     @Transactional
-    public User add(UserRegistrationDto userRegistrationDto) {
+    public User registerUser(RegistrationDTO registrationDTO) {
 
         User user = new User();
-        user.setFirstName(userRegistrationDto.getFirstName());
-        user.setLastName(userRegistrationDto.getLastName());
-        user.setUsername(userRegistrationDto.getUsername());
-        user.setPassword(bCryptPasswordEncoder.encode(userRegistrationDto.getPassword()));
-        user.setRoles(new HashSet<>(roleRepository.findByTypeIn(userRegistrationDto.getRoleTypes())));
+        user.setFirstName(registrationDTO.getFirstName());
+        user.setLastName(registrationDTO.getLastName());
+        user.setUsername(registrationDTO.getUsername());
+        user.setPassword(bCryptPasswordEncoder.encode(registrationDTO.getPassword()));
+        user.getRoles().add(roleRepository.findByType(RoleType.ROLE_USER));
 
         return userRepository.save(user);
     }
@@ -186,18 +186,6 @@ public class UserService {
         // without the need to call the DAO to issue an update.
         User user = getUserByGuid(guid);
         user.setPassword(bCryptPasswordEncoder.encode(passwordDTO.getNewPassword()));
-    }
-
-    @Transactional
-    @PreAuthorize("#userPasswordDto.username == authentication.name")
-    public User updatePassword(UserPasswordDto userPasswordDto) {
-
-        // The persisted user will automatically be updated in the database at the end of the transaction
-        // without the need to call the DAO to issue an update.
-        User user = getUserByUsername(userPasswordDto.getUsername());
-        user.setPassword(bCryptPasswordEncoder.encode(userPasswordDto.getNewPassword()));
-
-        return user;
     }
 
     @Transactional

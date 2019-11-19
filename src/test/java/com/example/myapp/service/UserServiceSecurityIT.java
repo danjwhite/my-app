@@ -1,13 +1,11 @@
 package com.example.myapp.service;
 
 import com.example.myapp.builder.dto.UserDTOBuilder;
-import com.example.myapp.builder.dto.UserPasswordDtoBuilder;
 import com.example.myapp.builder.entity.UserBuilder;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDTO;
-import com.example.myapp.dto.UserPasswordDto;
 import com.example.myapp.repository.RoleRepository;
 import org.junit.Rule;
 import org.junit.Test;
@@ -96,23 +94,6 @@ public class UserServiceSecurityIT {
     @Test
     @Transactional
     @Rollback
-    @WithMockUser(username = "mjones", roles = {"USER", "ADMIN"})
-    public void updatePasswordShouldThrowExceptionWhenUsernameDoesNotMatchAuthenticatedUsername() {
-        expectAccessDeniedException();
-        userService.updatePassword(newUserPasswordDto("test"));
-    }
-
-    @Test
-    @Transactional
-    @Rollback
-    @WithMockUser(username = "mjones")
-    public void updatePasswordShouldNotThrowExceptionWhenUsernameMatchesAuthenticatedUsername() {
-        userService.updatePassword(newUserPasswordDto("mjones"));
-    }
-
-    @Test
-    @Transactional
-    @Rollback
     @WithMockUser(username = "mjones")
     public void deleteShouldThrowExceptionWhenUsernameDoesNotMatchAuthenticatedUsernameAndUserIsNotAdmin() {
         expectAccessDeniedException();
@@ -157,15 +138,5 @@ public class UserServiceSecurityIT {
                 .withRoleTypes(user.getRoles().stream().map(Role::getType).collect(Collectors.toList()))
                 .build();
 
-    }
-
-    private UserPasswordDto newUserPasswordDto(String username) {
-        User user = newUser(username);
-
-        return UserPasswordDtoBuilder.givenUserPasswordDto().withUsername(username)
-                .withPassword(user.getPassword())
-                .withNewPassword("test")
-                .withConfirmPassword("test")
-                .build();
     }
 }
