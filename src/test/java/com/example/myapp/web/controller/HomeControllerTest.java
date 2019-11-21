@@ -35,7 +35,6 @@ import java.util.Collections;
 @ContextConfiguration(classes = {HomeControllerTest.HomeControllerTestConfig.class})
 public class HomeControllerTest extends WebMvcBaseTest {
 
-    private static final SecurityService securityServiceMock = EasyMock.strictMock(SecurityService.class);
     private static final UserService userServiceMock = EasyMock.strictMock(UserService.class);
     private static final UserDetails userDetailsMock = EasyMock.strictMock(UserDetails.class);
 
@@ -47,7 +46,7 @@ public class HomeControllerTest extends WebMvcBaseTest {
 
     @BeforeClass
     public static void init() {
-        initMocks(securityServiceMock, userServiceMock, userDetailsMock);
+        initMocks(userServiceMock, userDetailsMock);
     }
 
     @Before
@@ -68,7 +67,6 @@ public class HomeControllerTest extends WebMvcBaseTest {
     @WithMockUser(username = "mjones")
     public void homeShouldReturnExpectedViewWithExpectedAttributes() throws Exception {
 
-        expectGetLoggedInUser();
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/").session(mockHttpSession))
@@ -82,10 +80,6 @@ public class HomeControllerTest extends WebMvcBaseTest {
         Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
     }
 
-    private void expectGetLoggedInUser() {
-        EasyMock.expect(userServiceMock.getLoggedInUser()).andReturn(loggedInUser);
-    }
-
     private Role newRole(long id, RoleType roleType) {
         return RoleBuilder.givenRole().withId(id).withType(roleType).build();
     }
@@ -96,7 +90,7 @@ public class HomeControllerTest extends WebMvcBaseTest {
 
         @Bean
         public HomeController homeController() {
-            return new HomeController(securityServiceMock, userServiceMock);
+            return new HomeController(userServiceMock);
         }
     }
 }

@@ -38,12 +38,6 @@ public class UserService {
     private final UserDTOMapper userDTOMapper;
 
     @Transactional(readOnly = true)
-    @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
-    public User findByUsername(String username) {
-        return getUserByUsername(username);
-    }
-
-    @Transactional(readOnly = true)
     @PostAuthorize("returnObject.username == authentication.name or hasRole('ROLE_ADMIN')")
     public UserDTO findByGuid(UUID guid) {
         return userDTOMapper.map(getUserByGuid(guid));
@@ -63,12 +57,6 @@ public class UserService {
     @Transactional
     public boolean userExists(String username) {
         return userRepository.findByUsername(username) != null;
-    }
-
-    @Transactional
-    public User getLoggedInUser() {
-        UserDetails userDetails = securityService.getPrincipal();
-        return getUserByUsername(userDetails.getUsername());
     }
 
     @Transactional
@@ -111,32 +99,6 @@ public class UserService {
         user.setRoles(new HashSet<>(roleRepository.findByTypeIn(addUserDTO.getRoleTypes())));
 
         return userRepository.save(user);
-    }
-
-    @Transactional
-    @PreAuthorize("#userDTO.username == authentication.name or hasRole('ROLE_ADMIN')")
-    public User update(UserDTO userDTO) {
-
-        // The persisted user will automatically be updated in the database at the end of the transaction
-        // without the need to call the DAO to issue an update.
-        User user = getUserByUsername(userDTO.getUsername());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-
-        List<RoleType> updatedRoleTypes = userDTO.getRoleTypes();
-        List<RoleType> currentRoleTypes = user.getRoles().stream().map(Role::getType).collect(Collectors.toList());
-
-        // Add any new roles.
-        for (RoleType roleType : updatedRoleTypes) {
-            if (!currentRoleTypes.contains(roleType)) {
-                user.getRoles().add(roleRepository.findByType(roleType));
-            }
-        }
-
-        // Remove roles that were removed.
-        user.getRoles().removeIf(role -> !updatedRoleTypes.contains(role.getType()));
-
-        return user;
     }
 
     @Transactional
@@ -186,12 +148,6 @@ public class UserService {
         // without the need to call the DAO to issue an update.
         User user = getUserByGuid(guid);
         user.setPassword(bCryptPasswordEncoder.encode(passwordDTO.getNewPassword()));
-    }
-
-    @Transactional
-    @PreAuthorize("#username == authentication.name or hasRole('ROLE_ADMIN')")
-    public void delete(String username) {
-        userRepository.delete(getUserByUsername(username));
     }
 
     // TODO: secure

@@ -1,26 +1,16 @@
 package com.example.myapp.builder.dto;
 
 import com.example.myapp.builder.AbstractBuilder;
-import com.example.myapp.dto.NoteDto;
+import com.example.myapp.dto.NoteDTO;
 
-public class NoteDtoBuilder extends AbstractBuilder<NoteDto> {
+public class NoteDtoBuilder extends AbstractBuilder<NoteDTO> {
 
     private NoteDtoBuilder() {
-        super(new NoteDto());
+        super(new NoteDTO());
     }
 
     public static NoteDtoBuilder givenNoteDto() {
         return new NoteDtoBuilder();
-    }
-
-    public NoteDtoBuilder withId(Long id) {
-        getObject().setId(id);
-        return this;
-    }
-
-    public NoteDtoBuilder withUsername(String username) {
-        getObject().setUsername(username);
-        return this;
     }
 
     public NoteDtoBuilder withTitle(String title) {

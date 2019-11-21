@@ -68,7 +68,6 @@ public class AdminControllerTest extends WebMvcBaseTest {
         final User loggedInUser = newUser();
         final List<RoleType> roles = Arrays.stream(RoleType.values()).collect(Collectors.toList());
 
-        expectGetLoggedInUser(loggedInUser);
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/admin")
@@ -82,10 +81,6 @@ public class AdminControllerTest extends WebMvcBaseTest {
         Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
 
         verifyAll();
-    }
-
-    private void expectGetLoggedInUser(User user) {
-        EasyMock.expect(userServiceMock.getLoggedInUser()).andReturn(user);
     }
 
     private User newUser() {

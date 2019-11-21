@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    const guid = $('#guidVar').text();
+    const guid = $('#userGuid').text();
     const baseUrl = '/account-management/users/' + guid;
 
     // TODO: Determine approach for caching account info to prevent unnecessary calls to the database

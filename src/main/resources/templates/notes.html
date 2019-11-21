@@ -7,12 +7,16 @@
     <!--/*/ <th:block th:include="fragments/general.html :: head">
         </th:block> /*/-->
 
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/datatables/1.10.20/css/jquery.dataTables.css}">
+    <script th:src="@{/webjars/datatables/1.10.20/js/jquery.dataTables.js}"></script>
     <script th:src="@{/js/notes.js}"></script>
 
 </head>
 <body>
 <div class="container-fluid h-100">
     <div th:replace="fragments/general::navbar (${session.userInContext})"></div>
+
+    <div id="userGuid" th:text="${session.userInContext.guid}" hidden="hidden"></div>
 
     <div class="row ml-5">
         <div class="col-md-6">
@@ -24,18 +28,12 @@
             </div>
 
             <!-------------------------- NOTE VIEW HEADING -------------------------->
-            <div class="row mb-5">
+            <div class="row mb-3">
                 <div class="col-md">
-                    <h5 th:text="${display == 'all' ? 'Showing All Notes' : 'Showing Recent Notes'}"></h5>
+                    <h5>Note Entries</h5>
                 </div>
-                <div class="col-md">
-                    <div class="text-right">
-                        <a class="btn btn-sm btn-primary"
-                           th:href="@{/notes(display=${display == 'all' ? 'recent' : 'all'})}"
-                           th:text="${display == 'all' ? 'Show Recent' : 'Show All'}">Show Recent</a>
-                        <!-- TODO: Rename nBtn class -->
-                        <button type="button" class="btn btn-sm btn-success ml-3 newBtn">Add Note</button>
-                    </div>
+                <div class="col-md text-right">
+                    <button type="button" class="btn btn-sm btn-success" id="addNoteBtn">Add Note</button>
                 </div>
             </div>
 
@@ -43,31 +41,11 @@
             <div class="row">
                 <div class="col-md-12">
 
-                    <!-------------------------- NOTE -------------------------->
-                    <div class="row mb-5 note-entry" th:each="note : ${notes}">
-                        <div class="col-md">
-                            <div class="card bg-light shadow">
-                                <div class="card-header">
-                                    <h5 class="mb-0" th:text="${note.title}"></h5>
-                                </div>
-                                <div class="card-body" th:text="${note.body}"></div>
-                                <div class="card-footer padding-bottom-0">
-                                    <div class="row mb-0">
-                                        <div class="col-md timestamp" th:text="${note.createdAt}">
-                                        </div>
-                                        <div class="col-md text-right">
-                                            <a class="btn btn-sm btn-dark editBtn"
-                                               th:href="@{/notes/{id}(id=${note.id})}"><i
-                                                    class="fa fa-edit"></i></a>
-                                            <button class="btn btn-sm btn-dark ml-3 deleteBtn"
-                                                    th:href="@{/notes/{id}(id=${note.id})}"><i
-                                                    class="fa fa-trash-alt"></i></button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-------------------------- NOTE TABLE -------------------------->
+                    <table id="noteTable">
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

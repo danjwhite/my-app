@@ -38,7 +38,7 @@ body {
 
 /* Remove horizontal line from table header */
 table.dataTable thead th {
-    border-bottom: 0;
+    border-bottom: 0 !important;
 }
 
 /* Remove horizontal line from bottom of table */

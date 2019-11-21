@@ -47,7 +47,6 @@ public class ErrorControllerTest extends WebMvcBaseTest {
     public void getErrorShouldDisplayExpectedAttributesWhenErrorIs403Forbidden() throws Exception {
         User loggedInUser = newUser();
 
-        expectGetLoggedInUser(loggedInUser);
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/error/403").session(mockHttpSession))
@@ -68,7 +67,6 @@ public class ErrorControllerTest extends WebMvcBaseTest {
     public void getErrorShouldDisplayExpectedAttributesWhenErrorIs404NotFound() throws Exception {
         User loggedInUser = newUser();
 
-        expectGetLoggedInUser(loggedInUser);
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/error/404").session(mockHttpSession))
@@ -82,10 +80,6 @@ public class ErrorControllerTest extends WebMvcBaseTest {
         verifyAll();
 
         Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    private void expectGetLoggedInUser(User user) {
-        EasyMock.expect(userServiceMock.getLoggedInUser()).andReturn(user);
     }
 
     private User newUser() {

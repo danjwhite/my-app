@@ -52,7 +52,6 @@ public class AccountControllerTest extends WebMvcBaseTest {
     public void getAccountPageShouldReturnExpectedResult() throws Exception {
         final User loggedInUser = newUser();
 
-        expectGetLoggedInUser(loggedInUser);
         replayAll();
 
         mockMvc.perform(MockMvcRequestBuilders.get("/account")
@@ -62,11 +61,6 @@ public class AccountControllerTest extends WebMvcBaseTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("userInContext", loggedInUser));
 
         Assert.assertEquals(loggedInUser, mockHttpSession.getAttribute("userInContext"));
-    }
-
-    private void expectGetLoggedInUser(User user) {
-        EasyMock.expect(userServiceMock.getLoggedInUser())
-                .andReturn(user);
     }
 
     private User newUser() {
