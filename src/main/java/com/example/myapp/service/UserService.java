@@ -104,8 +104,6 @@ public class UserService {
     @Transactional
     @Secured("ROLE_ADMIN")
     public User update(UUID guid, UserDTO userDTO) {
-        // The persisted user will automatically be updated in the database at the end of the transaction
-        // without the need to call the DAO to issue an update.
         User user = getUserByGuid(guid);
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
@@ -113,14 +111,12 @@ public class UserService {
         List<RoleType> updatedRoleTypes = userDTO.getRoleTypes();
         List<RoleType> currentRoleTypes = user.getRoles().stream().map(Role::getType).collect(Collectors.toList());
 
-        // Add any new roles.
         for (RoleType roleType : updatedRoleTypes) {
             if (!currentRoleTypes.contains(roleType)) {
                 user.getRoles().add(roleRepository.findByType(roleType));
             }
         }
 
-        // Remove roles that were removed.
         user.getRoles().removeIf(role -> !updatedRoleTypes.contains(role.getType()));
 
         return user;
@@ -129,8 +125,6 @@ public class UserService {
     @Transactional
     @PreAuthorize("#accountInfoDTO.username == authentication.name")
     public void updateAccountInfo(UUID guid, AccountInfoDTO accountInfoDTO) {
-        // The persisted user will automatically be updated in the database at the end of the transaction
-        // without the need to call the DAO to issue an update.
         User user = getUserByGuid(guid);
         user.setFirstName(accountInfoDTO.getFirstName());
         user.setLastName(accountInfoDTO.getLastName());
@@ -144,13 +138,10 @@ public class UserService {
 
     @Transactional
     public void updatePassword(UUID guid, PasswordDTO passwordDTO) {
-        // The persisted user will automatically be updated in the database at the end of the transaction
-        // without the need to call the DAO to issue an update.
         User user = getUserByGuid(guid);
         user.setPassword(bCryptPasswordEncoder.encode(passwordDTO.getNewPassword()));
     }
 
-    // TODO: secure
     @Transactional
     public void delete(UUID guid) {
         userRepository.delete(getUserByGuid(guid));
