@@ -17,7 +17,7 @@ import java.util.List;
 @GroupSequence({AddUserDTO.class, BlankCheck.class, MatchCheck.class})
 @FieldMatch(first = "password", second = "confirmPassword", message = "Password fields must match.",
         groups = MatchCheck.class)
-public class AddUserDTO {
+public class AddUserDTO implements NewUserInfo {
 
     @NotBlank(message = "Cannot be blank", groups = BlankCheck.class)
     private String firstName;
