@@ -16,7 +16,7 @@ public class RegistrationService {
 
     @Transactional
     public void registerUser(NewUserInfo newUserInfo) {
-        if (userService.findByUsername(newUserInfo.getUsername()) != null) {
+        if (userService.findByUsername(newUserInfo.getUsername()).isPresent()) {
             throw new UsernameTakenException();
         }
 

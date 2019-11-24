@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = Optional.ofNullable(userService.findByUsername(username))
+        User user = userService.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password"));
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();

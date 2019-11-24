@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,8 +26,8 @@ public class UserService {
         return user;
     }
 
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public Optional<User> findByUsername(String username) {
+        return Optional.ofNullable(userRepository.findByUsername(username));
     }
 
     public Page<User> findAll(Pageable pageable) {

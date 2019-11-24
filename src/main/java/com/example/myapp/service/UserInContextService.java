@@ -5,6 +5,7 @@ import com.example.myapp.dto.UserDTO;
 import com.example.myapp.service.mapper.UserDTOMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,8 @@ public class UserInContextService {
     @Transactional
     public UserDTO getUserInContext() {
         UserDetails userDetails = securityService.getPrincipal();
-        User user = userService.findByUsername(userDetails.getUsername());
+        User user = userService.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password"));
 
         return userDTOMapper.mapToUserDTO(user);
     }

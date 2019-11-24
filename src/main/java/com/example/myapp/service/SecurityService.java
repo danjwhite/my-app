@@ -1,5 +1,6 @@
 package com.example.myapp.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,18 +11,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class SecurityService {
 
     private final AuthenticationManager authenticationManager;
+
+    @Qualifier("userDetailsServiceImpl")
     private final UserDetailsService userDetailsService;
 
-    public SecurityService(AuthenticationManager authenticationManager,
-                           @Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService) {
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
-    }
-
-    // TODO: Add SecurityException to GlobalExceptionHandler and update controller tests?
     public UserDetails getPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
