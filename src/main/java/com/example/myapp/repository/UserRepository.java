@@ -15,6 +15,6 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
 
     User findByGuid(UUID guid);
 
-    @Query(value = "SELECT * FROM user u WHERE u.username LIKE %:search% OR u.first_name LIKE %:search% OR u.last_name LIKE %:search%", nativeQuery = true)
+    @Query(value = "SELECT u FROM User u WHERE u.username LIKE %:search% OR u.firstName LIKE %:search% OR u.lastName LIKE %:search%")
     Page<User> search(Pageable pageable, @Param("search") String search);
 }

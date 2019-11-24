@@ -15,6 +15,6 @@ public interface NoteRepository extends PagingAndSortingRepository<Note, Long> {
 
     Page<Note> findAllByUserId(Pageable pageable, long userId);
 
-    @Query(value = "SELECT * FROM note n WHERE user_id = :userId AND (title LIKE %:search% OR body LIKE %:search%)", nativeQuery = true)
+    @Query(value = "SELECT n FROM Note n WHERE n.user.id = :userId AND (n.title LIKE %:search% OR n.body LIKE %:search%)")
     Page<Note> searchByUserId(Pageable pageable, @Param("userId") long userId, @Param("search") String search);
 }
