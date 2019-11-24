@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -80,6 +81,6 @@ public class UserDetailsServiceImplTest extends EasyMockSupport {
     }
 
     private void expectFindByUsername(String username, User user) {
-        EasyMock.expect(userServiceMock.findByUsername(username)).andReturn(user);
+        EasyMock.expect(userServiceMock.findByUsername(username)).andReturn(Optional.ofNullable(user));
     }
 }

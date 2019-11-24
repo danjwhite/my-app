@@ -1,7 +1,7 @@
 package com.example.myapp.web.controller;
 
 import com.example.myapp.dto.NoteDTO;
-import com.example.myapp.service.NoteService;
+import com.example.myapp.service.NoteManagementService;
 import com.example.myapp.web.response.ResponseFactory;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -22,7 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final NoteService noteService;
+    private final NoteManagementService noteManagementService;
 
     @GetMapping("/{userGuid}/notes")
     public ResponseEntity<Page<NoteDTO>> getNotesForUser(
@@ -30,8 +30,8 @@ public class UserController {
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC)
             }) Pageable pageable, @PathVariable("userGuid") UUID userGuid, @RequestParam(value = "search", required = false) String search) {
-        Page<NoteDTO> page = StringUtils.isNotBlank(search) ? noteService.searchForUser(pageable, userGuid, search) :
-                noteService.findAllForUser(pageable, userGuid);
+        Page<NoteDTO> page = StringUtils.isNotBlank(search) ? noteManagementService.searchNotesForUser(pageable, userGuid, search) :
+                noteManagementService.findAllNotesForUser(pageable, userGuid);
 
         return ResponseFactory.ok(page);
     }
@@ -39,7 +39,7 @@ public class UserController {
     @GetMapping("/{userGuid}/notes/{noteGuid}")
     public ResponseEntity<NoteDTO> getNoteForUser(@PathVariable("userGuid") UUID userGuid,
                                                   @PathVariable("noteGuid") UUID noteGuid) {
-        return ResponseFactory.ok(noteService.findForUser(userGuid, noteGuid));
+        return ResponseFactory.ok(noteManagementService.findNoteForUser(userGuid, noteGuid));
     }
 
     @PostMapping("/{userGuid}/notes")
@@ -49,7 +49,7 @@ public class UserController {
             return ResponseFactory.badRequest(result);
         }
 
-        noteService.addNoteForUser(userGuid, noteDTO);
+        noteManagementService.addNoteForUser(userGuid, noteDTO);
 
         return ResponseFactory.noContent();
     }
@@ -62,7 +62,7 @@ public class UserController {
             return ResponseFactory.badRequest(result);
         }
 
-        noteService.updateNoteForUser(userGuid, noteGuid, noteDTO);
+        noteManagementService.updateNoteForUser(userGuid, noteGuid, noteDTO);
 
         return ResponseFactory.noContent();
     }
@@ -70,7 +70,7 @@ public class UserController {
     @DeleteMapping("/{userGuid}/notes/{noteGuid}")
     public ResponseEntity<Void> deleteNoteForUser(@PathVariable("userGuid") UUID userGuid,
                                                   @PathVariable("noteGuid") UUID noteGuid) {
-        noteService.deleteNoteForUser(userGuid, noteGuid);
+        noteManagementService.deleteNoteForUser(userGuid, noteGuid);
 
         return ResponseFactory.noContent();
     }
