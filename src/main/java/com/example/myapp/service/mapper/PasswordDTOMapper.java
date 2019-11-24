@@ -12,9 +12,8 @@ public class PasswordDTOMapper {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public User mapToUser(PasswordDTO source, User target) {
+    public void mapToUser(PasswordDTO source, User target) {
         target.setPassword(bCryptPasswordEncoder.encode(source.getNewPassword()));
 
-        return target;
     }
 }

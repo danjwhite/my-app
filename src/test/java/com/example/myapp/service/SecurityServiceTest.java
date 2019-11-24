@@ -1,7 +1,9 @@
 package com.example.myapp.service;
 
-import com.example.myapp.domain.RoleType;
-import org.easymock.*;
+import org.easymock.EasyMock;
+import org.easymock.EasyMockRunner;
+import org.easymock.Mock;
+import org.easymock.MockType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -24,7 +26,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(EasyMockRunner.class)
@@ -62,7 +65,7 @@ public class SecurityServiceTest {
     public void setUp() {
         PowerMock.mockStatic(SecurityContextHolder.class);
 
-        securityService = new SecurityService(authenticationManagerMock, authenticationTrustResolverMock, userDetailsServiceMock);
+        securityService = new SecurityService(authenticationManagerMock, userDetailsServiceMock);
     }
 
     @Test
@@ -100,59 +103,6 @@ public class SecurityServiceTest {
         verifyAll();
 
         Assert.assertEquals(userDetailsMock, result);
-    }
-
-    @Test
-    public void isCurrentAuthenticationAnonymousShouldReturnExpectedResult() {
-        expectGetAuthenticationFromSecurityContext(authenticationMock);
-        expectIsAnonymousCheck(false);
-        replayAll();
-
-        boolean result = securityService.isCurrentAuthenticationAnonymous();
-        verifyAll();
-
-        Assert.assertFalse(result);
-    }
-
-    @Test
-    public void currentAuthenticationHasRoleShouldThrowSecurityExceptionWhenAuthenticationIsNull() {
-        expectedException.expect(SecurityException.class);
-        expectedException.expectMessage("No authentication found in security context.");
-
-        expectGetAuthenticationFromSecurityContext(null);
-        replayAll();
-
-        securityService.currentAuthenticationHasRole(RoleType.ROLE_ADMIN);
-        verifyAll();
-    }
-
-    @Test
-    public void currentAuthenticationHasRoleShouldReturnExpectedResultWhenFalse() {
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-
-        expectGetAuthenticationFromSecurityContext(authenticationMock);
-        expectGetAuthoritiesFromAuthentication(authorities);
-        replayAll();
-
-        boolean result = securityService.currentAuthenticationHasRole(RoleType.ROLE_ADMIN);
-        verifyAll();
-
-        Assert.assertFalse(result);
-    }
-
-    @Test
-    public void currentAuthenticationHasRoleShouldReturnExpectedResultWhenTrue() {
-        List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"),
-                new SimpleGrantedAuthority("ROLE_ADMIN"));
-
-        expectGetAuthenticationFromSecurityContext(authenticationMock);
-        expectGetAuthoritiesFromAuthentication(authorities);
-        replayAll();
-
-        boolean result = securityService.currentAuthenticationHasRole(RoleType.ROLE_ADMIN);
-        verifyAll();
-
-        Assert.assertTrue(result);
     }
 
     @Test
@@ -207,15 +157,6 @@ public class SecurityServiceTest {
 
     private void expectGetPrincipalFromAuthentication(Object object) {
         EasyMock.expect(authenticationMock.getPrincipal()).andReturn(object);
-    }
-
-    private void expectIsAnonymousCheck(boolean value) {
-        EasyMock.expect(authenticationTrustResolverMock.isAnonymous(authenticationMock))
-                .andReturn(value);
-    }
-
-    private void expectGetAuthoritiesFromAuthentication(List authorities) {
-        EasyMock.expect(authenticationMock.getAuthorities()).andReturn(authorities);
     }
 
     private void expectLoadUserByUsername(String username) {

@@ -2,7 +2,6 @@ package com.example.myapp.service;
 
 import com.example.myapp.builder.entity.RoleBuilder;
 import com.example.myapp.builder.entity.UserBuilder;
-import com.example.myapp.repository.UserRepository;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 public class UserDetailsServiceImplTest extends EasyMockSupport {
 
     @Mock(type = MockType.STRICT)
-    private UserRepository userRepositoryMock;
+    private UserService userServiceMock;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -34,7 +33,7 @@ public class UserDetailsServiceImplTest extends EasyMockSupport {
 
     @Before
     public void setUp() {
-        userDetailsService = new UserDetailsServiceImpl(userRepositoryMock);
+        userDetailsService = new UserDetailsServiceImpl(userServiceMock);
     }
 
     @Test
@@ -81,6 +80,6 @@ public class UserDetailsServiceImplTest extends EasyMockSupport {
     }
 
     private void expectFindByUsername(String username, User user) {
-        EasyMock.expect(userRepositoryMock.findByUsername(username)).andReturn(user);
+        EasyMock.expect(userServiceMock.findByUsername(username)).andReturn(user);
     }
 }

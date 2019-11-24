@@ -2,7 +2,8 @@ package com.example.myapp.web.controller;
 
 import com.example.myapp.dto.AccountInfoDTO;
 import com.example.myapp.dto.PasswordDTO;
-import com.example.myapp.service.UserService;
+import com.example.myapp.service.AccountManagementService;
+import com.example.myapp.service.exception.PasswordMatchException;
 import com.example.myapp.web.response.ResponseFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +23,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AccountManagementController {
 
-    private final UserService userService;
+    private final AccountManagementService accountManagementService;
 
     @GetMapping("/users/{guid}")
     public ResponseEntity<AccountInfoDTO> getAccountInfo(@PathVariable("guid") UUID guid) {
-        AccountInfoDTO accountInfoDTO = userService.getAccountInfo(guid);
+        AccountInfoDTO accountInfoDTO = accountManagementService.getAccountInfo(guid);
         return ResponseFactory.ok(accountInfoDTO);
     }
 
@@ -36,7 +37,7 @@ public class AccountManagementController {
             return ResponseFactory.badRequest(result);
         }
 
-        userService.updateAccountInfo(guid, accountInfoDTO);
+        accountManagementService.updateAccountInfo(guid, accountInfoDTO);
 
         return ResponseFactory.noContent();
     }
@@ -47,19 +48,19 @@ public class AccountManagementController {
             return ResponseFactory.badRequest(result);
         }
 
-        if (!userService.passwordMatches(guid, passwordDTO.getPassword())) {
+        try {
+            accountManagementService.updatePassword(guid, passwordDTO);
+        } catch (PasswordMatchException e) {
             result.rejectValue("password", "InvalidPassword", "Current password is invalid.");
             return ResponseFactory.badRequest(result);
         }
-
-        userService.updatePassword(guid, passwordDTO);
 
         return ResponseFactory.noContent();
     }
 
     @DeleteMapping("/users/{guid}")
     public ResponseEntity<Void> deleteAccount(@PathVariable("guid") UUID guid, HttpServletRequest request, HttpServletResponse response) {
-        userService.delete(guid);
+        accountManagementService.deleteAccount(guid);
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {

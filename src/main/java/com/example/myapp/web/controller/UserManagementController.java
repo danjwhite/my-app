@@ -2,7 +2,8 @@ package com.example.myapp.web.controller;
 
 import com.example.myapp.dto.AddUserDTO;
 import com.example.myapp.dto.UserDTO;
-import com.example.myapp.service.UserService;
+import com.example.myapp.service.UserManagementService;
+import com.example.myapp.service.exception.UsernameTakenException;
 import com.example.myapp.web.response.ResponseFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,23 +23,25 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserManagementController {
 
-    private final UserService userService;
+    private final UserManagementService userManagementService;
 
     @GetMapping("/users")
     public ResponseEntity<Page<UserDTO>> getUsers(
-            @PageableDefault(page = 0, size = 20)
+            @PageableDefault(size = 20)
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "username", direction = Sort.Direction.ASC)
             }) Pageable pageable,
             @RequestParam(value = "search", required = false) String search) {
 
-        Page<UserDTO> page = userService.findAll(pageable, search);
+        Page<UserDTO> page = search != null ? userManagementService.search(pageable, search) :
+                userManagementService.findAll(pageable);
+
         return ResponseFactory.ok(page);
     }
 
     @GetMapping("/users/{guid}")
     public ResponseEntity<UserDTO> getUser(@PathVariable(value = "guid") UUID guid) {
-        UserDTO userDTO = userService.findByGuid(guid);
+        UserDTO userDTO = userManagementService.findByGuid(guid);
         return ResponseFactory.ok(userDTO);
     }
 
@@ -48,12 +51,12 @@ public class UserManagementController {
             return ResponseFactory.badRequest(result);
         }
 
-        if (userService.userExists(addUserDTO.getUsername())) {
+        try {
+            userManagementService.addUser(addUserDTO);
+        } catch (UsernameTakenException e) {
             result.rejectValue("username", "UsernameAlreadyTaken", "There is already an account registered with this username.");
             return ResponseFactory.badRequest(result);
         }
-
-        userService.add(addUserDTO);
 
         return ResponseFactory.noContent();
     }
@@ -64,14 +67,14 @@ public class UserManagementController {
             return ResponseFactory.badRequest(result);
         }
 
-        userService.update(guid, userDTO);
+        userManagementService.updateUser(guid, userDTO);
 
         return ResponseFactory.noContent();
     }
 
     @DeleteMapping(value = "/users/{guid}")
     public ResponseEntity<Void> deleteUser(@PathVariable("guid") UUID guid) {
-        userService.delete(guid);
+        userManagementService.deleteUser(guid);
         return ResponseFactory.noContent();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.myapp.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -20,18 +21,12 @@ import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private UserDetailsService userDetailsService;
-
-    private AccessDeniedHandler accessDeniedHandler;
-
-    @Autowired
-    public SecurityConfig(@Qualifier("userDetailsServiceImpl") UserDetailsService userDetailsService,
-                          AccessDeniedHandler accessDeniedHandler) {
-        this.userDetailsService = userDetailsService;
-        this.accessDeniedHandler = accessDeniedHandler;
-    }
+    @Qualifier("userDetailsServiceImpl")
+    private final UserDetailsService userDetailsService;
+    private final AccessDeniedHandler accessDeniedHandler;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {

@@ -22,11 +22,10 @@ public class UserDTOMapper {
         return userDTO;
     }
 
-    public User mapToUser(UserDTO source, User target) {
+    public void mapToUser(UserDTO source, User target) {
         target.setFirstName(source.getFirstName());
         target.setLastName(source.getLastName());
         target.setRoles(rolesMapper.mapToRoles(source.getRoleTypes(), target.getRoles()));
 
-        return target;
     }
 }

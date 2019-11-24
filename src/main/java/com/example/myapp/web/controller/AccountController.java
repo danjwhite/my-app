@@ -1,8 +1,8 @@
 package com.example.myapp.web.controller;
 
-import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDTO;
-import com.example.myapp.service.UserService;
+import com.example.myapp.service.UserInContextService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,17 +12,14 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @Controller
 @SessionAttributes("userInContext")
 @RequestMapping("/account")
+@RequiredArgsConstructor
 public class AccountController {
 
-    private final UserService userService;
-
-    public AccountController(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserInContextService userInContextService;
 
     @ModelAttribute("userInContext")
     public UserDTO userInContext() {
-        return userService.getUserInContext();
+        return userInContextService.getUserInContext();
     }
 
     @GetMapping

@@ -5,15 +5,13 @@ import com.example.myapp.builder.entity.UserBuilder;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
-import com.example.myapp.service.SecurityService;
-import com.example.myapp.service.UserService;
+import com.example.myapp.service.UserInContextService;
 import com.example.myapp.test.WebMvcBaseTest;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +22,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -35,7 +32,7 @@ import java.util.Collections;
 @ContextConfiguration(classes = {HomeControllerTest.HomeControllerTestConfig.class})
 public class HomeControllerTest extends WebMvcBaseTest {
 
-    private static final UserService userServiceMock = EasyMock.strictMock(UserService.class);
+    private static final UserInContextService userInContextServiceMock = EasyMock.strictMock(UserInContextService.class);
     private static final UserDetails userDetailsMock = EasyMock.strictMock(UserDetails.class);
 
     @Autowired
@@ -46,7 +43,7 @@ public class HomeControllerTest extends WebMvcBaseTest {
 
     @BeforeClass
     public static void init() {
-        initMocks(userServiceMock, userDetailsMock);
+        initMocks(userInContextServiceMock, userDetailsMock);
     }
 
     @Before
@@ -90,7 +87,7 @@ public class HomeControllerTest extends WebMvcBaseTest {
 
         @Bean
         public HomeController homeController() {
-            return new HomeController(userServiceMock);
+            return new HomeController(userInContextServiceMock);
         }
     }
 }

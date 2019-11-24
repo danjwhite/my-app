@@ -26,7 +26,7 @@ public class UserController {
 
     @GetMapping("/{userGuid}/notes")
     public ResponseEntity<Page<NoteDTO>> getNotesForUser(
-            @PageableDefault(page = 0, size = 20)
+            @PageableDefault(size = 20)
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC)
             }) Pageable pageable, @PathVariable("userGuid") UUID userGuid, @RequestParam(value = "search", required = false) String search) {

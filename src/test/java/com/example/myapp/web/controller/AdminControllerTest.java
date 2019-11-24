@@ -5,7 +5,7 @@ import com.example.myapp.builder.entity.UserBuilder;
 import com.example.myapp.domain.Role;
 import com.example.myapp.domain.RoleType;
 import com.example.myapp.domain.User;
-import com.example.myapp.service.UserService;
+import com.example.myapp.service.UserInContextService;
 import com.example.myapp.test.WebMvcBaseTest;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 @ContextConfiguration(classes = {AdminControllerTest.AdminControllerTestConfig.class})
 public class AdminControllerTest extends WebMvcBaseTest {
 
-    private static final UserService userServiceMock = EasyMock.strictMock(UserService.class);
+    private static final UserInContextService userInContextServiceMock = EasyMock.strictMock(UserInContextService.class);
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,7 +42,7 @@ public class AdminControllerTest extends WebMvcBaseTest {
 
     @BeforeClass
     public static void init() {
-        initMocks(userServiceMock);
+        initMocks(userInContextServiceMock);
     }
 
     @Before
@@ -103,7 +103,7 @@ public class AdminControllerTest extends WebMvcBaseTest {
 
         @Bean
         public AdminController adminController() {
-            return new AdminController(userServiceMock);
+            return new AdminController(userInContextServiceMock);
         }
     }
 }

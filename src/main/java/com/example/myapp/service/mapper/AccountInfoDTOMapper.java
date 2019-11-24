@@ -16,10 +16,9 @@ public class AccountInfoDTOMapper {
         return accountInfoDTO;
     }
 
-    public User mapToUser(AccountInfoDTO source, User target) {
+    public void mapToUser(AccountInfoDTO source, User target) {
         target.setFirstName(source.getFirstName());
         target.setLastName(source.getLastName());
 
-        return target;
     }
 }

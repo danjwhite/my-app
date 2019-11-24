@@ -1,9 +1,9 @@
 package com.example.myapp.web.controller;
 
 import com.example.myapp.domain.RoleType;
-import com.example.myapp.domain.User;
 import com.example.myapp.dto.UserDTO;
-import com.example.myapp.service.UserService;
+import com.example.myapp.service.UserInContextService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,17 +17,14 @@ import java.util.stream.Collectors;
 @Controller
 @SessionAttributes("userInContext")
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class AdminController {
 
-    private final UserService userService;
-
-    public AdminController(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserInContextService userInContextService;
 
     @ModelAttribute("userInContext")
     public UserDTO userInContext() {
-        return userService.getUserInContext();
+        return userInContextService.getUserInContext();
     }
 
     @ModelAttribute("roles")

@@ -1,8 +1,9 @@
 package com.example.myapp.web.controller;
 
 import com.example.myapp.dto.RegistrationDTO;
+import com.example.myapp.service.RegistrationService;
 import com.example.myapp.service.SecurityService;
-import com.example.myapp.service.UserService;
+import com.example.myapp.service.exception.UsernameTakenException;
 import com.example.myapp.web.response.ResponseFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class RegistrationController {
 
-    private final UserService userService;
+    private final RegistrationService registrationService;
     private final SecurityService securityService;
 
     @PostMapping
@@ -28,13 +29,13 @@ public class RegistrationController {
             return ResponseFactory.badRequest(result);
         }
 
-        if (userService.userExists(registrationDTO.getUsername())) {
+        try {
+            registrationService.registerUser(registrationDTO);
+            securityService.autoLogin(registrationDTO.getUsername(), registrationDTO.getPassword());
+        } catch (UsernameTakenException e) {
             result.rejectValue("username", "UsernameAlreadyTaken", "There is already an account registered with this username.");
             return ResponseFactory.badRequest(result);
         }
-
-        userService.registerUser(registrationDTO);
-        securityService.autoLogin(registrationDTO.getUsername(), registrationDTO.getPassword());
 
         return ResponseFactory.noContent();
     }

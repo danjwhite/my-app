@@ -2,7 +2,7 @@ package com.example.myapp.web.controller;
 
 import com.example.myapp.builder.entity.UserBuilder;
 import com.example.myapp.domain.User;
-import com.example.myapp.service.UserService;
+import com.example.myapp.service.UserInContextService;
 import com.example.myapp.test.WebMvcBaseTest;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @ContextConfiguration(classes = {ErrorControllerTest.ErrorControllerTestConfig.class})
 public class ErrorControllerTest extends WebMvcBaseTest {
 
-    private static final UserService userServiceMock = EasyMock.strictMock(UserService.class);
+    private static final UserInContextService userInContextServiceMock = EasyMock.strictMock(UserInContextService.class);
 
     @Autowired
     private MockMvc mockMvc;
@@ -34,7 +34,7 @@ public class ErrorControllerTest extends WebMvcBaseTest {
 
     @BeforeClass
     public static void init() {
-        initMocks(userServiceMock);
+        initMocks(userInContextServiceMock);
     }
 
     @Before
@@ -92,7 +92,7 @@ public class ErrorControllerTest extends WebMvcBaseTest {
 
         @Bean
         public ErrorController errorController() {
-            return new ErrorController(userServiceMock);
+            return new ErrorController(userInContextServiceMock);
         }
     }
 }
