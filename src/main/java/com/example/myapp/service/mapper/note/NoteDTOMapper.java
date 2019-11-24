@@ -1,4 +1,4 @@
-package com.example.myapp.service;
+package com.example.myapp.service.mapper.note;
 
 import com.example.myapp.domain.Note;
 import com.example.myapp.dto.NoteDTO;

@@ -5,6 +5,7 @@ import com.example.myapp.domain.User;
 import com.example.myapp.dto.NoteDTO;
 import com.example.myapp.repository.NoteRepository;
 import com.example.myapp.repository.UserRepository;
+import com.example.myapp.service.mapper.note.NoteDTOMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
