@@ -1,4 +1,4 @@
-package com.example.myapp.service.mapper;
+package com.example.myapp.service.mapper.user;
 
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.NewUserInfo;

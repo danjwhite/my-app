@@ -3,7 +3,7 @@ package com.example.myapp.service;
 import com.example.myapp.domain.User;
 import com.example.myapp.dto.NewUserInfo;
 import com.example.myapp.dto.UserDTO;
-import com.example.myapp.service.mapper.UserDTOMapper;
+import com.example.myapp.service.mapper.user.UserDTOMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -2,7 +2,7 @@ package com.example.myapp.service;
 
 import com.example.myapp.dto.NewUserInfo;
 import com.example.myapp.service.exception.UsernameTakenException;
-import com.example.myapp.service.mapper.NewUserInfoMapper;
+import com.example.myapp.service.mapper.user.NewUserInfoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
